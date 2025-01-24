@@ -1,0 +1,62 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/**/controller.ts"],
+  "spec": {
+    "outputDirectory": "build",
+    "specVersion": 3,
+    "host": "api.collegebasketballdata.com",
+    "name": "College Basketball Data API",
+    "description": "This API is in limited Beta for Patreon subscribers. It may have bugs and is subject to changes. API keys can be acquired from the CollegeFootballData.com website.",
+    "license": "",
+    "contact": {
+      "email": "admin@collegefootballdata.com",
+      "name": "the developer"
+    },
+    "securityDefinitions": {
+      "apiKey": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "rootSecurity": [
+      {
+        "apiKey": []
+      }
+    ],
+    "tags": [
+      {
+        "name": "games",
+        "description": "Games scores and statistics"
+      },
+      {
+        "name": "plays",
+        "description": "Play by play data"
+      },
+      {
+        "name": "teams",
+        "description": "Team information"
+      },
+      {
+        "name": "conferences",
+        "description": "Conference information"
+      },
+      {
+        "name": "venues",
+        "description": "Information about venues"
+      },
+      {
+        "name": "ratings",
+        "description": "Team rating data"
+      },
+      {
+        "name": "stats",
+        "description": "Statistical data"
+      }
+    ]
+  },
+  "routes": {
+    "routesDir": "build",
+    "authenticationModule": "src/config/auth.ts"
+  }
+}
