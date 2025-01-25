@@ -229,6 +229,9 @@ export interface GameBoxScorePlayers {
   gameMinutes: number | null;
   gamePace: number | null;
   players: {
+    /**
+     * @isInt
+     */
     athleteId: number;
     athleteSourceId: string;
     name: string;

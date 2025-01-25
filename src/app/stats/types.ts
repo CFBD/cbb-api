@@ -10,6 +10,10 @@ export interface TeamSeasonStats {
   teamId: number;
   team: string;
   conference: string | null;
+  /**
+   * @isInt
+   */
+  games: number;
   totalMinutes: number | null;
   pace: number | null;
   offense: TeamSeasonUnitStats;
@@ -83,54 +87,54 @@ export interface PlayerSeasonStats {
   teamId: number;
   team: string;
   conference: string | null;
-  players: {
-    athleteId: number;
-    athleteSourceId: string;
-    name: string;
-    position: string;
-    starter: boolean | null;
-    ejected: boolean | null;
-    minutes: number | null;
-    points: number | null;
-    turnovers: number | null;
-    fouls: number | null;
-    assists: number | null;
-    steals: number | null;
-    blocks: number | null;
-    usage: number | null;
-    offensiveRating: number | null;
-    defensiveRating: number | null;
-    netRating: number | null;
-    effectiveFieldGoalPct: number | null;
-    trueShootingPct: number | null;
-    gameScore: number | null;
-    assistsTurnoverRatio: number | null;
-    freeThrowRate: number | null;
-    offensiveReboundPct: number | null;
-    fieldGoals: {
-      made: number | null;
-      attempted: number | null;
-      pct: number | null;
-    };
-    twoPointFieldGoals: {
-      made: number | null;
-      attempted: number | null;
-      pct: number | null;
-    };
-    threePointFieldGoals: {
-      made: number | null;
-      attempted: number | null;
-      pct: number | null;
-    };
-    freeThrows: {
-      made: number | null;
-      attempted: number | null;
-      pct: number | null;
-    };
-    rebounds: {
-      offensive: number | null;
-      defensive: number | null;
-      total: number | null;
-    };
-  }[];
+  /**
+   * @isInt
+   */
+  athleteId: number;
+  athleteSourceId: string;
+  name: string;
+  position: string;
+  games: number;
+  starts: number;
+  minutes: number;
+  points: number | null;
+  turnovers: number | null;
+  fouls: number | null;
+  assists: number | null;
+  steals: number | null;
+  blocks: number | null;
+  usage: number | null;
+  offensiveRating: number | null;
+  defensiveRating: number | null;
+  netRating: number | null;
+  effectiveFieldGoalPct: number | null;
+  trueShootingPct: number | null;
+  assistsTurnoverRatio: number | null;
+  freeThrowRate: number | null;
+  offensiveReboundPct: number | null;
+  fieldGoals: {
+    made: number | null;
+    attempted: number | null;
+    pct: number | null;
+  };
+  twoPointFieldGoals: {
+    made: number | null;
+    attempted: number | null;
+    pct: number | null;
+  };
+  threePointFieldGoals: {
+    made: number | null;
+    attempted: number | null;
+    pct: number | null;
+  };
+  freeThrows: {
+    made: number | null;
+    attempted: number | null;
+    pct: number | null;
+  };
+  rebounds: {
+    offensive: number | null;
+    defensive: number | null;
+    total: number | null;
+  };
 }

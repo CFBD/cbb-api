@@ -1,6 +1,6 @@
 import { Route, Tags, Controller, Get, Query } from 'tsoa';
-import { TeamSeasonStats } from './types';
-import { getTeamSeasonStats } from './service';
+import { PlayerSeasonStats, TeamSeasonStats } from './types';
+import { getPlayerSeasonStats, getTeamSeasonStats } from './service';
 import { SeasonType } from '../enums';
 
 @Route('stats')
@@ -23,6 +23,32 @@ export class StatsController extends Controller {
     @Query() endDateRange?: Date,
   ): Promise<TeamSeasonStats[]> {
     return await getTeamSeasonStats(
+      season,
+      seasonType,
+      team,
+      conference,
+      startDateRange,
+      endDateRange,
+    );
+  }
+
+  /**
+   * Returns player statistics by season
+   * @param season Required season filter
+   * @param seasonType Optional season type filter
+   * @param team Optional team name filter
+   * @param conference Optional conference abbreviation filter
+   */
+  @Get('player/season')
+  public async getPlayerSeasonStats(
+    @Query() season: number,
+    @Query() seasonType?: SeasonType,
+    @Query() team?: string,
+    @Query() conference?: string,
+    @Query() startDateRange?: Date,
+    @Query() endDateRange?: Date,
+  ): Promise<PlayerSeasonStats[]> {
+    return await getPlayerSeasonStats(
       season,
       seasonType,
       team,
