@@ -53,6 +53,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^19.6.0
         version: 19.6.0
+      '@commitlint/types':
+        specifier: ^19.5.0
+        version: 19.5.0
       '@jest-mock/express':
         specifier: ^2.1.0
         version: 2.1.0

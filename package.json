@@ -48,6 +48,7 @@
     "@babel/preset-env": "^7.26.0",
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@commitlint/types": "^19.5.0",
     "@jest-mock/express": "^2.1.0",
     "@jest/globals": "^29.7.0",
     "@semantic-release/changelog": "^6.0.3",

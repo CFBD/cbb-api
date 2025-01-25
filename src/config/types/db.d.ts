@@ -57,7 +57,7 @@ export interface Athlete {
 }
 
 export interface Conference {
-  abbreviation: string | null;
+  abbreviation: string;
   id: Generated<number>;
   name: string;
   shortName: string;
@@ -87,6 +87,38 @@ export interface Game {
   startDate: Timestamp;
   startTimeTbd: boolean;
   status: GameStatus;
+  tournamentId: number | null;
+  venueId: number | null;
+}
+
+export interface GameInfo {
+  attendance: number | null;
+  awayConference: string | null;
+  awayConferenceId: number | null;
+  awayPeriodPoints: number[] | null;
+  awayPoints: number | null;
+  awayTeam: string | null;
+  awayTeamId: number | null;
+  awayWinner: boolean | null;
+  conferenceGame: boolean | null;
+  gameType: string | null;
+  homeConference: string | null;
+  homeConferenceId: number | null;
+  homePeriodPoints: number[] | null;
+  homePoints: number | null;
+  homeTeam: string | null;
+  homeTeamId: number | null;
+  homeWinner: boolean | null;
+  id: number | null;
+  neutralSite: boolean | null;
+  notes: string | null;
+  season: number | null;
+  seasonLabel: string | null;
+  seasonType: SeasonType | null;
+  sourceId: string | null;
+  startDate: Timestamp | null;
+  startTimeTbd: boolean | null;
+  status: GameStatus | null;
   tournamentId: number | null;
   venueId: number | null;
 }
@@ -245,6 +277,7 @@ export interface DB {
   conference: Conference;
   conferenceTeam: ConferenceTeam;
   game: Game;
+  gameInfo: GameInfo;
   gameMedia: GameMedia;
   gamePlayerStats: GamePlayerStats;
   gameTeam: GameTeam;
