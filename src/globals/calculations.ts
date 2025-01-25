@@ -26,10 +26,8 @@ interface PlayerStats {
 }
 
 interface TeamStats {
-  periodPoints: number[] | null;
   points: number | null;
   opponentPoints: number | null;
-  opponentPeriodPoints: number[] | null;
   team2pm: number | null;
   team2pa: number | null;
   team2pPct: string | null;
