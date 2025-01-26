@@ -1,9 +1,12 @@
-import { Route, Tags, Controller, Get, Query } from 'tsoa';
+import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
 import { PlayerSeasonStats, TeamSeasonStats } from './types';
 import { getPlayerSeasonStats, getTeamSeasonStats } from './service';
 import { SeasonType } from '../enums';
 
+import middlewares from '../../config/middleware';
+
 @Route('stats')
+@Middlewares(middlewares.standard)
 @Tags('stats')
 export class StatsController extends Controller {
   /**

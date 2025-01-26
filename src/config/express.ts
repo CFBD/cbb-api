@@ -9,7 +9,7 @@ import cors from 'cors';
 
 import { RegisterRoutes } from '../../build/routes';
 import errorHandler from './errors';
-// import { updateQuotas } from './middleware/quotas';
+import { updateQuotas } from './middleware/quotas';
 
 export const configureServer = async (
   app: Application,
@@ -30,7 +30,7 @@ export const configureServer = async (
 
   // app.use(Sentry.Handlers.errorHandler());
 
-  // app.use(updateQuotas);
+  app.use(updateQuotas);
 
   RegisterRoutes(app);
 

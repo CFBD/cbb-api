@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Get, Path, Query } from 'tsoa';
+import { Route, Tags, Controller, Get, Path, Query, Middlewares } from 'tsoa';
 import { PlayInfo, PlayTypeInfo } from './types';
 import {
   getPlaysByDate,
@@ -8,7 +8,10 @@ import {
   getPlayTypes,
 } from './service';
 
+import middlewares from '../../config/middleware';
+
 @Route('plays')
+@Middlewares(middlewares.standard)
 @Tags('plays')
 export class PlaysController extends Controller {
   /**

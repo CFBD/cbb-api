@@ -4,11 +4,11 @@
 // const mockDatabaseUser: Partial<any> = {
 //   id: 123,
 //   username: 'test@example.com',
-//   patron_level: 0,
+//   patronLevel: 0,
 //   blacklisted: false,
 //   throttled: false,
-//   remaining_calls: 1000,
-//   is_admin: false,
+//   remainingCalls: 1000,
+//   isAdmin: false,
 // };
 
 // jest.mock('./database', () => {
@@ -16,7 +16,7 @@
 //     jest.createMockFromModule<typeof import('./database')>('./database');
 
 //   // @ts-ignore
-//   mock.authDb.oneOrNone = () => Promise.resolve(mockDatabaseUser);
+//   mock.authDb.execute = () => Promise.resolve(mockDatabaseUser);
 
 //   return mock;
 // });

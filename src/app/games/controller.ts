@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Get, Query } from 'tsoa';
+import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
 import {
   getBroadcasts,
   getGamePlayerStatistics,
@@ -13,7 +13,10 @@ import {
 } from './types';
 import { GameStatus, SeasonType } from '../enums';
 
+import middlewares from '../../config/middleware';
+
 @Route('games')
+@Middlewares(middlewares.standard)
 @Tags('games')
 export class GamesController extends Controller {
   /**

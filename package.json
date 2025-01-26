@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsoa spec-and-routes && tsc --skipLibCheck",
     "build:db": "yarn kysely-codegen --camel-case --out-file=./src/config/types/db.d.ts",
+    "build:authdb": "yarn kysely-codegen --camel-case --out-file=./src/config/types/authdb.d.ts",
     "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
     "start": "node ./build/app.js",
     "test": "jest",
