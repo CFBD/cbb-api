@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/CFBD/cbb-api/compare/v1.0.0...v1.1.0) (2025-01-26)
+
+
+### Features
+
+* **python:** initial python package ([2081a83](https://github.com/CFBD/cbb-api/commit/2081a83fa345140cb566ad9e4e8ca1c60bd1efec))
+
 # 1.0.0 (2025-01-26)
 
 
