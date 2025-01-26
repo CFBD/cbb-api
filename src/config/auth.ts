@@ -26,7 +26,11 @@ export const expressAuthentication = async (
       const origin = request.get('origin');
       const host = request.get('host');
 
-      if (nodeEnv === '.asdf' || corsOrigin === origin || corsOrigin === host) {
+      if (
+        nodeEnv === 'development' ||
+        corsOrigin === origin ||
+        corsOrigin === host
+      ) {
         return Promise.resolve(null);
       }
     }
