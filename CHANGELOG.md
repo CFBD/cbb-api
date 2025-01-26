@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/CFBD/cbb-api/compare/v1.1.0...v1.1.1) (2025-01-26)
+
+
+### Bug Fixes
+
+* removing alpha from python package ([f53d787](https://github.com/CFBD/cbb-api/commit/f53d7873d765b8ff3fb6dfa8bcf2e359188a0adc))
+
 # [1.1.0](https://github.com/CFBD/cbb-api/compare/v1.0.0...v1.1.0) (2025-01-26)
 
 
