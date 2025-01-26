@@ -207,7 +207,7 @@ export const getTeamSeasonStats = async (
           attempted: Number(team['2pa']),
           pct:
             Math.round(
-              (Number(team.fgm) /
+              (Number(team['2pm']) /
                 (team['2pa'] != 0 ? Number(team['2pa']) : 1)) *
                 1000,
             ) / 10,
@@ -295,7 +295,7 @@ export const getTeamSeasonStats = async (
           attempted: Number(team['2paOpp']),
           pct:
             Math.round(
-              (Number(team.fgmOpp) /
+              (Number(team['2pmOpp']) /
                 (team['2paOpp'] != 0 ? Number(team['2paOpp']) : 1)) *
                 1000,
             ) / 10,
