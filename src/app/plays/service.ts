@@ -21,6 +21,20 @@ export const getPlaysByDate = async (date: Date): Promise<PlayInfo[]> => {
   return await getPlays(undefined, undefined, undefined, date, endRange);
 };
 
+export const getPlaysByPlayerId = async (
+  season: number,
+  playerId: number,
+): Promise<PlayInfo[]> => {
+  return await getPlays(
+    season,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    playerId,
+  );
+};
+
 export const getPlayTypes = async (): Promise<PlayTypeInfo[]> => {
   return await db.selectFrom('playType').selectAll().orderBy('id').execute();
 };
@@ -31,6 +45,7 @@ const getPlays = async (
   team?: string,
   startDateRange?: Date,
   endDateRange?: Date,
+  playerId?: number,
 ): Promise<PlayInfo[]> => {
   let query = db
     .selectFrom('gameInfo')
@@ -103,6 +118,18 @@ const getPlays = async (
 
   if (endDateRange) {
     query = query.where('gameInfo.startDate', '<=', endDateRange);
+  }
+
+  if (playerId) {
+    query = query.innerJoin('athlete', (join) =>
+      join
+        .on('athlete.id', '=', playerId)
+        .on(
+          'athlete.sourceId',
+          '=',
+          sql<string>`ANY(play.participants::varchar[])`,
+        ),
+    );
   }
 
   const plays = await query.execute();

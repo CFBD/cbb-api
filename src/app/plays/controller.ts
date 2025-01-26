@@ -3,6 +3,7 @@ import { PlayInfo, PlayTypeInfo } from './types';
 import {
   getPlaysByDate,
   getPlaysByGameId,
+  getPlaysByPlayerId,
   getPlaysByTeam,
   getPlayTypes,
 } from './service';
@@ -18,6 +19,21 @@ export class PlaysController extends Controller {
   @Get('game/{gameId}')
   public async getPlays(@Path() gameId: number): Promise<PlayInfo[]> {
     return await getPlaysByGameId(gameId);
+  }
+
+  /**
+   * Retrieve all plays for a given player and season
+   * @param playerId Required player id filter
+   * @param season Required season filter
+   * @isInt playerId
+   * @isInt season
+   */
+  @Get('player/{playerId}')
+  public async getPlaysByPlayerId(
+    @Path() playerId: number,
+    @Query() season: number,
+  ): Promise<PlayInfo[]> {
+    return await getPlaysByPlayerId(season, playerId);
   }
 
   /**
