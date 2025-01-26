@@ -187,7 +187,7 @@ jobs:
           api_version=$(curl https://api.collegebasketballdata.com/api-docs.json | jq .info.version)
           api_version=${api_version%\"}
           api_version=${api_version#\"}
-          package_version=(${api_version}a1)
+          package_version=(${api_version})
           code=$(curl -X POST -H "content-type:application/json" -d '{"openAPIUrl": "https://api.collegebasketballdata.com/api-docs.json", "options": { "packageName": "cbbd", "projectName": "cbbd", "packageUrl": "https://github.com/CFBD/cbbd-python", "packageVersion": "'"${package_version}"'"}}' https://api.openapi-generator.tech/api/gen/clients/python-pydantic-v1 | jq '. | .code')
           code=${code%\"}
           code=${code#\"}
