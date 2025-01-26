@@ -170,58 +170,58 @@ jobs:
   #           v${{ env.api_version}}
   #           ${{ env.COMMIT_MESSAGE }}
 
-  # buildPython:
-  #   needs: deploy
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: true
-  #   steps:
-  #     - name: Install dependencies
-  #       run: |
-  #         sudo apt install wget -y
-  #         sudo apt install unzip -y
-  #         sudo apt install jq -y
-  #         sudo apt install curl -y
-  #     - name: Generate library
-  #       id: generate
-  #       run: |
-  #         api_version=$(curl https://api.collegebasketballdata.com/api-docs.json | jq .info.version)
-  #         api_version=${api_version%\"}
-  #         api_version=${api_version#\"}
-  #         package_version=(${api_version}a1)
-  #         code=$(curl -X POST -H "content-type:application/json" -d '{"openAPIUrl": "https://api.collegebasketballdata.com/api-docs.json", "options": { "packageName": "cbbd", "projectName": "cbbd", "packageUrl": "https://github.com/CFBD/cbbd-python", "packageVersion": "'"${package_version}"'"}}' https://api.openapi-generator.tech/api/gen/clients/python-pydantic-v1 | jq '. | .code')
-  #         code=${code%\"}
-  #         code=${code#\"}
-  #         wget 'http://api.openapi-generator.tech/api/gen/download/'"${code}"''
-  #         unzip $code
-  #         echo "package_version=$package_version" >> $GITHUB_ENV
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: cfbd/cbbd-python
-  #         token: ${{ secrets.GH_PAT }}
-  #         ref: next
-  #         path: cbbd-python
-  #     - name: Copy and push generated code
-  #       run: |
-  #         sudo yes | cp -a ./python-pydantic-v1-client/. cbbd-python
-  #         cd cbbd-python
-  #         rm .gitlab-ci.yml .travis.yml git_push.sh .github/workflows/python.yml
-  #         sed -i '30,47d' README.md
-  #         sed -i 's/git+https:\/\/\/\/.git/cbbd/g' README.md
-  #         sed -i '18,19d' README.md
-  #         sed -i 's/pip install cbbd/pip install cbbd@'"$package_version"'/g' README.md
-  #         sed -i '38d' setup.py
-  #         echo "Configuring git..."
-  #         git config user.name "github-actions[bot]"
-  #         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-  #         if git status --porcelain --
-  #         then
-  #           git add .
-  #           echo "Committing changes ..."
-  #           git commit -am "$COMMIT_MESSAGE"
-  #           echo "Pushing to remote..."
-  #           git push
-  #         fi
+  buildPython:
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt install wget -y
+          sudo apt install unzip -y
+          sudo apt install jq -y
+          sudo apt install curl -y
+      - name: Generate library
+        id: generate
+        run: |
+          api_version=$(curl https://api.collegebasketballdata.com/api-docs.json | jq .info.version)
+          api_version=${api_version%\"}
+          api_version=${api_version#\"}
+          package_version=(${api_version}a1)
+          code=$(curl -X POST -H "content-type:application/json" -d '{"openAPIUrl": "https://api.collegebasketballdata.com/api-docs.json", "options": { "packageName": "cbbd", "projectName": "cbbd", "packageUrl": "https://github.com/CFBD/cbbd-python", "packageVersion": "'"${package_version}"'"}}' https://api.openapi-generator.tech/api/gen/clients/python-pydantic-v1 | jq '. | .code')
+          code=${code%\"}
+          code=${code#\"}
+          wget 'http://api.openapi-generator.tech/api/gen/download/'"${code}"''
+          unzip $code
+          echo "package_version=$package_version" >> $GITHUB_ENV
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: cfbd/cbbd-python
+          token: ${{ secrets.GH_PAT }}
+          ref: main
+          path: cbbd-python
+      - name: Copy and push generated code
+        run: |
+          sudo yes | cp -a ./python-pydantic-v1-client/. cbbd-python
+          cd cbbd-python
+          rm .gitlab-ci.yml .travis.yml git_push.sh .github/workflows/python.yml
+          sed -i '30,47d' README.md
+          sed -i 's/git+https:\/\/\/\/.git/cbbd/g' README.md
+          sed -i '18,19d' README.md
+          sed -i 's/pip install cbbd/pip install cbbd@'"$package_version"'/g' README.md
+          sed -i '38d' setup.py
+          echo "Configuring git..."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git status --porcelain --
+          then
+            git add .
+            echo "Committing changes ..."
+            git commit -am "$COMMIT_MESSAGE"
+            echo "Pushing to remote..."
+            git push
+          fi
 
   # buildTypeScript:
   #   needs: deploy
