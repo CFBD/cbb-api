@@ -217,7 +217,7 @@ export interface Play {
   homeScore: number;
   id: Generated<Int8>;
   participants: number[] | null;
-  period: number | null;
+  period: number;
   playText: string | null;
   playTypeId: number;
   scoreValue: number | null;
@@ -267,7 +267,7 @@ export interface Venue {
   location: Point | null;
   name: string;
   postalCode: string | null;
-  sourceId: string | null;
+  sourceId: string;
   state: string | null;
   timezone: string | null;
 }
