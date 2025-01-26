@@ -1,5 +1,13 @@
 import { SeasonType } from '../enums';
 
+export interface PlayTypeInfo {
+  /**
+   * @isInt
+   */
+  id: number;
+  name: string;
+}
+
 export interface PlayInfo {
   /**
    * @isInt

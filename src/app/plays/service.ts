@@ -1,6 +1,6 @@
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { db } from '../../config/database';
-import { PlayInfo } from './types';
+import { PlayInfo, PlayTypeInfo } from './types';
 import { sql } from 'kysely';
 import { SeasonType } from '../enums';
 
@@ -19,6 +19,10 @@ export const getPlaysByDate = async (date: Date): Promise<PlayInfo[]> => {
   const endRange = new Date();
   endRange.setDate(date.getDate() + 1);
   return await getPlays(undefined, undefined, undefined, date, endRange);
+};
+
+export const getPlayTypes = async (): Promise<PlayTypeInfo[]> => {
+  return await db.selectFrom('playType').selectAll().orderBy('id').execute();
 };
 
 const getPlays = async (

@@ -1,6 +1,11 @@
 import { Route, Tags, Controller, Get, Path, Query } from 'tsoa';
-import { PlayInfo } from './types';
-import { getPlaysByDate, getPlaysByGameId, getPlaysByTeam } from './service';
+import { PlayInfo, PlayTypeInfo } from './types';
+import {
+  getPlaysByDate,
+  getPlaysByGameId,
+  getPlaysByTeam,
+  getPlayTypes,
+} from './service';
 
 @Route('plays')
 @Tags('plays')
@@ -36,5 +41,13 @@ export class PlaysController extends Controller {
   @Get('date')
   public async getPlaysByDate(@Query() date: Date): Promise<PlayInfo[]> {
     return await getPlaysByDate(date);
+  }
+
+  /**
+   * Retrieve list of play types
+   */
+  @Get('types')
+  public async getPlayTypes(): Promise<PlayTypeInfo[]> {
+    return await getPlayTypes();
   }
 }
