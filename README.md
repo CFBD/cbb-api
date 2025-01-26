@@ -1,21 +1,23 @@
-# CFBD API v2
+# CBBD API
 
-This is the repository for the CFBD API v2, currently hosted at [APINext.CollegeFootballData.com](https://apinext.collegefootballdata.com). The API is built on NodeJS using TypeScript and Express over a PostgreSQL database.
+This is the repository for the CBBD API, currently hosted at [API.CollegeBasketballData.com](https://api.collegebasketballdata.com). The API is built on NodeJS using TypeScript and Express over a PostgreSQL database.
+
+This project is an offshoot of CollegeFootballData.com. You can retrieve an API key at the CollegeFootballData.com website that will work with both the CFBD and CBBD APIs. A standalone website for CollegeBasketballData.com is planned for the future.
 
 ## Getting Started
 
-This repo uses `yarn` for dependency management. Run the following commands to install dependencies and start a dev server with hot reloading:
+This repo uses `pnpm` for dependency management. Run the following commands to install dependencies and start a dev server with hot reloading:
 
 ```bash
-yarn install
-yarn dev
+pnpm install
+pnpm dev
 ```
 ### Code Formatting
 
 This repo uses `prettier` and `eslint` for code formatting. Run the following command to format your code before committing:
 
 ```bash
-yarn prettify
+pnpm prettify
 ```
 
 ### Semantic Versioning

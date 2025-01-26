@@ -77,23 +77,20 @@ export const expressAuthentication = async (
           //   }
           // }
 
-          // try {
-          //   await authDb.none(
-          //     `
-          //   INSERT INTO metrics (user_id, endpoint, query, user_agent, api_version)
-          //       VALUES ($1, $2, $3, $4, $5)
-          // `,
-          //     [
-          //       user.id,
-          //       request.path,
-          //       request.query,
-          //       request.get('user-agent'),
-          //       '2',
-          //     ],
-          //   );
-          // } catch (err) {
-          //   console.error(err);
-          // }
+          try {
+            await authDb
+              .insertInto('metrics')
+              .values({
+                userId: user.id,
+                endpoint: request.path,
+                query: request.query.toString(),
+                userAgent: request.get('user-agent') ?? '',
+                apiVersion: 'cbb',
+              })
+              .execute();
+          } catch (err) {
+            console.error(err);
+          }
 
           return Promise.resolve({
             id: user?.id,
