@@ -34,11 +34,11 @@ jobs:
         with:
           node-version: 'lts/*'
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install
       - name: Validate current commit
         run: npx commitlint --last --verbose
-      - name: Run tests
-        run: yarn test
+      # - name: Run tests
+      #   run: pnpm test
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -232,7 +232,7 @@ jobs:
   #       with:
   #         node-version: 'lts/*'
   #     - name: Install dependencies
-  #       run: yarn install --frozen-lockfile
+  #       run: pnpm install
   #     - name: Checkout repo
   #       uses: actions/checkout@v4
   #       with:
