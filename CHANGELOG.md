@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/CFBD/cbb-api/compare/v1.1.1...v1.1.2) (2025-01-27)
+
+
+### Bug Fixes
+
+* true shooting calculation ([abe7fbe](https://github.com/CFBD/cbb-api/commit/abe7fbee3b58f5a2b5653adb3c6b828d5ec9bf47))
+
 ## [1.1.1](https://github.com/CFBD/cbb-api/compare/v1.1.0...v1.1.1) (2025-01-26)
 
 
