@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/CFBD/cbb-api/compare/v1.1.2...v1.1.3) (2025-01-27)
+
+
+### Bug Fixes
+
+* metrics logging ([647f215](https://github.com/CFBD/cbb-api/commit/647f215540cb4a2eb250738205924f58311e1b7c))
+
 ## [1.1.2](https://github.com/CFBD/cbb-api/compare/v1.1.1...v1.1.2) (2025-01-27)
 
 
