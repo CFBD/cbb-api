@@ -188,7 +188,7 @@ export const getTeamSeasonStats = async (
           Math.round(
             (Number(team.points) /
               (2 * (Number(team.fga) + 0.44 * Number(team.fta)))) *
-              10,
+              1000,
           ) / 10,
         rating:
           Math.round((1000 * Number(team.points)) / Number(team.possessions)) /
@@ -274,7 +274,7 @@ export const getTeamSeasonStats = async (
           Math.round(
             (Number(team.pointsOpp) /
               (2 * (Number(team.fgaOpp) + 0.44 * Number(team.ftaOpp)))) *
-              10,
+              1000,
           ) / 10,
         rating:
           Math.round(
