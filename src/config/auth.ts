@@ -83,7 +83,7 @@ export const expressAuthentication = async (
               .values({
                 userId: user.id,
                 endpoint: request.path,
-                query: request.query.toString(),
+                query: request.query,
                 userAgent: request.get('user-agent') ?? '',
                 apiVersion: 'cbb',
               })
