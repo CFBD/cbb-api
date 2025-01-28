@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/CFBD/cbb-api/compare/v1.1.3...v1.2.0) (2025-01-28)
+
+
+### Features
+
+* conference history and rosters ([85a6e40](https://github.com/CFBD/cbb-api/commit/85a6e406d860fd044f0a6ccf78bdb8eb3d04bd49))
+
 ## [1.1.3](https://github.com/CFBD/cbb-api/compare/v1.1.2...v1.1.3) (2025-01-27)
 
 
