@@ -24,3 +24,44 @@ export interface TeamInfo {
   conferenceId: number | null;
   conference: string | null;
 }
+
+export interface TeamRoster {
+  /**
+   * @isInt
+   */
+  teamId: number;
+  teamSourceId: string;
+  team: string;
+  conference: string | null;
+  season: number;
+  players: TeamRosterPlayer[];
+}
+
+export interface TeamRosterPlayer {
+  /**
+   * @isInt
+   */
+  id: number;
+  sourceId: string;
+  name: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * @isInt
+   */
+  jersey: string | null;
+  position: string | null;
+  height: number | null;
+  weight: number | null;
+  hometown: {
+    city: string | null;
+    state: string | null;
+    country: string | null;
+  };
+  /**
+   * @isDate
+   */
+  dateOfBirth: Date | null;
+  startSeason: number;
+  endSeason: number;
+}

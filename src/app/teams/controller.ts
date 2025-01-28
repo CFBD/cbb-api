@@ -1,6 +1,6 @@
 import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
-import { getTeams } from './service';
-import { TeamInfo } from './types';
+import { getTeamRoster, getTeams } from './service';
+import { TeamInfo, TeamRoster } from './types';
 
 import middlewares from '../../config/middleware';
 
@@ -20,5 +20,19 @@ export class TeamsController extends Controller {
     @Query() season?: number,
   ): Promise<TeamInfo[]> {
     return await getTeams(conference, season);
+  }
+
+  /**
+   * Retrieves team roster information
+   * @param season Season filter
+   * @param team Optional team filter
+   * @isInt season
+   */
+  @Get('roster')
+  public async getTeamRoster(
+    @Query() season: number,
+    @Query() team?: string,
+  ): Promise<TeamRoster[]> {
+    return await getTeamRoster(season, team);
   }
 }

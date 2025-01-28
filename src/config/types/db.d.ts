@@ -47,13 +47,25 @@ export type SeasonType = 'postseason' | 'preseason' | 'regular';
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface Athlete {
+  dob: Timestamp | null;
   firstName: string | null;
+  height: number | null;
+  hometownId: number | null;
   id: Generated<number>;
   jersey: string | null;
   lastName: string | null;
   name: string;
   positionId: number | null;
   sourceId: string;
+  weight: number | null;
+}
+
+export interface AthleteTeam {
+  athleteId: number;
+  endSeason: number;
+  id: Generated<number>;
+  startSeason: number;
+  teamId: number;
 }
 
 export interface Conference {
@@ -210,6 +222,13 @@ export interface GameTeamStats {
   tto: number | null;
 }
 
+export interface Hometown {
+  city: string;
+  country: string | null;
+  id: Generated<number>;
+  state: string | null;
+}
+
 export interface Play {
   awayScore: number;
   clock: string;
@@ -274,6 +293,7 @@ export interface Venue {
 
 export interface DB {
   athlete: Athlete;
+  athleteTeam: AthleteTeam;
   conference: Conference;
   conferenceTeam: ConferenceTeam;
   game: Game;
@@ -282,6 +302,7 @@ export interface DB {
   gamePlayerStats: GamePlayerStats;
   gameTeam: GameTeam;
   gameTeamStats: GameTeamStats;
+  hometown: Hometown;
   play: Play;
   playType: PlayType;
   position: Position;

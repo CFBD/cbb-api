@@ -1,6 +1,6 @@
-import { Route, Tags, Controller, Get, Middlewares } from 'tsoa';
-import { ConferenceInfo } from './types';
-import { getConferences } from './service';
+import { Route, Tags, Controller, Get, Middlewares, Query } from 'tsoa';
+import { ConferenceHistory, ConferenceInfo } from './types';
+import { getConferenceHistory, getConferences } from './service';
 
 import middlewares from '../../config/middleware';
 
@@ -14,5 +14,16 @@ export class ConferencesController extends Controller {
   @Get()
   public async getConferences(): Promise<ConferenceInfo[]> {
     return await getConferences();
+  }
+
+  /**
+   * Retrieves historical conference membership information
+   * @param conference Optional conference abbreviation filter
+   */
+  @Get('history')
+  public async getConferenceHistory(
+    @Query() conference?: string,
+  ): Promise<ConferenceHistory[]> {
+    return await getConferenceHistory(conference);
   }
 }
