@@ -48,6 +48,10 @@
       {
         "name": "stats",
         "description": "Statistical data"
+      },
+      {
+        "name": "lines",
+        "description": "Historical spreads and betting data"
       }
     ]
   },

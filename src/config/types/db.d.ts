@@ -135,6 +135,18 @@ export interface GameInfo {
   venueId: number | null;
 }
 
+export interface GameLine {
+  awayMoneyline: Numeric | null;
+  gameId: number;
+  homeMoneyline: Numeric | null;
+  id: Generated<number>;
+  lineProviderId: number;
+  overUnder: Numeric | null;
+  overUnderOpen: Numeric | null;
+  spread: Numeric | null;
+  spreadOpen: Numeric | null;
+}
+
 export interface GameMedia {
   gameId: number;
   id: Generated<number>;
@@ -229,6 +241,12 @@ export interface Hometown {
   state: string | null;
 }
 
+export interface LineProvider {
+  id: Generated<number>;
+  name: string;
+  sourceId: string;
+}
+
 export interface Play {
   awayScore: number;
   clock: string;
@@ -298,11 +316,13 @@ export interface DB {
   conferenceTeam: ConferenceTeam;
   game: Game;
   gameInfo: GameInfo;
+  gameLine: GameLine;
   gameMedia: GameMedia;
   gamePlayerStats: GamePlayerStats;
   gameTeam: GameTeam;
   gameTeamStats: GameTeamStats;
   hometown: Hometown;
+  lineProvider: LineProvider;
   play: Play;
   playType: PlayType;
   position: Position;
