@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/CFBD/cbb-api/compare/v1.4.0...v1.5.0) (2025-01-30)
+
+
+### Features
+
+* adjusted efficiency ratings ([f4b2019](https://github.com/CFBD/cbb-api/commit/f4b201905e25529be586ff3f5c4f2aabac931523))
+
 # [1.4.0](https://github.com/CFBD/cbb-api/compare/v1.3.0...v1.4.0) (2025-01-30)
 
 
