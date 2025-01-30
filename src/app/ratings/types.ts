@@ -11,3 +11,19 @@ export interface SrsInfo {
   conference: string;
   rating: number;
 }
+
+export interface AdjustedEfficiencyInfo {
+  /**
+   * @isInt
+   */
+  season: number;
+  /**
+   * @isInt
+   */
+  teamId: number;
+  team: string;
+  conference: string;
+  offensiveRating: number;
+  defensiveRating: number;
+  netRating: number;
+}

@@ -46,6 +46,15 @@ export type SeasonType = 'postseason' | 'preseason' | 'regular';
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export interface AdjustedEfficiency {
+  defense: Numeric;
+  id: Generated<number>;
+  net: Numeric;
+  offense: Numeric;
+  season: number;
+  teamId: number;
+}
+
 export interface Athlete {
   dob: Timestamp | null;
   firstName: string | null;
@@ -317,6 +326,7 @@ export interface Venue {
 }
 
 export interface DB {
+  adjustedEfficiency: AdjustedEfficiency;
   athlete: Athlete;
   athleteTeam: AthleteTeam;
   conference: Conference;
