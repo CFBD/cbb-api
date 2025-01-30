@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/CFBD/cbb-api/compare/v1.2.0...v1.3.0) (2025-01-30)
+
+
+### Features
+
+* betting line endpoints ([60e35ab](https://github.com/CFBD/cbb-api/commit/60e35ab4435fc15ef39ceaf9240cbe68bbe5d929))
+
 # [1.2.0](https://github.com/CFBD/cbb-api/compare/v1.1.3...v1.2.0) (2025-01-28)
 
 
