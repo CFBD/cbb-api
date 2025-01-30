@@ -50,6 +50,10 @@
         "description": "Statistical data"
       },
       {
+        "name": "ratings",
+        "description": "Historical ratings systems"
+      },
+      {
         "name": "lines",
         "description": "Historical spreads and betting data"
       }

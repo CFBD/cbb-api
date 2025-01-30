@@ -278,6 +278,13 @@ export interface Position {
   name: string;
 }
 
+export interface Srs {
+  id: Generated<number>;
+  rating: Numeric;
+  season: number;
+  teamId: number;
+}
+
 export interface Team {
   abbreviation: string | null;
   active: Generated<boolean>;
@@ -326,6 +333,7 @@ export interface DB {
   play: Play;
   playType: PlayType;
   position: Position;
+  srs: Srs;
   team: Team;
   venue: Venue;
 }
