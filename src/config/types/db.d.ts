@@ -97,6 +97,7 @@ export interface ConferenceTeam {
 export interface Game {
   attendance: number | null;
   conferenceGame: Generated<boolean>;
+  excitement: Numeric | null;
   gameType: string | null;
   id: Generated<number>;
   neutralSite: Generated<boolean>;
@@ -122,6 +123,7 @@ export interface GameInfo {
   awayTeamId: number | null;
   awayWinner: boolean | null;
   conferenceGame: boolean | null;
+  excitement: Numeric | null;
   gameType: string | null;
   homeConference: string | null;
   homeConferenceId: number | null;
@@ -274,6 +276,7 @@ export interface Play {
   sourceId: string;
   teamId: number | null;
   wallclock: Timestamp | null;
+  wp: Numeric | null;
 }
 
 export interface PlayType {

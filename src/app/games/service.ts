@@ -57,6 +57,7 @@ export const getGames = async (
       'venue.name as venue',
       'venue.city',
       'venue.state',
+      'game.excitement',
     ])
     .orderBy('game.startDate', 'asc')
     .limit(3000);
@@ -136,6 +137,9 @@ export const getGames = async (
     awayPoints: game.awayPoints,
     awayPeriodPoints: game.awayPeriodPoints,
     awayWinner: game.awayWinner,
+    excitement: game.excitement
+      ? Math.round(Number(game.excitement) * 10) / 10
+      : null,
     venueId: game.venueId,
     venue: game.venue,
     city: game.city,

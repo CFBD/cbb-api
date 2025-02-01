@@ -83,6 +83,7 @@ const getPlays = async (
       'play.scoreValue',
       'playType.name as playType',
       'play.playText',
+      'play.wp',
       jsonArrayFrom(
         eb
           .selectFrom('athlete')
@@ -181,6 +182,9 @@ const getPlays = async (
             : null,
         homeScore: play.homeScore,
         awayScore: play.awayScore,
+        homeWinProbability: play.wp
+          ? Math.round(Number(play.wp) * 1000) / 1000
+          : null,
         period: play.period,
         clock: play.clock,
         secondsRemaining: play.secondsRemaining,

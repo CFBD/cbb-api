@@ -54,6 +54,7 @@ export interface PlayInfo {
    * @isInt
    */
   awayScore: number;
+  homeWinProbability: number | null;
   scoringPlay: boolean | null;
   shootingPlay: boolean | null;
   scoreValue: number | null;

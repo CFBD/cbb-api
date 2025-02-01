@@ -60,6 +60,7 @@ export interface GameInfo {
    */
   awayPeriodPoints: number[] | null;
   awayWinner: boolean | null;
+  excitement: number | null;
   /**
    * @isInt
    */
