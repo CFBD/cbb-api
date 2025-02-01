@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/CFBD/cbb-api/compare/v1.5.0...v1.6.0) (2025-02-01)
+
+
+### Features
+
+* win probability and excitement ([067b3ca](https://github.com/CFBD/cbb-api/commit/067b3caa236ec310e3c215da11509424d484a311))
+
 # [1.5.0](https://github.com/CFBD/cbb-api/compare/v1.4.0...v1.5.0) (2025-01-30)
 
 
