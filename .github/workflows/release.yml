@@ -232,6 +232,11 @@ jobs:
         run: |
           sudo apt install wget -y
           sudo apt install jq -y
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: cfbd/cbbd-typescript
+          token: ${{ secrets.GH_PAT }}
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -243,11 +248,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          repository: cfbd/cbbd-typescript
-          token: ${{ secrets.GH_PAT }}
       - name: Download spec
         run: |
           wget https://api.collegebasketballdata.com/api-docs.json
