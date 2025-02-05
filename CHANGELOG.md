@@ -1,3 +1,10 @@
+## [1.7.3](https://github.com/CFBD/cbb-api/compare/v1.7.2...v1.7.3) (2025-02-05)
+
+
+### Bug Fixes
+
+* typescript ci ([c9d59aa](https://github.com/CFBD/cbb-api/commit/c9d59aa13c97047bd47803cae9a277d4fd65d699))
+
 ## [1.7.2](https://github.com/CFBD/cbb-api/compare/v1.7.1...v1.7.2) (2025-02-05)
 
 
