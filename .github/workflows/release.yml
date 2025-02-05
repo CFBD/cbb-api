@@ -251,7 +251,7 @@ jobs:
           api_version=$(cat api-docs.json | jq '. | .info.version')
           api_version=${api_version%\"}
           api_version=${api_version#\"}
-          package_version=(${api_version}-alpha.0)
+          package_version=(${api_version})
           sed -i '/"version": /c\  "version": "'"$package_version"'",' package.json
       - name: Generate client
         run: |
