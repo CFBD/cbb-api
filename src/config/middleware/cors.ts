@@ -1,7 +1,8 @@
 import cors from 'cors';
 
 const env = process.env.NODE_ENV;
-const corsOrigin = process.env.CORS_ORIGIN || 'https://collegefootballdata.com';
+const corsOrigin =
+  process.env.CORS_ORIGIN || 'https://collegebasketballdata.com';
 
 let corsOptions: cors.CorsOptions = {};
 
