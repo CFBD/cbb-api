@@ -4,26 +4,58 @@ import { PlayInfo, PlayTypeInfo } from './types';
 import { sql } from 'kysely';
 import { SeasonType } from '../enums';
 
-export const getPlaysByGameId = async (gameId: number): Promise<PlayInfo[]> => {
-  return await getPlays(undefined, gameId, undefined, undefined, undefined);
+export const getPlaysByGameId = async (
+  gameId: number,
+  shootingPlaysOnly?: boolean,
+): Promise<PlayInfo[]> => {
+  return await getPlays(
+    undefined,
+    gameId,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    shootingPlaysOnly,
+  );
 };
 
 export const getPlaysByTeam = async (
   season: number,
   team: string,
+  shootingPlaysOnly?: boolean,
 ): Promise<PlayInfo[]> => {
-  return await getPlays(season, undefined, team, undefined, undefined);
+  return await getPlays(
+    season,
+    undefined,
+    team,
+    undefined,
+    undefined,
+    undefined,
+    shootingPlaysOnly,
+  );
 };
 
-export const getPlaysByDate = async (date: Date): Promise<PlayInfo[]> => {
+export const getPlaysByDate = async (
+  date: Date,
+  shootingPlaysOnly?: boolean,
+): Promise<PlayInfo[]> => {
   const endRange = new Date();
   endRange.setDate(date.getDate() + 1);
-  return await getPlays(undefined, undefined, undefined, date, endRange);
+  return await getPlays(
+    undefined,
+    undefined,
+    undefined,
+    date,
+    endRange,
+    undefined,
+    shootingPlaysOnly,
+  );
 };
 
 export const getPlaysByPlayerId = async (
   season: number,
   playerId: number,
+  shootingPlaysOnly?: boolean,
 ): Promise<PlayInfo[]> => {
   return await getPlays(
     season,
@@ -32,11 +64,35 @@ export const getPlaysByPlayerId = async (
     undefined,
     undefined,
     playerId,
+    shootingPlaysOnly,
   );
 };
 
 export const getPlayTypes = async (): Promise<PlayTypeInfo[]> => {
   return await db.selectFrom('playType').selectAll().orderBy('id').execute();
+};
+
+const getShotRange = (
+  playType: string,
+  playText: string,
+): 'rim' | 'jumper' | 'three_pointer' | 'free_throw' => {
+  const playTypeText = playType.toLowerCase();
+  if (playTypeText.includes('free')) {
+    return 'free_throw';
+  } else if (
+    playTypeText.includes('three') ||
+    playText.toLowerCase().includes('three point')
+  ) {
+    return 'three_pointer';
+  } else if (
+    playTypeText.includes('layup') ||
+    playTypeText.includes('dunk') ||
+    playTypeText.includes('tip')
+  ) {
+    return 'rim';
+  }
+
+  return 'jumper';
 };
 
 const getPlays = async (
@@ -46,6 +102,7 @@ const getPlays = async (
   startDateRange?: Date,
   endDateRange?: Date,
   playerId?: number,
+  shootingPlaysOnly?: boolean,
 ): Promise<PlayInfo[]> => {
   let query = db
     .selectFrom('gameInfo')
@@ -121,6 +178,10 @@ const getPlays = async (
     query = query.where('gameInfo.startDate', '<=', endDateRange);
   }
 
+  if (shootingPlaysOnly === true) {
+    query = query.where('play.shootingPlay', '=', true);
+  }
+
   if (playerId) {
     query = query.innerJoin('athlete', (join) =>
       join
@@ -194,6 +255,29 @@ const getPlays = async (
         wallclock: play.wallclock,
         playText: play.playText,
         participants: play.participants,
+        shotInfo: play.shootingPlay
+          ? {
+              shooter:
+                (play.participants?.length ?? 0) > 0
+                  ? {
+                      id: play.participants[0].id,
+                      name: play.participants[0].name,
+                    }
+                  : null,
+              made: play.scoringPlay ?? false,
+              range: getShotRange(play.playType, play.playText ?? ''),
+              assisted:
+                play.playText?.toLowerCase().includes('assisted by') ?? false,
+              assistedBy:
+                play.playText?.toLowerCase().includes('assisted by') &&
+                (play.participants?.length ?? 0) > 1
+                  ? {
+                      id: play.participants[1].id,
+                      name: play.participants[1].name,
+                    }
+                  : null,
+            }
+          : null,
       }),
     )
     .filter((play) => play.gameId !== -1);

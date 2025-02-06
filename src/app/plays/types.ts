@@ -67,4 +67,25 @@ export interface PlayInfo {
     id: number;
     name: string;
   }[];
+  shotInfo: ShotInfo | null;
+}
+
+export interface ShotInfo {
+  shooter: {
+    /**
+     * @isInt
+     */
+    id: number;
+    name: string;
+  } | null;
+  made: boolean;
+  range: 'rim' | 'jumper' | 'three_pointer' | 'free_throw';
+  assisted: boolean;
+  assistedBy: {
+    /**
+     * @isInt
+     */
+    id: number;
+    name: string;
+  } | null;
 }
