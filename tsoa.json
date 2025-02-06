@@ -50,6 +50,10 @@
         "description": "Statistical data"
       },
       {
+        "name": "rankings",
+        "description": "Historical polls and rankings"
+      },
+      {
         "name": "ratings",
         "description": "Historical ratings systems"
       },

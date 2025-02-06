@@ -284,6 +284,30 @@ export interface PlayType {
   name: string;
 }
 
+export interface Poll {
+  id: Generated<number>;
+  pollDate: Timestamp | null;
+  pollTypeId: number;
+  season: number;
+  seasonType: SeasonType;
+  week: number;
+}
+
+export interface PollRank {
+  firstPlaceVotes: number | null;
+  id: Generated<number>;
+  points: number | null;
+  pollId: number;
+  rank: number | null;
+  teamId: number;
+}
+
+export interface PollType {
+  id: number;
+  name: string;
+  shortName: string;
+}
+
 export interface Position {
   abbreviation: string;
   id: Generated<number>;
@@ -345,6 +369,9 @@ export interface DB {
   lineProvider: LineProvider;
   play: Play;
   playType: PlayType;
+  poll: Poll;
+  pollRank: PollRank;
+  pollType: PollType;
   position: Position;
   srs: Srs;
   team: Team;
