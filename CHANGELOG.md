@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/CFBD/cbb-api/compare/v1.7.3...v1.8.0) (2025-02-06)
+
+
+### Features
+
+* shot info on play data ([3c26d14](https://github.com/CFBD/cbb-api/commit/3c26d147136a5743c229b4c1328979a82e441c9a))
+
 ## [1.7.3](https://github.com/CFBD/cbb-api/compare/v1.7.2...v1.7.3) (2025-02-05)
 
 
