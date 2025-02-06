@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/CFBD/cbb-api/compare/v1.8.0...v1.9.0) (2025-02-06)
+
+
+### Features
+
+* historical polls ([53fc70a](https://github.com/CFBD/cbb-api/commit/53fc70aad5320158b9da219c34f22950fb177bcb))
+
 # [1.8.0](https://github.com/CFBD/cbb-api/compare/v1.7.3...v1.8.0) (2025-02-06)
 
 
