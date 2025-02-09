@@ -6,7 +6,7 @@ import { sql } from 'kysely';
 import { ValidateError } from 'tsoa';
 import {
   calculatePlayerSeasonDefensiveRating,
-  calculatePlayerSeasonOffensiveRating,
+  calculatePlayerSeasonOffenseRatings,
 } from '../../globals/calculations';
 
 export const getTeamSeasonStats = async (
@@ -100,7 +100,7 @@ export const getTeamSeasonStats = async (
       eb.fn.sum('gameTeamStats.pointsFastBreak').as('pointsFastBreak'),
       eb.fn.sum('gameTeamStats.pointsInPaint').as('pointsInPaint'),
       eb.fn.sum('gameTeamStats.pointsOffTo').as('pointsOffTo'),
-      eb.fn.sum('gameTeam.points').as('pointsOpp'),
+      eb.fn.sum('oppTeam.points').as('pointsOpp'),
       eb.fn.sum('oppStats.possessions').as('possessionsOpp'),
       eb.fn.sum('oppStats.2pa').as('2paOpp'),
       eb.fn.sum('oppStats.2pm').as('2pmOpp'),
@@ -444,7 +444,7 @@ export const getPlayerSeasonStats = async (
       eb.fn.sum('gameTeamStats.tto').as('ttoTeam'),
       eb.fn.sum('gameTeamStats.toto').as('totoTeam'),
       eb.fn.sum('gameTeamStats.pf').as('pfTeam'),
-      eb.fn.sum('gameTeam.points').as('pointsOpp'),
+      eb.fn.sum('oppTeam.points').as('pointsOpp'),
       eb.fn.sum('oppStats.possessions').as('possessionsOpp'),
       eb.fn.sum('oppStats.2pa').as('2paOpp'),
       eb.fn.sum('oppStats.2pm').as('2pmOpp'),
@@ -521,9 +521,31 @@ export const getPlayerSeasonStats = async (
   const players = await query.execute();
 
   return players.map((player): PlayerSeasonStats => {
-    const offensiveRating = calculatePlayerSeasonOffensiveRating(player);
+    const teamPace =
+      40 *
+      ((Number(player.possessionsTeam) + Number(player.possessionsOpp)) /
+        (2 * player.teamMinutes));
+
+    const offensiveRatings = calculatePlayerSeasonOffenseRatings(player);
+    const marginalOffense =
+      offensiveRatings.pointsProduced -
+      0.875 * 1.05 * offensiveRatings.possessions;
+    const marginalOffensivePointsPerWin = 0.5 * 71 * (teamPace / 66.3);
+    const offensiveWinShares =
+      Math.round((10 * marginalOffense) / marginalOffensivePointsPerWin) / 10;
+
     const defensiveRating = calculatePlayerSeasonDefensiveRating(player);
-    const netRating = Math.round((offensiveRating - defensiveRating) * 10) / 10;
+    const marginalDefense =
+      (Number(player.minutes) / (Number(player.teamMinutes) * 5)) *
+      Number(player.possessionsOpp) *
+      (1.125 * 1.05 - defensiveRating / 100);
+    const marginalDefensivePointsPerWin = 0.5 * 71 * (teamPace / 66.3);
+    const defensiveWinShares =
+      Math.round((10 * marginalDefense) / marginalDefensivePointsPerWin) / 10;
+
+    const netRating =
+      Math.round((offensiveRatings.offensiveRating - defensiveRating) * 10) /
+      10;
     const usage =
       Math.round(
         1000 *
@@ -556,7 +578,7 @@ export const getPlayerSeasonStats = async (
       assists: Number(player.ast),
       steals: Number(player.stl),
       blocks: Number(player.blk),
-      offensiveRating,
+      offensiveRating: offensiveRatings.offensiveRating,
       defensiveRating,
       netRating,
       usage,
@@ -627,6 +649,11 @@ export const getPlayerSeasonStats = async (
         offensive: Number(player.oreb),
         defensive: Number(player.dreb),
         total: Number(player.reb),
+      },
+      winShares: {
+        offensive: offensiveWinShares,
+        defensive: defensiveWinShares,
+        total: Math.round(10 * (offensiveWinShares + defensiveWinShares)) / 10,
       },
     };
   });

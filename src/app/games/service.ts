@@ -10,7 +10,7 @@ import {
 } from './types';
 import {
   getPlayerDefensiveRating,
-  getPlayerOffensiveRating,
+  getPlayerOffensiveRatings,
   getUsage,
 } from '../../globals/calculations';
 
@@ -866,7 +866,7 @@ export const getGamePlayerStatistics = async (
       gamePace,
       players: game.players.map((player) => {
         const usage = getUsage(player, game, gameMinutes);
-        const offensiveRating = getPlayerOffensiveRating(
+        const offensiveRatings = getPlayerOffensiveRatings(
           player,
           game,
           gameMinutes,
@@ -892,11 +892,13 @@ export const getGamePlayerStatistics = async (
           steals: player.stl,
           blocks: player.blk,
           gameScore: player.gameScore ? Number(player.gameScore) : null,
-          offensiveRating,
+          offensiveRating: offensiveRatings?.offensiveRating ?? null,
           defensiveRating,
           netRating:
-            offensiveRating !== null && defensiveRating !== null
-              ? Math.round((offensiveRating - defensiveRating) * 10) / 10
+            offensiveRatings !== null && defensiveRating !== null
+              ? Math.round(
+                  (offensiveRatings.offensiveRating - defensiveRating) * 10,
+                ) / 10
               : null,
           usage,
           effectiveFieldGoalPct: player.efg ? Number(player.efg) : null,

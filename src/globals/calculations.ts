@@ -120,7 +120,7 @@ export function getUsage(
 
   return null;
 }
-export function getPlayerOffensiveRating(
+export function getPlayerOffensiveRatings(
   player: PlayerStats,
   team: TeamStats,
   gameMinutes: number,
@@ -221,7 +221,11 @@ export function getPlayerOffensiveRating(
         (1 - (team.teamOreb / teamScoringPoss) * teamOrebWeight * teamPlayPct) +
       pprodOrebPart;
 
-    return Math.round(1000 * (pprod / totPoss)) / 10;
+    return {
+      pointsProduced: Math.round(pprod * 10) / 10,
+      possessions: Math.round(totPoss * 10) / 10,
+      offensiveRating: Math.round(1000 * (pprod / totPoss)) / 10,
+    };
   }
 
   return null;
@@ -237,6 +241,7 @@ export function getPlayerDefensiveRating(
     player.minutes !== null &&
     player.minutes >= 8 &&
     player.pf !== null &&
+    player.dreb !== null &&
     team.teamPossessions !== null &&
     team.teamPf !== null &&
     team.teamStl !== null &&
@@ -256,7 +261,7 @@ export function getPlayerDefensiveRating(
     const stops1 =
       player.stl +
       player.blk * fmWeight * (1 - 1.07 * dor) +
-      team.teamDreb * (1 - fmWeight);
+      player.dreb * (1 - fmWeight);
 
     const stops2 =
       (((team.opponentFga - team.opponentFgm - team.teamBlk) /
@@ -294,7 +299,7 @@ export function getPlayerDefensiveRating(
   return null;
 }
 
-export function calculatePlayerSeasonOffensiveRating(player: {
+export function calculatePlayerSeasonOffenseRatings(player: {
   season: number;
   seasonLabel: string;
   id: number;
@@ -475,7 +480,11 @@ export function calculatePlayerSeasonOffensiveRating(player: {
           teamPlayPct) +
     pprodOrebPart;
 
-  return Math.round(1000 * (pprod / totPoss)) / 10;
+  return {
+    pointsProduced: Math.round(pprod * 10) / 10,
+    possessions: Math.round(totPoss * 10) / 10,
+    offensiveRating: Math.round(1000 * (pprod / totPoss)) / 10,
+  };
 }
 
 export function calculatePlayerSeasonDefensiveRating(player: {
@@ -555,7 +564,7 @@ export function calculatePlayerSeasonDefensiveRating(player: {
   const stops1 =
     Number(player.stl) +
     Number(player.blk) * fmWeight * (1 - 1.07 * dor) +
-    Number(player.drebTeam) * (1 - fmWeight);
+    Number(player.dreb) * (1 - fmWeight);
 
   const stops2 =
     (((Number(player.fgaOpp) - Number(player.fgmOpp) - Number(player.blkTeam)) /
@@ -577,6 +586,7 @@ export function calculatePlayerSeasonDefensiveRating(player: {
 
   const teamDRtg =
     (100 * Number(player.pointsOpp)) / Number(player.possessionsTeam);
+
   const dPtsPerScoringPossession =
     Number(player.pointsOpp) /
     (Number(player.fgmOpp) +

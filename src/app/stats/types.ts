@@ -1,3 +1,5 @@
+import { off } from 'process';
+
 export interface TeamSeasonStats {
   /**
    * @isInt
@@ -133,6 +135,11 @@ export interface PlayerSeasonStats {
     pct: number | null;
   };
   rebounds: {
+    offensive: number | null;
+    defensive: number | null;
+    total: number | null;
+  };
+  winShares: {
     offensive: number | null;
     defensive: number | null;
     total: number | null;
