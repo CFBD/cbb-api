@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/CFBD/cbb-api/compare/v1.9.0...v1.10.0) (2025-02-09)
+
+
+### Features
+
+* **stats:** player win shares ([f3212af](https://github.com/CFBD/cbb-api/commit/f3212af7bcba5e4dea62cb516e07739fa211f5c4))
+
 # [1.9.0](https://github.com/CFBD/cbb-api/compare/v1.8.0...v1.9.0) (2025-02-06)
 
 
