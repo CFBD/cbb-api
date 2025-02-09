@@ -1,3 +1,10 @@
+## [1.10.1](https://github.com/CFBD/cbb-api/compare/v1.10.0...v1.10.1) (2025-02-09)
+
+
+### Bug Fixes
+
+* unused import ([c45ae44](https://github.com/CFBD/cbb-api/commit/c45ae44babd4b0fc73e4ebf41209487d3aff11ec))
+
 # [1.10.0](https://github.com/CFBD/cbb-api/compare/v1.9.0...v1.10.0) (2025-02-09)
 
 
