@@ -1,3 +1,10 @@
+## [1.10.2](https://github.com/CFBD/cbb-api/compare/v1.10.1...v1.10.2) (2025-02-10)
+
+
+### Bug Fixes
+
+* **stats:** player stats team id ([b19469d](https://github.com/CFBD/cbb-api/commit/b19469d57a9c37df0eef5b8d46f4d97fdcc21742))
+
 ## [1.10.1](https://github.com/CFBD/cbb-api/compare/v1.10.0...v1.10.1) (2025-02-09)
 
 
