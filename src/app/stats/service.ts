@@ -416,7 +416,7 @@ export const getPlayerSeasonStats = async (
     .select((eb) => [
       'game.season',
       'game.seasonLabel',
-      'team.id',
+      'team.id as teamId',
       'team.school',
       'conference.abbreviation as conference',
       'athlete.id',
@@ -562,7 +562,7 @@ export const getPlayerSeasonStats = async (
     return {
       season: player.season,
       seasonLabel: player.seasonLabel,
-      teamId: player.id,
+      teamId: player.teamId,
       team: player.school,
       conference: player.conference,
       athleteId: player.id,
