@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/CFBD/cbb-api/compare/v1.11.0...v1.11.1) (2025-02-12)
+
+
+### Bug Fixes
+
+* **plays:** shooter and assisted by swapping ([10caeb5](https://github.com/CFBD/cbb-api/commit/10caeb541b6a87c111d58da0f69d4129f7f1e50c))
+
 # [1.11.0](https://github.com/CFBD/cbb-api/compare/v1.10.2...v1.11.0) (2025-02-12)
 
 
