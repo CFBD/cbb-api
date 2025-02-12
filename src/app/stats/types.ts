@@ -107,6 +107,7 @@ export interface PlayerSeasonStats {
   offensiveRating: number | null;
   defensiveRating: number | null;
   netRating: number | null;
+  PORPAG: number | null;
   effectiveFieldGoalPct: number | null;
   trueShootingPct: number | null;
   assistsTurnoverRatio: number | null;
@@ -141,5 +142,6 @@ export interface PlayerSeasonStats {
     offensive: number | null;
     defensive: number | null;
     total: number | null;
+    totalPer40: number | null;
   };
 }

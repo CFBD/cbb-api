@@ -559,6 +559,15 @@ export const getPlayerSeasonStats = async (
                 Number(player.toTeam)))),
       ) / 10;
 
+    const PORPAG =
+      Math.round(
+        ((offensiveRatings.offensiveRating - 88) *
+          (usage / 100) *
+          66 *
+          (Number(player.minutes) / Number(player.teamMinutes))) /
+          10,
+      ) / 10;
+
     return {
       season: player.season,
       seasonLabel: player.seasonLabel,
@@ -581,6 +590,7 @@ export const getPlayerSeasonStats = async (
       offensiveRating: offensiveRatings.offensiveRating,
       defensiveRating,
       netRating,
+      PORPAG,
       usage,
       assistsTurnoverRatio:
         player.to != 0
@@ -654,6 +664,11 @@ export const getPlayerSeasonStats = async (
         offensive: offensiveWinShares,
         defensive: defensiveWinShares,
         total: Math.round(10 * (offensiveWinShares + defensiveWinShares)) / 10,
+        totalPer40:
+          Math.round(
+            (40000 * (offensiveWinShares + defensiveWinShares)) /
+              Number(player.minutes ?? 0),
+          ) / 1000,
       },
     };
   });
