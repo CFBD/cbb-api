@@ -95,6 +95,46 @@ const getShotRange = (
   return 'jumper';
 };
 
+const getShooter = (
+  participants: { id: number; name: string }[],
+  playText: string,
+): { id: number; name: string } | null => {
+  if (participants.length === 0) {
+    return null;
+  } else if (participants.length === 1) {
+    return participants[0];
+  } else {
+    const parts = playText.split(' made ');
+    if (parts.length > 1) {
+      const shooterText = parts[0].trim();
+      let shooter =
+        participants.find((p) => p.name.includes(shooterText)) ?? null;
+      if (shooter) {
+        return shooter;
+      }
+
+      const shooterParts = shooterText.split(' ');
+      if (shooterParts.length > 1) {
+        shooter =
+          participants.find((p) => p.name.includes(shooterParts[1])) ?? null;
+        if (shooter) {
+          return shooter;
+        }
+      }
+
+      if (shooterParts.length > 2) {
+        shooter =
+          participants.find((p) => p.name.includes(shooterParts[2])) ?? null;
+        if (shooter) {
+          return shooter;
+        }
+      }
+    }
+  }
+
+  return null;
+};
+
 const getPlays = async (
   season?: number,
   gameId?: number,
@@ -187,9 +227,9 @@ const getPlays = async (
       join
         .on('athlete.id', '=', playerId)
         .on(
-          'athlete.sourceId',
-          '=',
-          sql<string>`ANY(play.participants::varchar[])`,
+          'play.participants',
+          '@>',
+          sql<number[]>`ARRAY[athlete.source_id::integer]`,
         ),
     );
   }
@@ -197,8 +237,19 @@ const getPlays = async (
   const plays = await query.execute();
 
   return plays
-    .map(
-      (play): PlayInfo => ({
+    .map((play): PlayInfo => {
+      const shooter = play.shootingPlay
+        ? getShooter(play.participants, play.playText ?? '')
+        : null;
+      const assistedBy =
+        play.shootingPlay &&
+        shooter &&
+        play.playText?.toLowerCase().includes('assisted by') &&
+        (play.participants?.length ?? 0) > 1
+          ? (play.participants.find((p) => p.id !== shooter?.id) ?? null)
+          : null;
+
+      return {
         gameId: play.gameId ?? -1,
         gameSourceId: play.gameSourceId ?? '',
         gameStartDate: play.gameStartDate ?? new Date(),
@@ -257,28 +308,15 @@ const getPlays = async (
         participants: play.participants,
         shotInfo: play.shootingPlay
           ? {
-              shooter:
-                (play.participants?.length ?? 0) > 0
-                  ? {
-                      id: play.participants[0].id,
-                      name: play.participants[0].name,
-                    }
-                  : null,
+              shooter,
               made: play.scoringPlay ?? false,
               range: getShotRange(play.playType, play.playText ?? ''),
               assisted:
                 play.playText?.toLowerCase().includes('assisted by') ?? false,
-              assistedBy:
-                play.playText?.toLowerCase().includes('assisted by') &&
-                (play.participants?.length ?? 0) > 1
-                  ? {
-                      id: play.participants[1].id,
-                      name: play.participants[1].name,
-                    }
-                  : null,
+              assistedBy,
             }
           : null,
-      }),
-    )
+      };
+    })
     .filter((play) => play.gameId !== -1);
 };
