@@ -1,3 +1,15 @@
+# [1.11.0](https://github.com/CFBD/cbb-api/compare/v1.10.2...v1.11.0) (2025-02-12)
+
+
+### Bug Fixes
+
+* **stats:** zero percentages showing as null ([f9882f2](https://github.com/CFBD/cbb-api/commit/f9882f285eb89ab84b77f9233295e5b1609eaa2f))
+
+
+### Features
+
+* **stats:** porpag and win shares per 40 ([5d4aeab](https://github.com/CFBD/cbb-api/commit/5d4aeab30cb52f830a1fb2699ebae004f0224858))
+
 ## [1.10.2](https://github.com/CFBD/cbb-api/compare/v1.10.1...v1.10.2) (2025-02-10)
 
 
