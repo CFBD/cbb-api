@@ -516,22 +516,22 @@ export const getGameTeamStatistics = async (
         twoPointFieldGoals: {
           made: game['2pm'],
           attempted: game['2pa'],
-          pct: game['2pPct'] ? Number(game['2pPct']) : null,
+          pct: game['2pPct'] !== null ? Number(game['2pPct']) : null,
         },
         threePointFieldGoals: {
           made: game['3pm'],
           attempted: game['3pa'],
-          pct: game['3pPct'] ? Number(game['3pPct']) : null,
+          pct: game['3pPct'] !== null ? Number(game['3pPct']) : null,
         },
         freeThrows: {
           made: game.ftm,
           attempted: game.fta,
-          pct: game.ftPct ? Number(game.ftPct) : null,
+          pct: game.ftPct !== null ? Number(game.ftPct) : null,
         },
         fieldGoals: {
           made: game.fgm,
           attempted: game.fga,
-          pct: game.fgPct ? Number(game.fgPct) : null,
+          pct: game.fgPct !== null ? Number(game.fgPct) : null,
         },
         turnovers: {
           total: game.to,
@@ -548,19 +548,19 @@ export const getGameTeamStatistics = async (
           flagrant: game.flag,
         },
         fourFactors: {
-          effectiveFieldGoalPct: game.efg ? Number(game.efg) : null,
+          effectiveFieldGoalPct: game.efg !== null ? Number(game.efg) : null,
           freeThrowRate:
-            game.fta && game.fga
+            game.fta !== null && game.fga !== null
               ? Math.round((Number(game.fta) / Number(game.fga)) * 1000) / 10
               : null,
           turnoverRatio:
-            game.to && game.possessions
+            game.to !== null && game.possessions
               ? Math.round(
                   (Number(game.to) * 1000) / Number(game.possessions),
                 ) / 10
               : null,
           offensiveReboundPct:
-            game.oreb && game.reb
+            game.oreb !== null && game.reb
               ? Math.round((game.oreb / game.reb) * 1000) / 10
               : null,
         },
@@ -570,9 +570,10 @@ export const getGameTeamStatistics = async (
         assists: game.opponentAst,
         steals: game.opponentStl,
         blocks: game.opponentBlk,
-        trueShooting: game.opponentTrueShooting
-          ? Number(game.opponentTrueShooting)
-          : null,
+        trueShooting:
+          game.opponentTrueShooting !== null
+            ? Number(game.opponentTrueShooting)
+            : null,
         rating:
           game.opponentPoints && game.opponentPossessions
             ? Math.round(
@@ -591,22 +592,22 @@ export const getGameTeamStatistics = async (
         twoPointFieldGoals: {
           made: game.opponent2pm,
           attempted: game.opponent2pa,
-          pct: game.opponent2pPct ? Number(game.opponent2pPct) : null,
+          pct: game.opponent2pPct !== null ? Number(game.opponent2pPct) : null,
         },
         threePointFieldGoals: {
           made: game.opponent3pm,
           attempted: game.opponent3pa,
-          pct: game.opponent3pPct ? Number(game.opponent3pPct) : null,
+          pct: game.opponent3pPct !== null ? Number(game.opponent3pPct) : null,
         },
         freeThrows: {
           made: game.opponentFtm,
           attempted: game.opponentFta,
-          pct: game.opponentFtPct ? Number(game.opponentFtPct) : null,
+          pct: game.opponentFtPct !== null ? Number(game.opponentFtPct) : null,
         },
         fieldGoals: {
           made: game.opponentFgm,
           attempted: game.opponentFga,
-          pct: game.opponentFgPct ? Number(game.opponentFgPct) : null,
+          pct: game.opponentFgPct !== null ? Number(game.opponentFgPct) : null,
         },
         turnovers: {
           total: game.opponentTo,
@@ -623,24 +624,23 @@ export const getGameTeamStatistics = async (
           flagrant: game.opponentFlag,
         },
         fourFactors: {
-          effectiveFieldGoalPct: game.opponentEfg
-            ? Number(game.opponentEfg)
-            : null,
+          effectiveFieldGoalPct:
+            game.opponentEfg !== null ? Number(game.opponentEfg) : null,
           freeThrowRate:
-            game.opponentFta && game.opponentFga
+            game.opponentFta !== null && game.opponentFga
               ? Math.round(
                   (Number(game.opponentFta) / Number(game.opponentFga)) * 1000,
                 ) / 10
               : null,
           turnoverRatio:
-            game.opponentTo && game.opponentPossessions
+            game.opponentTo !== null && game.opponentPossessions
               ? Math.round(
                   (Number(game.opponentTo) * 1000) /
                     Number(game.opponentPossessions),
                 ) / 10
               : null,
           offensiveReboundPct:
-            game.opponentOreb && game.opponentReb
+            game.opponentOreb !== null && game.opponentReb
               ? Math.round((game.opponentOreb / game.opponentReb) * 1000) / 10
               : null,
         },
@@ -891,7 +891,8 @@ export const getGamePlayerStatistics = async (
           assists: player.ast,
           steals: player.stl,
           blocks: player.blk,
-          gameScore: player.gameScore ? Number(player.gameScore) : null,
+          gameScore:
+            player.gameScore !== null ? Number(player.gameScore) : null,
           offensiveRating: offensiveRatings?.offensiveRating ?? null,
           defensiveRating,
           netRating:
@@ -901,38 +902,41 @@ export const getGamePlayerStatistics = async (
                 ) / 10
               : null,
           usage,
-          effectiveFieldGoalPct: player.efg ? Number(player.efg) : null,
-          trueShootingPct: player.trueShooting
-            ? Number(player.trueShooting)
-            : null,
-          assistsTurnoverRatio: player.to
-            ? Math.round(((player.ast ?? 0) * 10) / player.to) / 10
-            : null,
-          freeThrowRate: player.fga
-            ? Math.round(((player.fta ?? 0) * 1000) / player.fga) / 10
-            : null,
-          offensiveReboundPct: player.reb
-            ? Math.round(((player.oreb ?? 0) * 1000) / player.reb) / 10
-            : null,
+          effectiveFieldGoalPct:
+            player.efg !== null ? Number(player.efg) : null,
+          trueShootingPct:
+            player.trueShooting !== null ? Number(player.trueShooting) : null,
+          assistsTurnoverRatio:
+            player.to !== null
+              ? Math.round(((player.ast ?? 0) * 10) / player.to) / 10
+              : null,
+          freeThrowRate:
+            player.fga !== null
+              ? Math.round(((player.fta ?? 0) * 1000) / player.fga) / 10
+              : null,
+          offensiveReboundPct:
+            player.reb !== null
+              ? Math.round(((player.oreb ?? 0) * 1000) / player.reb) / 10
+              : null,
           fieldGoals: {
             made: player.fgm,
             attempted: player.fga,
-            pct: player.fgPct ? Number(player.fgPct) : null,
+            pct: player.fgPct !== null ? Number(player.fgPct) : null,
           },
           twoPointFieldGoals: {
             made: player['2pm'],
             attempted: player['2pa'],
-            pct: player['2pPct'] ? Number(player['2pPct']) : null,
+            pct: player['2pPct'] !== null ? Number(player['2pPct']) : null,
           },
           threePointFieldGoals: {
             made: player['3pm'],
             attempted: player['3pa'],
-            pct: player['3pPct'] ? Number(player['3pPct']) : null,
+            pct: player['3pPct'] !== null ? Number(player['3pPct']) : null,
           },
           freeThrows: {
             made: player.ftm,
             attempted: player.fta,
-            pct: player.ftPct ? Number(player.ftPct) : null,
+            pct: player.ftPct !== null ? Number(player.ftPct) : null,
           },
           rebounds: {
             offensive: player.oreb,
