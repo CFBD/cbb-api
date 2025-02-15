@@ -64,6 +64,7 @@ export interface Athlete {
   jersey: string | null;
   lastName: string | null;
   name: string;
+  ncaaId: number | null;
   positionId: number | null;
   sourceId: string;
   weight: number | null;
@@ -100,6 +101,7 @@ export interface Game {
   excitement: Numeric | null;
   gameType: string | null;
   id: Generated<number>;
+  ncaaId: number | null;
   neutralSite: Generated<boolean>;
   notes: string | null;
   season: number;
@@ -273,6 +275,8 @@ export interface Play {
   secondsRemaining: number;
   sequencer: string | null;
   shootingPlay: boolean | null;
+  shotLocationX: Numeric | null;
+  shotLocationY: Numeric | null;
   sourceId: string;
   teamId: number | null;
   wallclock: Timestamp | null;
@@ -328,6 +332,7 @@ export interface Team {
   homeVenueId: number | null;
   id: Generated<number>;
   mascot: string | null;
+  ncaaId: number | null;
   nickname: string | null;
   primaryColor: string | null;
   school: string;

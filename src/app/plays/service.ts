@@ -181,6 +181,8 @@ const getPlays = async (
       'playType.name as playType',
       'play.playText',
       'play.wp',
+      'play.shotLocationX',
+      'play.shotLocationY',
       jsonArrayFrom(
         eb
           .selectFrom('athlete')
@@ -314,6 +316,13 @@ const getPlays = async (
               assisted:
                 play.playText?.toLowerCase().includes('assisted by') ?? false,
               assistedBy,
+              location:
+                play.shotLocationX !== null && play.shotLocationY !== null
+                  ? {
+                      x: Number(play.shotLocationX),
+                      y: Number(play.shotLocationY),
+                    }
+                  : null,
             }
           : null,
       };

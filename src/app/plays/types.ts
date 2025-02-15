@@ -88,4 +88,8 @@ export interface ShotInfo {
     id: number;
     name: string;
   } | null;
+  location: {
+    x: number;
+    y: number;
+  } | null;
 }
