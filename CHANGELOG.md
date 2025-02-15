@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/CFBD/cbb-api/compare/v1.11.1...v1.12.0) (2025-02-15)
+
+
+### Features
+
+* **plays:** shot location data ([5653de3](https://github.com/CFBD/cbb-api/commit/5653de34c469e0db357b2138e8cd3096cfbcf77e))
+
 ## [1.11.1](https://github.com/CFBD/cbb-api/compare/v1.11.0...v1.11.1) (2025-02-12)
 
 
