@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/CFBD/cbb-api/compare/v1.12.0...v1.12.1) (2025-02-18)
+
+
+### Bug Fixes
+
+* **ratings:** adding ranking numbers ([314538e](https://github.com/CFBD/cbb-api/commit/314538e2bf063a0052806e331e6d28fff241478b))
+
 # [1.12.0](https://github.com/CFBD/cbb-api/compare/v1.11.1...v1.12.0) (2025-02-15)
 
 
