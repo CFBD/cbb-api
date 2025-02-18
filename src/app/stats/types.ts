@@ -14,6 +14,8 @@ export interface TeamSeasonStats {
    * @isInt
    */
   games: number;
+  wins: number;
+  losses: number;
   totalMinutes: number | null;
   pace: number | null;
   offense: TeamSeasonUnitStats;

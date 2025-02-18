@@ -37,13 +37,13 @@ export const getTeamSeasonStats = async (
     .selectFrom('game')
     .innerJoin('gameTeam', 'game.id', 'gameTeam.gameId')
     .innerJoin('team', 'gameTeam.teamId', 'team.id')
-    .innerJoin('gameTeamStats', 'gameTeam.id', 'gameTeamStats.gameTeamId')
     .innerJoin('gameTeam as oppTeam', (join) =>
       join
         .onRef('game.id', '=', 'oppTeam.gameId')
         .onRef('oppTeam.id', '<>', 'gameTeam.id'),
     )
-    .innerJoin('gameTeamStats as oppStats', 'oppStats.gameTeamId', 'oppTeam.id')
+    .leftJoin('gameTeamStats', 'gameTeam.id', 'gameTeamStats.gameTeamId')
+    .leftJoin('gameTeamStats as oppStats', 'oppStats.gameTeamId', 'oppTeam.id')
     .leftJoin('conferenceTeam', (join) =>
       join
         .onRef('team.id', '=', 'conferenceTeam.teamId')
@@ -75,6 +75,11 @@ export const getTeamSeasonStats = async (
       'team.school',
       'conference.abbreviation',
       eb.fn.countAll().as('games'),
+      eb.fn.countAll().filterWhere('gameTeam.isWinner', '=', true).as('wins'),
+      eb.fn
+        .countAll()
+        .filterWhere('gameTeam.isWinner', '=', false)
+        .as('losses'),
       eb.fn.sum('gameTeam.points').as('points'),
       eb.fn.sum('gameTeamStats.possessions').as('possessions'),
       eb.fn.sum('gameTeamStats.2pa').as('2pa'),
@@ -172,6 +177,8 @@ export const getTeamSeasonStats = async (
       team: team.school,
       conference: team.abbreviation,
       games: Number(team.games),
+      wins: Number(team.wins),
+      losses: Number(team.losses),
       totalMinutes: Number(team.minutes),
       pace:
         Math.round(

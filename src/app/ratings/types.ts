@@ -26,4 +26,9 @@ export interface AdjustedEfficiencyInfo {
   offensiveRating: number;
   defensiveRating: number;
   netRating: number;
+  rankings: {
+    offense: number;
+    defense: number;
+    net: number;
+  };
 }

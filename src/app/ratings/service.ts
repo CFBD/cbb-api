@@ -95,6 +95,24 @@ export const getAdjustedEfficiency = async (
       'adjustedEfficiency.defense as defensiveRating',
       'adjustedEfficiency.net as netRating',
     ])
+    .select((eb) =>
+      eb.fn
+        .agg<number>('rank')
+        .over((ob) => ob.orderBy('offense', 'desc'))
+        .as('offenseRank'),
+    )
+    .select((eb) =>
+      eb.fn
+        .agg<number>('rank')
+        .over((ob) => ob.orderBy('defense'))
+        .as('defenseRank'),
+    )
+    .select((eb) =>
+      eb.fn
+        .agg<number>('rank')
+        .over((ob) => ob.orderBy('net', 'desc'))
+        .as('netRank'),
+    )
     .orderBy('adjustedEfficiency.season', 'desc')
     .orderBy('adjustedEfficiency.net', 'desc');
 
@@ -127,5 +145,10 @@ export const getAdjustedEfficiency = async (
     offensiveRating: Number(r.offensiveRating),
     defensiveRating: Number(r.defensiveRating),
     netRating: Number(r.netRating),
+    rankings: {
+      offense: Number(r.offenseRank),
+      defense: Number(r.defenseRank),
+      net: Number(r.netRank),
+    },
   }));
 };
