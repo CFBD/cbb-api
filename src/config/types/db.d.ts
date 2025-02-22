@@ -42,6 +42,8 @@ export type Point = {
   y: number;
 };
 
+export type RecruitType = 'high_school' | 'junior_college' | 'prep_school';
+
 export type SeasonType = 'postseason' | 'preseason' | 'regular';
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
@@ -93,6 +95,47 @@ export interface ConferenceTeam {
   id: Generated<number>;
   startYear: number;
   teamId: number;
+}
+
+export interface DraftPick {
+  collegeId: number | null;
+  draftPositionId: number;
+  draftTeamId: number;
+  height: number | null;
+  id: Generated<number>;
+  name: string;
+  overall: number;
+  overallRank: number | null;
+  pick: number;
+  positionRank: number | null;
+  round: number;
+  sourceTeamId: number | null;
+  weight: number | null;
+  year: number;
+}
+
+export interface DraftPosition {
+  abbreviation: string;
+  id: number;
+  name: string;
+}
+
+export interface DraftSourceTeam {
+  id: Generated<number>;
+  leagueAffiliation: string | null;
+  location: string;
+  name: string | null;
+  teamId: number | null;
+}
+
+export interface DraftTeam {
+  abbreviation: string | null;
+  displayName: string | null;
+  id: Generated<number>;
+  location: string;
+  name: string | null;
+  shortDisplayName: string | null;
+  sourceId: number;
 }
 
 export interface Game {
@@ -318,6 +361,35 @@ export interface Position {
   name: string;
 }
 
+export interface Recruit {
+  athleteId: number | null;
+  committedToId: number | null;
+  height: number | null;
+  hometownId: number | null;
+  id: Generated<number>;
+  name: string;
+  ranking: number | null;
+  rating: number;
+  recruitPositionId: number | null;
+  recruitSchoolId: number | null;
+  recruitType: RecruitType;
+  sourceId: string | null;
+  stars: number;
+  weight: number | null;
+  year: number;
+}
+
+export interface RecruitPosition {
+  id: Generated<number>;
+  position: string;
+  positionGroup: string | null;
+}
+
+export interface RecruitSchool {
+  id: Generated<number>;
+  name: string;
+}
+
 export interface Srs {
   id: Generated<number>;
   rating: Numeric;
@@ -363,6 +435,10 @@ export interface DB {
   athleteTeam: AthleteTeam;
   conference: Conference;
   conferenceTeam: ConferenceTeam;
+  draftPick: DraftPick;
+  draftPosition: DraftPosition;
+  draftSourceTeam: DraftSourceTeam;
+  draftTeam: DraftTeam;
   game: Game;
   gameInfo: GameInfo;
   gameLine: GameLine;
@@ -378,6 +454,9 @@ export interface DB {
   pollRank: PollRank;
   pollType: PollType;
   position: Position;
+  recruit: Recruit;
+  recruitPosition: RecruitPosition;
+  recruitSchool: RecruitSchool;
   srs: Srs;
   team: Team;
   venue: Venue;
