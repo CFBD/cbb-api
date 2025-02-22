@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/CFBD/cbb-api/compare/v1.13.0...v1.14.0) (2025-02-22)
+
+
+### Features
+
+* **recruiting:** added 247 composite player data ([505b722](https://github.com/CFBD/cbb-api/commit/505b7221ef37784d15b9a29cfd194ab7a821d235))
+
 # [1.13.0](https://github.com/CFBD/cbb-api/compare/v1.12.1...v1.13.0) (2025-02-22)
 
 
