@@ -64,6 +64,10 @@
       {
         "name": "draft",
         "description": "Historical NBA draft data"
+      },
+      {
+        "name": "draft",
+        "description": "Historical recruiting data"
       }
     ]
   },
