@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/CFBD/cbb-api/compare/v1.12.1...v1.13.0) (2025-02-22)
+
+
+### Features
+
+* **draft:** added nba draft endpoints ([1311f56](https://github.com/CFBD/cbb-api/commit/1311f5659ae7737f1f88867f37a6f57fabad25e7))
+
 ## [1.12.1](https://github.com/CFBD/cbb-api/compare/v1.12.0...v1.12.1) (2025-02-18)
 
 
