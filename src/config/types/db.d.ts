@@ -293,7 +293,10 @@ export interface GameTeamStats {
 export interface Hometown {
   city: string;
   country: string | null;
+  countyFips: string | null;
   id: Generated<number>;
+  latitude: Numeric | null;
+  longitude: Numeric | null;
   state: string | null;
 }
 

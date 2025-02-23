@@ -57,6 +57,9 @@ export interface TeamRosterPlayer {
     city: string | null;
     state: string | null;
     country: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    countyFips: string | null;
   };
   /**
    * @isDate

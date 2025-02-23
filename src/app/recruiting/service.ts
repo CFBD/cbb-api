@@ -38,6 +38,9 @@ export const getRecruits = async (
       'hometown.city as hometownCity',
       'hometown.state as hometownState',
       'hometown.country as hometownCountry',
+      'hometown.latitude as hometownLatitude',
+      'hometown.longitude as hometownLongitude',
+      'hometown.countyFips as hometownCountyFips',
       'team.id as committedToId',
       'team.school as committedToSchool',
       'conference.abbreviation as conference',
@@ -93,6 +96,9 @@ export const getRecruits = async (
           city: r.hometownCity,
           state: r.hometownState,
           country: r.hometownCountry,
+          latitude: r.hometownLatitude ? Number(r.hometownLatitude) : null,
+          longitude: r.hometownLongitude ? Number(r.hometownLongitude) : null,
+          countyFips: r.hometownCountyFips,
         }
       : null,
     committedTo: r.committedToId
