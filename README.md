@@ -1,6 +1,6 @@
 # CBBD API
 
-This is the repository for the CBBD API, currently hosted at [API.CollegeBasketballData.com](https://api.collegebasketballdata.com). The API is built on NodeJS using TypeScript and Express over a PostgreSQL database.
+This is the repository for the CBBD API, currently hosted at [api.CollegeBasketballData.com](https://api.collegebasketballdata.com). The API is built on NodeJS using TypeScript and Express over a PostgreSQL database.
 
 This project is an offshoot of CollegeFootballData.com. You can retrieve an API key at the CollegeFootballData.com website that will work with both the CFBD and CBBD APIs. A standalone website for CollegeBasketballData.com is planned for the future.
 
