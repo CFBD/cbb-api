@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/CFBD/cbb-api/compare/v1.15.0...v1.15.1) (2025-02-23)
+
+
+### Bug Fixes
+
+* **geocoding:** adding latitude, longitude, and county fips to recruit and athlete hometowns ([fce0320](https://github.com/CFBD/cbb-api/commit/fce03202686f98b84976efdcc223d518ffa91753))
+
 # [1.15.0](https://github.com/CFBD/cbb-api/compare/v1.14.1...v1.15.0) (2025-02-23)
 
 
