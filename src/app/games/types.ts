@@ -136,8 +136,8 @@ export interface GameBoxScoreTeam {
   notes: string | null;
   gameMinutes: number | null;
   pace: number | null;
-  offense: GameBoxScoreTeamStats;
-  defense: GameBoxScoreTeamStats;
+  teamStats: GameBoxScoreTeamStats;
+  opponentStats: GameBoxScoreTeamStats;
 }
 
 export interface GameBoxScoreTeamStats {

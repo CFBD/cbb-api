@@ -186,7 +186,7 @@ export const getTeamSeasonStats = async (
             ((Number(team.possessions) + Number(team.possessionsOpp)) /
               (2 * Number(team.minutes))),
         ) / 10,
-      offense: {
+      teamStats: {
         assists: Number(team.ast),
         blocks: Number(team.blk),
         steals: Number(team.stl),
@@ -272,7 +272,7 @@ export const getTeamSeasonStats = async (
             Math.round(1000 * (Number(team.fta) / Number(team.fga))) / 10,
         },
       },
-      defense: {
+      opponentStats: {
         assists: Number(team.astOpp),
         blocks: Number(team.blkOpp),
         steals: Number(team.stlOpp),

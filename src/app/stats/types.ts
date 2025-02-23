@@ -18,8 +18,8 @@ export interface TeamSeasonStats {
   losses: number;
   totalMinutes: number | null;
   pace: number | null;
-  offense: TeamSeasonUnitStats;
-  defense: TeamSeasonUnitStats;
+  teamStats: TeamSeasonUnitStats;
+  opponentStats: TeamSeasonUnitStats;
 }
 
 export interface TeamSeasonUnitStats {

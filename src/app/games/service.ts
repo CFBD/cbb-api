@@ -494,7 +494,7 @@ export const getGameTeamStatistics = async (
       notes: game.notes,
       gameMinutes,
       pace,
-      offense: {
+      teamStats: {
         possessions: game.possessions,
         assists: game.ast,
         steals: game.stl,
@@ -565,7 +565,7 @@ export const getGameTeamStatistics = async (
               : null,
         },
       },
-      defense: {
+      opponentStats: {
         possessions: game.opponentPossessions,
         assists: game.opponentAst,
         steals: game.opponentStl,
