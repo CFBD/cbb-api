@@ -1,3 +1,10 @@
+## [1.15.2](https://github.com/CFBD/cbb-api/compare/v1.15.1...v1.15.2) (2025-02-23)
+
+
+### Bug Fixes
+
+* **stats:** changing offense/defense to teamStats/opponentStats ([7f0d398](https://github.com/CFBD/cbb-api/commit/7f0d39832c6e4ac248512b86864bc89990c8b757))
+
 ## [1.15.1](https://github.com/CFBD/cbb-api/compare/v1.15.0...v1.15.1) (2025-02-23)
 
 
