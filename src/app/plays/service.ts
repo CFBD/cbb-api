@@ -39,7 +39,7 @@ export const getPlaysByDate = async (
   date: Date,
   shootingPlaysOnly?: boolean,
 ): Promise<PlayInfo[]> => {
-  const endRange = new Date();
+  const endRange = new Date(date);
   endRange.setDate(date.getDate() + 1);
   return await getPlays(
     undefined,
