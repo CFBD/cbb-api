@@ -1,3 +1,10 @@
+## [1.14.1](https://github.com/CFBD/cbb-api/compare/v1.14.0...v1.14.1) (2025-02-23)
+
+
+### Bug Fixes
+
+* **plays:** fixing crashes on getting plays by date ([497c1f5](https://github.com/CFBD/cbb-api/commit/497c1f5bb6f52ff374119f6c34270c987a8b0369))
+
 # [1.14.0](https://github.com/CFBD/cbb-api/compare/v1.13.0...v1.14.0) (2025-02-22)
 
 
