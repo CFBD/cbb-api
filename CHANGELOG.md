@@ -1,3 +1,10 @@
+## [1.15.3](https://github.com/CFBD/cbb-api/compare/v1.15.2...v1.15.3) (2025-02-25)
+
+
+### Bug Fixes
+
+* **plays:** making object fields non-nullable to fix website issues ([b3e1e13](https://github.com/CFBD/cbb-api/commit/b3e1e136ffd452b45186ec85c821858bcf0d9d68))
+
 ## [1.15.2](https://github.com/CFBD/cbb-api/compare/v1.15.1...v1.15.2) (2025-02-23)
 
 
