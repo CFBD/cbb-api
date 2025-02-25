@@ -75,9 +75,9 @@ export interface ShotInfo {
     /**
      * @isInt
      */
-    id: number;
-    name: string;
-  } | null;
+    id: number | null;
+    name: string | null;
+  };
   made: boolean;
   range: 'rim' | 'jumper' | 'three_pointer' | 'free_throw';
   assisted: boolean;
@@ -85,11 +85,11 @@ export interface ShotInfo {
     /**
      * @isInt
      */
-    id: number;
-    name: string;
-  } | null;
+    id: number | null;
+    name: string | null;
+  };
   location: {
-    x: number;
-    y: number;
-  } | null;
+    x: number | null;
+    y: number | null;
+  };
 }

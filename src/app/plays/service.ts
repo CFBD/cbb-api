@@ -310,19 +310,19 @@ const getPlays = async (
         participants: play.participants,
         shotInfo: play.shootingPlay
           ? {
-              shooter,
+              shooter: shooter ?? { id: null, name: null },
               made: play.scoringPlay ?? false,
               range: getShotRange(play.playType, play.playText ?? ''),
               assisted:
                 play.playText?.toLowerCase().includes('assisted by') ?? false,
-              assistedBy,
+              assistedBy: assistedBy ?? { id: null, name: null },
               location:
                 play.shotLocationX !== null && play.shotLocationY !== null
                   ? {
                       x: Number(play.shotLocationX),
                       y: Number(play.shotLocationY),
                     }
-                  : null,
+                  : { x: null, y: null },
             }
           : null,
       };
