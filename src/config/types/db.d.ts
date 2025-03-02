@@ -66,7 +66,7 @@ export interface Athlete {
   jersey: string | null;
   lastName: string | null;
   name: string;
-  ncaaId: number | null;
+  ncaaInfo: Json | null;
   positionId: number | null;
   sourceId: string;
   weight: number | null;
@@ -400,9 +400,26 @@ export interface Srs {
   teamId: number;
 }
 
+export interface Substitution {
+  athleteId: number;
+  endOpponentPoints: number;
+  endTeamPoints: number;
+  gameId: number;
+  id: Generated<Int8>;
+  startOpponentPoints: number;
+  startTeamPoints: number;
+  subInPeriod: number;
+  subInSecondsRemaining: number;
+  subOutPeriod: number;
+  subOutSecondsRemaining: number;
+  teamId: number;
+  timeRange: string;
+}
+
 export interface Team {
   abbreviation: string | null;
   active: Generated<boolean>;
+  currentNcaaVid: number | null;
   displayName: string | null;
   homeVenueId: number | null;
   id: Generated<number>;
@@ -461,6 +478,7 @@ export interface DB {
   recruitPosition: RecruitPosition;
   recruitSchool: RecruitSchool;
   srs: Srs;
+  substitution: Substitution;
   team: Team;
   venue: Venue;
 }
