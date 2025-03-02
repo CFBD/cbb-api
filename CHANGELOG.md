@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/CFBD/cbb-api/compare/v1.15.3...v1.16.0) (2025-03-02)
+
+
+### Features
+
+* **subsitutions:** player substitution endpoints ([9a0fd66](https://github.com/CFBD/cbb-api/commit/9a0fd668c3856ea9869bcb099cb9084c9b755758))
+
 ## [1.15.3](https://github.com/CFBD/cbb-api/compare/v1.15.2...v1.15.3) (2025-02-25)
 
 
