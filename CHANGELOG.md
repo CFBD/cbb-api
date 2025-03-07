@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/CFBD/cbb-api/compare/v1.16.0...v1.17.0) (2025-03-07)
+
+
+### Features
+
+* **plays:** tracking players on floor ([9daef0e](https://github.com/CFBD/cbb-api/commit/9daef0e31f0572ee60fc1b66cada03e84db7a15d))
+
 # [1.16.0](https://github.com/CFBD/cbb-api/compare/v1.15.3...v1.16.0) (2025-03-02)
 
 
