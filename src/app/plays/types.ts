@@ -67,6 +67,14 @@ export interface PlayInfo {
     id: number;
     name: string;
   }[];
+  onFloor: {
+    /**
+     * @isInt
+     */
+    id: number;
+    name: string;
+    team: string;
+  }[];
   shotInfo: ShotInfo | null;
 }
 

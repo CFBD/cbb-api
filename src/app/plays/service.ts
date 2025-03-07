@@ -193,6 +193,19 @@ const getPlays = async (
           )
           .select(['athlete.id', 'athlete.name']),
       ).as('participants'),
+      jsonArrayFrom(
+        eb
+          .selectFrom('substitution')
+          .innerJoin('athlete', 'substitution.athleteId', 'athlete.id')
+          .innerJoin('team', 'substitution.teamId', 'team.id')
+          .whereRef('substitution.gameId', '=', 'gameInfo.id')
+          .where(
+            'substitution.timeRange',
+            '@>',
+            sql<string>`(CASE WHEN play.period = 1 THEN 1200 - play.seconds_remaining WHEN play.period = 2 THEN 2400 - play.seconds_remaining ELSE 2400 + (play.period - 2) * 300 - play.seconds_remaining END)::numeric`,
+          )
+          .select(['athlete.id', 'athlete.name', 'team.school as team']),
+      ).as('onFloor'),
     ]);
 
   if (season) {
@@ -325,6 +338,7 @@ const getPlays = async (
                   : { x: null, y: null },
             }
           : null,
+        onFloor: play.onFloor,
       };
     })
     .filter((play) => play.gameId !== -1);
