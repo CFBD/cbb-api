@@ -234,7 +234,12 @@ const getPlays = async (
   }
 
   if (shootingPlaysOnly === true) {
-    query = query.where('play.shootingPlay', '=', true);
+    query = query.where((eb) =>
+      eb.or([
+        eb('play.shootingPlay', '=', true),
+        eb('playType.name', '=', 'MadeFreeThrow'),
+      ]),
+    );
   }
 
   if (playerId) {
@@ -253,9 +258,10 @@ const getPlays = async (
 
   return plays
     .map((play): PlayInfo => {
-      const shooter = play.shootingPlay
-        ? getShooter(play.participants, play.playText ?? '')
-        : null;
+      const shooter =
+        play.shootingPlay || play.playType === 'MadeFreeThrow'
+          ? getShooter(play.participants, play.playText ?? '')
+          : null;
       const assistedBy =
         play.shootingPlay &&
         shooter &&
@@ -316,28 +322,29 @@ const getPlays = async (
         clock: play.clock,
         secondsRemaining: play.secondsRemaining,
         scoringPlay: play.scoringPlay,
-        shootingPlay: play.shootingPlay,
+        shootingPlay: play.shootingPlay || play.playType === 'MadeFreeThrow',
         scoreValue: play.scoreValue,
         wallclock: play.wallclock,
         playText: play.playText,
         participants: play.participants,
-        shotInfo: play.shootingPlay
-          ? {
-              shooter: shooter ?? { id: null, name: null },
-              made: play.scoringPlay ?? false,
-              range: getShotRange(play.playType, play.playText ?? ''),
-              assisted:
-                play.playText?.toLowerCase().includes('assisted by') ?? false,
-              assistedBy: assistedBy ?? { id: null, name: null },
-              location:
-                play.shotLocationX !== null && play.shotLocationY !== null
-                  ? {
-                      x: Number(play.shotLocationX),
-                      y: Number(play.shotLocationY),
-                    }
-                  : { x: null, y: null },
-            }
-          : null,
+        shotInfo:
+          play.shootingPlay || play.playType === 'MadeFreeThrow'
+            ? {
+                shooter: shooter ?? { id: null, name: null },
+                made: play.scoringPlay ?? false,
+                range: getShotRange(play.playType, play.playText ?? ''),
+                assisted:
+                  play.playText?.toLowerCase().includes('assisted by') ?? false,
+                assistedBy: assistedBy ?? { id: null, name: null },
+                location:
+                  play.shotLocationX !== null && play.shotLocationY !== null
+                    ? {
+                        x: Number(play.shotLocationX),
+                        y: Number(play.shotLocationY),
+                      }
+                    : { x: null, y: null },
+              }
+            : null,
         onFloor: play.onFloor,
       };
     })
