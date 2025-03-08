@@ -1,3 +1,10 @@
+## [1.17.1](https://github.com/CFBD/cbb-api/compare/v1.17.0...v1.17.1) (2025-03-08)
+
+
+### Bug Fixes
+
+* **plays:** free throws not showing shooting info ([d917598](https://github.com/CFBD/cbb-api/commit/d9175988765a40461871c13d2c133e5ba9681da8))
+
 # [1.17.0](https://github.com/CFBD/cbb-api/compare/v1.16.0...v1.17.0) (2025-03-07)
 
 
