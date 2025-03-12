@@ -59,13 +59,13 @@ export const expressAuthentication = async (
           .selectAll()
           .executeTakeFirst();
         if (user && !user?.blacklisted) {
-          if (!user?.patronLevel || (user?.patronLevel ?? 0) < 1) {
-            return Promise.reject(
-              new AuthorizationError(
-                'Unauthorized. This API is in limited preview for Patreon subscribers. Go to https://www.patreon.com/c/collegefootballdata to subscribe.',
-              ),
-            );
-          }
+          // if (!user?.patronLevel || (user?.patronLevel ?? 0) < 1) {
+          //   return Promise.reject(
+          //     new AuthorizationError(
+          //       'Unauthorized. This API is in limited preview for Patreon subscribers. Go to https://www.patreon.com/c/collegefootballdata to subscribe.',
+          //     ),
+          //   );
+          // }
           // if (Object.keys(patreonLocked).includes(request.path)) {
           //   const requiredLevel = patreonLocked[request.path];
           //   if (!user.patron_level || user.patron_level < requiredLevel) {
