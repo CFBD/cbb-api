@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/CFBD/cbb-api/compare/v1.17.1...v1.18.0) (2025-03-12)
+
+
+### Features
+
+* **lineups:** lineup endpoints and statistics ([6ec96b6](https://github.com/CFBD/cbb-api/commit/6ec96b60b67a8a274a0475de4ed1723eb68f87c7))
+
 ## [1.17.1](https://github.com/CFBD/cbb-api/compare/v1.17.0...v1.17.1) (2025-03-08)
 
 
