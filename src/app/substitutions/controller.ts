@@ -7,7 +7,7 @@ import { getSubsByGameId, getSubsByPlayerId, getSubsByTeam } from './service';
 @Route('substitutions')
 @Middlewares(middlewares.standard)
 @Tags('plays')
-export class SubstitutionssController extends Controller {
+export class SubstitutionsController extends Controller {
   /**
    * Returns all player substitutions for a given game
    * @param gameId Game id filter

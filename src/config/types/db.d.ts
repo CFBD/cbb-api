@@ -318,6 +318,7 @@ export interface Play {
   playTypeId: number;
   scoreValue: number | null;
   scoringPlay: boolean | null;
+  secondsElapsed: number | null;
   secondsRemaining: number;
   sequencer: string | null;
   shootingPlay: boolean | null;

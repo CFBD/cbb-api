@@ -1,4 +1,4 @@
-import { Pool } from 'pg';
+import { Pool, types } from 'pg';
 import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely';
 
 const user = process.env.DATABASE_USER;
@@ -8,6 +8,9 @@ const port = process.env.DATABASE_PORT || '5432';
 const dbName = process.env.DATABASE_NAME;
 
 import { DB } from './types/db';
+
+types.setTypeParser(types.builtins.INT8, (value) => Number(value));
+types.setTypeParser(types.builtins.NUMERIC, (value) => Number(value));
 
 const dialect = new PostgresDialect({
   pool: new Pool({

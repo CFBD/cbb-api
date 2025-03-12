@@ -62,11 +62,15 @@
         "description": "Historical spreads and betting data"
       },
       {
+        "name": "lineups",
+        "description": "Statistics and data around specific lineups"
+      },
+      {
         "name": "draft",
         "description": "Historical NBA draft data"
       },
       {
-        "name": "draft",
+        "name": "recruiting",
         "description": "Historical recruiting data"
       }
     ]
