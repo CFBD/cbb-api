@@ -1,3 +1,10 @@
+## [1.18.1](https://github.com/CFBD/cbb-api/compare/v1.18.0...v1.18.1) (2025-03-12)
+
+
+### Bug Fixes
+
+* **lineups:** method name ([bb4d0e0](https://github.com/CFBD/cbb-api/commit/bb4d0e0d1aa21b7a57acbc53bc0fce2e148f534a))
+
 # [1.18.0](https://github.com/CFBD/cbb-api/compare/v1.17.1...v1.18.0) (2025-03-12)
 
 
