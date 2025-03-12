@@ -17,7 +17,7 @@ export class LineupsController extends Controller {
    * @isInt season
    */
   @Get('team')
-  public async getSubstitutionsByGame(
+  public async getLineupsByTeamSeason(
     @Query() season: number,
     @Query() team: string,
     @Query() startDateRange?: Date,
