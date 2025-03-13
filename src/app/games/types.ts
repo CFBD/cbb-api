@@ -17,6 +17,7 @@ export interface GameInfo {
   neutralSite: boolean;
   conferenceGame: boolean;
   gameType: string | null;
+  gameNotes: string | null;
   status: GameStatus;
   /**
    * @isInt

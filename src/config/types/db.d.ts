@@ -178,6 +178,7 @@ export interface GameInfo {
   homeTeamId: number | null;
   homeWinner: boolean | null;
   id: number | null;
+  ncaaId: number | null;
   neutralSite: boolean | null;
   notes: string | null;
   season: number | null;
