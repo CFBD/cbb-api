@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/CFBD/cbb-api/compare/v1.18.1...v1.18.2) (2025-03-13)
+
+
+### Bug Fixes
+
+* **games:** adding game notes ([ab7856c](https://github.com/CFBD/cbb-api/commit/ab7856cdf4928afeb38920a6ccca11e435d98c90))
+
 ## [1.18.1](https://github.com/CFBD/cbb-api/compare/v1.18.0...v1.18.1) (2025-03-12)
 
 
