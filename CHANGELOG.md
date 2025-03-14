@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/CFBD/cbb-api/compare/v1.18.2...v1.19.0) (2025-03-14)
+
+
+### Features
+
+* tournament filters, labels, and seeding information everywhere ([5642cac](https://github.com/CFBD/cbb-api/commit/5642cace45a3535d47d77b64cbc1fb6eeebaeffc))
+
 ## [1.18.2](https://github.com/CFBD/cbb-api/compare/v1.18.1...v1.18.2) (2025-03-13)
 
 
