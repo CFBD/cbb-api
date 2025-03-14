@@ -35,6 +35,23 @@ export const getPlaysByTeam = async (
   );
 };
 
+export const getPlaysByTournament = async (
+  season: number,
+  tournament: string,
+  shootingPlaysOnly?: boolean,
+): Promise<PlayInfo[]> => {
+  return await getPlays(
+    season,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    shootingPlaysOnly,
+    tournament,
+  );
+};
+
 export const getPlaysByDate = async (
   date: Date,
   shootingPlaysOnly?: boolean,
@@ -143,11 +160,13 @@ const getPlays = async (
   endDateRange?: Date,
   playerId?: number,
   shootingPlaysOnly?: boolean,
+  tournament?: string,
 ): Promise<PlayInfo[]> => {
   let query = db
     .selectFrom('gameInfo')
     .innerJoin('play', 'gameInfo.id', 'play.gameId')
     .innerJoin('playType', 'play.playTypeId', 'playType.id')
+    .leftJoin('tournament', 'gameInfo.tournamentId', 'tournament.id')
     .orderBy('gameInfo.startDate')
     .orderBy('gameInfo.id')
     .orderBy('play.period')
@@ -160,12 +179,15 @@ const getPlays = async (
       'gameInfo.homeTeamId',
       'gameInfo.homeTeam',
       'gameInfo.homeConference',
+      'gameInfo.homeSeed',
       'gameInfo.awayTeamId',
       'gameInfo.awayTeam',
       'gameInfo.awayConference',
+      'gameInfo.awaySeed',
       'gameInfo.season',
       'gameInfo.seasonType',
       'gameInfo.gameType',
+      'tournament.shortName as tournament',
       'play.id',
       'play.sourceId',
       'play.homeScore',
@@ -254,6 +276,16 @@ const getPlays = async (
     );
   }
 
+  if (tournament) {
+    query = query.where((eb) =>
+      eb(
+        eb.fn('lower', ['tournament.shortName']),
+        '=',
+        tournament.toLowerCase(),
+      ),
+    );
+  }
+
   const plays = await query.execute();
 
   return plays
@@ -277,6 +309,7 @@ const getPlays = async (
         season: play.season ?? -1,
         seasonType: play.seasonType as SeasonType,
         gameType: play.gameType ?? '',
+        tournament: play.tournament,
         id: Number(play.id),
         sourceId: play.sourceId,
         playType: play.playType,
@@ -295,6 +328,12 @@ const getPlays = async (
               ? play.homeConference
               : play.awayConference
             : null,
+        teamSeed:
+          play.teamId !== null
+            ? play.teamId === play.homeTeamId
+              ? play.homeSeed
+              : play.awaySeed
+            : null,
         opponentId:
           play.teamId !== null
             ? play.teamId === play.homeTeamId
@@ -312,6 +351,12 @@ const getPlays = async (
             ? play.teamId === play.homeTeamId
               ? play.awayConference
               : play.homeConference
+            : null,
+        opponentSeed:
+          play.teamId !== null
+            ? play.teamId === play.homeTeamId
+              ? play.awaySeed
+              : play.homeSeed
             : null,
         homeScore: play.homeScore,
         awayScore: play.awayScore,

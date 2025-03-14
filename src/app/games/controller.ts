@@ -28,6 +28,7 @@ export class GamesController extends Controller {
    * @param season Optional season filter
    * @param seasonType Optional season type filter
    * @param status Optional game status filter
+   * @param tournament Optional tournament filter (e.g. NCAA, NIT, etc)
    * @isInt season
    */
   @Get()
@@ -39,6 +40,7 @@ export class GamesController extends Controller {
     @Query() season?: number,
     @Query() seasonType?: SeasonType,
     @Query() status?: GameStatus,
+    @Query() tournament?: string,
   ): Promise<GameInfo[]> {
     return await getGames(
       startDateRange,
@@ -48,6 +50,7 @@ export class GamesController extends Controller {
       season,
       seasonType,
       status,
+      tournament,
     );
   }
 
@@ -59,6 +62,7 @@ export class GamesController extends Controller {
    * @param conference Optional conference abbreviation filter
    * @param season Optional season filter
    * @param seasonType Optional season type filter
+   * @param tournament Optional tournament filter (e.g. NCAA, NIT, etc)
    */
   @Get('media')
   public async getBroadcasts(
@@ -68,6 +72,7 @@ export class GamesController extends Controller {
     @Query() conference?: string,
     @Query() season?: number,
     @Query() seasonType?: SeasonType,
+    @Query() tournament?: string,
   ): Promise<GameMediaInfo[]> {
     return await getBroadcasts(
       startDateRange,
@@ -76,6 +81,7 @@ export class GamesController extends Controller {
       conference,
       season,
       seasonType,
+      tournament,
     );
   }
 
@@ -87,6 +93,7 @@ export class GamesController extends Controller {
    * @param conference Optional conference abbreviation filter
    * @param season Optional season filter
    * @param seasonType Optional season type filter
+   * @param tournament Optional tournament filter (e.g. NCAA, NIT, etc)
    */
   @Get('teams')
   public async getGameTeams(
@@ -96,6 +103,7 @@ export class GamesController extends Controller {
     @Query() conference?: string,
     @Query() season?: number,
     @Query() seasonType?: SeasonType,
+    @Query() tournament?: string,
   ): Promise<GameBoxScoreTeam[]> {
     return await getGameTeamStatistics(
       startDateRange,
@@ -104,6 +112,7 @@ export class GamesController extends Controller {
       conference,
       season,
       seasonType,
+      tournament,
     );
   }
 
@@ -115,6 +124,7 @@ export class GamesController extends Controller {
    * @param conference Optional conference abbreviation filter
    * @param season Optional season filter
    * @param seasonType Optional season type filter
+   * @param tournament Optional tournament filter (e.g. NCAA, NIT, etc)
    */
   @Get('players')
   public async getGamePlayers(
@@ -124,6 +134,7 @@ export class GamesController extends Controller {
     @Query() conference?: string,
     @Query() season?: number,
     @Query() seasonType?: SeasonType,
+    @Query() tournament?: string,
   ): Promise<GameBoxScorePlayers[]> {
     return await getGamePlayerStatistics(
       startDateRange,
@@ -132,6 +143,7 @@ export class GamesController extends Controller {
       conference,
       season,
       seasonType,
+      tournament,
     );
   }
 }

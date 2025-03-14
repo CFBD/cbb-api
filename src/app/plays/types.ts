@@ -23,6 +23,7 @@ export interface PlayInfo {
   season: number;
   seasonType: SeasonType;
   gameType: string;
+  tournament: string | null;
   playType: string;
   isHomeTeam: boolean | null;
   /**
@@ -31,12 +32,14 @@ export interface PlayInfo {
   teamId: number | null;
   team: string | null;
   conference: string | null;
+  teamSeed: number | null;
   /**
    * @isInt
    */
   opponentId: number | null;
   opponent: string | null;
   opponentConference: string | null;
+  opponentSeed: number | null;
   /**
    * @isInt
    */

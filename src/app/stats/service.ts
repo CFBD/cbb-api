@@ -16,6 +16,7 @@ export const getTeamSeasonStats = async (
   conference?: string,
   startDateRange?: Date,
   endDateRange?: Date,
+  tournament?: string,
 ): Promise<TeamSeasonStats[]> => {
   if (!season && !team) {
     throw new ValidateError(
@@ -56,6 +57,7 @@ export const getTeamSeasonStats = async (
         ),
     )
     .leftJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .leftJoin('tournament', 'game.tournamentId', 'tournament.id')
     .where((eb) =>
       eb.and({
         status: GameStatus.Final,
@@ -165,6 +167,14 @@ export const getTeamSeasonStats = async (
 
   if (endDateRange) {
     query = query.where('game.startDate', '<=', endDateRange);
+  }
+
+  if (tournament) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['tournament.shortName']),
+      '=',
+      tournament.toLowerCase(),
+    );
   }
 
   const teams = await query.execute();
@@ -375,6 +385,7 @@ export const getPlayerSeasonStats = async (
   conference?: string,
   startDateRange?: Date,
   endDateRange?: Date,
+  tournament?: string,
 ): Promise<PlayerSeasonStats[]> => {
   let query = db
     .selectFrom('game')
@@ -402,6 +413,7 @@ export const getPlayerSeasonStats = async (
         ),
     )
     .leftJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .leftJoin('tournament', 'game.tournamentId', 'tournament.id')
     .where((eb) =>
       eb.and({
         status: GameStatus.Final,
@@ -523,6 +535,14 @@ export const getPlayerSeasonStats = async (
 
   if (endDateRange) {
     query = query.where('game.startDate', '<=', endDateRange);
+  }
+
+  if (tournament) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['tournament.shortName']),
+      '=',
+      tournament.toLowerCase(),
+    );
   }
 
   const players = await query.execute();

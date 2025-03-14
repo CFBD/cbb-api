@@ -5,6 +5,7 @@ import {
   getPlaysByGameId,
   getPlaysByPlayerId,
   getPlaysByTeam,
+  getPlaysByTournament,
   getPlayTypes,
 } from './service';
 
@@ -72,6 +73,21 @@ export class PlaysController extends Controller {
     @Query() shootingPlaysOnly?: boolean,
   ): Promise<PlayInfo[]> {
     return await getPlaysByDate(date, shootingPlaysOnly);
+  }
+
+  /**
+   * Retrieve all plays for a given tournament and season
+   * @param tournament Required tournament filter (e.g. NCAA, NIT, etc)
+   * @param season Required season filter
+   * @param shootingPlaysOnly Optional filter to only return shooting plays
+   */
+  @Get('tournament')
+  public async getPlaysByTournament(
+    @Query() tournament: string,
+    @Query() season: number,
+    @Query() shootingPlaysOnly?: boolean,
+  ): Promise<PlayInfo[]> {
+    return await getPlaysByTournament(season, tournament, shootingPlaysOnly);
   }
 
   /**

@@ -22,10 +22,12 @@ export const getGames = async (
   season?: number,
   seasonType?: SeasonType,
   status?: GameStatus,
+  tournament?: string,
 ): Promise<GameInfo[]> => {
   let query = db
     .selectFrom('gameInfo as game')
     .leftJoin('venue', 'venue.id', 'game.venueId')
+    .leftJoin('tournament', 'tournament.id', 'game.tournamentId')
     .select([
       'game.id',
       'game.sourceId',
@@ -43,6 +45,7 @@ export const getGames = async (
       'game.homeTeam',
       'game.homeConferenceId',
       'game.homeConference',
+      'game.homeSeed',
       'game.homePoints',
       'game.homePeriodPoints',
       'game.homeWinner',
@@ -50,10 +53,12 @@ export const getGames = async (
       'game.awayTeam',
       'game.awayConferenceId',
       'game.awayConference',
+      'game.awaySeed',
       'game.awayPoints',
       'game.awayPeriodPoints',
       'game.awayWinner',
       'game.notes',
+      'tournament.shortName as tournament',
       'venue.id as venueId',
       'venue.name as venue',
       'venue.city',
@@ -109,6 +114,16 @@ export const getGames = async (
     query = query.where('game.status', '=', status);
   }
 
+  if (tournament) {
+    query = query.where((eb) =>
+      eb(
+        eb.fn('lower', ['tournament.shortName']),
+        '=',
+        tournament.toLowerCase(),
+      ),
+    );
+  }
+
   const games = await query.execute();
 
   return games.map((game) => ({
@@ -117,6 +132,7 @@ export const getGames = async (
     seasonLabel: game.seasonLabel,
     season: game.season,
     seasonType: game.seasonType as SeasonType,
+    tournament: game.tournament,
     startDate: game.startDate,
     startTimeTbd: game.startTimeTbd,
     neutralSite: game.neutralSite,
@@ -129,6 +145,7 @@ export const getGames = async (
     homeTeam: game.homeTeam ?? '',
     homeConferenceId: game.homeConferenceId,
     homeConference: game.homeConference,
+    homeSeed: game.homeSeed,
     homePoints: game.homePoints,
     homePeriodPoints: game.homePeriodPoints,
     homeWinner: game.homeWinner,
@@ -136,6 +153,7 @@ export const getGames = async (
     awayTeam: game.awayTeam ?? '',
     awayConferenceId: game.awayConferenceId,
     awayConference: game.awayConference,
+    awaySeed: game.awaySeed,
     awayPoints: game.awayPoints,
     awayPeriodPoints: game.awayPeriodPoints,
     awayWinner: game.awayWinner,
@@ -156,9 +174,11 @@ export const getBroadcasts = async (
   conference?: string,
   season?: number,
   seasonType?: SeasonType,
+  tournament?: string,
 ): Promise<GameMediaInfo[]> => {
   let query = db
     .selectFrom('gameInfo')
+    .leftJoin('tournament', 'tournament.id', 'gameInfo.tournamentId')
     .select((eb) => [
       'gameInfo.id as gameId',
       'gameInfo.season',
@@ -232,6 +252,16 @@ export const getBroadcasts = async (
     query = query.where('gameInfo.seasonType', '=', seasonType);
   }
 
+  if (tournament) {
+    query = query.where((eb) =>
+      eb(
+        eb.fn('lower', ['tournament.shortName']),
+        '=',
+        tournament.toLowerCase(),
+      ),
+    );
+  }
+
   const games = await query.execute();
   // @ts-ignore
   return games;
@@ -244,6 +274,7 @@ export const getGameTeamStatistics = async (
   conference?: string,
   season?: number,
   seasonType?: SeasonType,
+  tournament?: string,
 ): Promise<GameBoxScoreTeam[]> => {
   let query = db
     .selectFrom('game')
@@ -281,19 +312,23 @@ export const getGameTeamStatistics = async (
         ),
     )
     .leftJoin('conference as c2', 'ct2.conferenceId', 'c2.id')
+    .leftJoin('tournament', 'tournament.id', 'game.tournamentId')
     .select([
       'game.id',
       'game.season',
       'game.seasonLabel',
       'game.seasonType',
+      'tournament.shortName as tournament',
       'game.startDate',
       'game.startTimeTbd',
       'team.id as teamId',
       'team.school as team',
       'conference.abbreviation as conference',
+      'gameTeam.seed as teamSeed',
       't2.id as opponentId',
       't2.school as opponent',
       'c2.abbreviation as opponentConference',
+      'gt2.seed as opponentSeed',
       'game.neutralSite',
       'game.conferenceGame',
       'game.gameType',
@@ -402,6 +437,16 @@ export const getGameTeamStatistics = async (
     query = query.where('game.seasonType', '=', seasonType);
   }
 
+  if (tournament) {
+    query = query.where((eb) =>
+      eb(
+        eb.fn('lower', ['tournament.shortName']),
+        '=',
+        tournament.toLowerCase(),
+      ),
+    );
+  }
+
   const games = await query.execute();
 
   return games.map((game): GameBoxScoreTeam => {
@@ -482,14 +527,17 @@ export const getGameTeamStatistics = async (
       season: game.season,
       seasonLabel: game.seasonLabel,
       seasonType: game.seasonType as SeasonType,
+      tournament: game.tournament,
       startDate: game.startDate,
       startTimeTbd: game.startTimeTbd,
       teamId: game.teamId,
       team: game.team,
       conference: game.conference,
+      teamSeed: game.teamSeed,
       opponentId: game.opponentId,
       opponent: game.opponent,
       opponentConference: game.opponentConference,
+      opponentSeed: game.opponentSeed,
       neutralSite: game.neutralSite,
       conferenceGame: game.conferenceGame,
       gameType: game.gameType,
@@ -658,6 +706,7 @@ export const getGamePlayerStatistics = async (
   conference?: string,
   season?: number,
   seasonType?: SeasonType,
+  tournament?: string,
 ): Promise<GameBoxScorePlayers[]> => {
   let query = db
     .selectFrom('game')
@@ -695,19 +744,23 @@ export const getGamePlayerStatistics = async (
         ),
     )
     .leftJoin('conference as c2', 'ct2.conferenceId', 'c2.id')
+    .leftJoin('tournament', 'tournament.id', 'game.tournamentId')
     .select((eb) => [
       'game.id',
       'game.season',
       'game.seasonLabel',
       'game.seasonType',
+      'tournament.shortName as tournament',
       'game.startDate',
       'game.startTimeTbd',
       'team.id as teamId',
       'team.school as team',
       'conference.abbreviation as conference',
+      'gameTeam.seed as teamSeed',
       't2.id as opponentId',
       't2.school as opponent',
       'c2.abbreviation as opponentConference',
+      'gt2.seed as opponentSeed',
       'game.neutralSite',
       'game.conferenceGame',
       'game.gameType',
@@ -831,6 +884,16 @@ export const getGamePlayerStatistics = async (
     query = query.where('game.seasonType', '=', seasonType);
   }
 
+  if (tournament) {
+    query = query.where((eb) =>
+      eb(
+        eb.fn('lower', ['tournament.shortName']),
+        '=',
+        tournament.toLowerCase(),
+      ),
+    );
+  }
+
   const games = await query.execute();
   return games.map((game): GameBoxScorePlayers => {
     const gameMinutes =
@@ -852,6 +915,7 @@ export const getGamePlayerStatistics = async (
       season: game.season,
       seasonLabel: game.seasonLabel,
       seasonType: game.seasonType as SeasonType,
+      tournament: game.tournament,
       startDate: game.startDate,
       startTimeTbd: game.startTimeTbd,
       conferenceGame: game.conferenceGame,
@@ -861,9 +925,11 @@ export const getGamePlayerStatistics = async (
       teamId: game.teamId,
       team: game.team,
       conference: game.conference,
+      teamSeed: game.teamSeed,
       opponentId: game.opponentId,
       opponent: game.opponent,
       opponentConference: game.opponentConference,
+      opponentSeed: game.opponentSeed,
       gameMinutes,
       gamePace,
       players: game.players.map((player) => {

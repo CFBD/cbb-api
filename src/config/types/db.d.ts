@@ -164,6 +164,7 @@ export interface GameInfo {
   awayConferenceId: number | null;
   awayPeriodPoints: number[] | null;
   awayPoints: number | null;
+  awaySeed: number | null;
   awayTeam: string | null;
   awayTeamId: number | null;
   awayWinner: boolean | null;
@@ -174,6 +175,7 @@ export interface GameInfo {
   homeConferenceId: number | null;
   homePeriodPoints: number[] | null;
   homePoints: number | null;
+  homeSeed: number | null;
   homeTeam: string | null;
   homeTeamId: number | null;
   homeWinner: boolean | null;
@@ -252,6 +254,7 @@ export interface GameTeam {
   isWinner: boolean | null;
   periodPoints: number[] | null;
   points: number | null;
+  seed: number | null;
   teamId: number;
 }
 
@@ -436,6 +439,12 @@ export interface Team {
   srInfo: Json | null;
 }
 
+export interface Tournament {
+  id: number;
+  name: string;
+  shortName: string;
+}
+
 export interface Venue {
   capacity: number | null;
   city: string | null;
@@ -482,5 +491,6 @@ export interface DB {
   srs: Srs;
   substitution: Substitution;
   team: Team;
+  tournament: Tournament;
   venue: Venue;
 }

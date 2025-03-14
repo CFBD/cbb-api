@@ -17,6 +17,7 @@ export interface GameInfo {
   neutralSite: boolean;
   conferenceGame: boolean;
   gameType: string | null;
+  tournament: string | null;
   gameNotes: string | null;
   status: GameStatus;
   /**
@@ -36,6 +37,10 @@ export interface GameInfo {
   /**
    * @isInt
    */
+  homeSeed: number | null;
+  /**
+   * @isInt
+   */
   homePoints: number | null;
   /**
    * @isInt
@@ -52,6 +57,10 @@ export interface GameInfo {
    */
   awayConferenceId: number | null;
   awayConference: string | null;
+  /**
+   * @isInt
+   */
+  awaySeed: number | null;
   /**
    * @isInt
    */
@@ -82,6 +91,7 @@ export interface GameMediaInfo {
   season: number;
   seasonLabel: string;
   seasonType: SeasonType;
+  tournament: string | null;
   startDate: Date;
   startTimeTbd: boolean;
   /**
@@ -117,6 +127,7 @@ export interface GameBoxScoreTeam {
   season: number;
   seasonLabel: string;
   seasonType: SeasonType;
+  tournament: string | null;
   startDate: Date;
   startTimeTbd: boolean;
   /**
@@ -128,9 +139,17 @@ export interface GameBoxScoreTeam {
   /**
    * @isInt
    */
+  teamSeed: number | null;
+  /**
+   * @isInt
+   */
   opponentId: number;
   opponent: string;
   opponentConference: string | null;
+  /**
+   * @isInt
+   */
+  opponentSeed: number | null;
   neutralSite: boolean;
   conferenceGame: boolean;
   gameType: string | null;
@@ -210,6 +229,7 @@ export interface GameBoxScorePlayers {
   season: number;
   seasonLabel: string;
   seasonType: SeasonType;
+  tournament: string | null;
   startDate: Date;
   startTimeTbd: boolean;
   /**
@@ -221,9 +241,17 @@ export interface GameBoxScorePlayers {
   /**
    * @isInt
    */
+  teamSeed: number | null;
+  /**
+   * @isInt
+   */
   opponentId: number;
   opponent: string;
   opponentConference: string | null;
+  /**
+   * @isInt
+   */
+  opponentSeed: number | null;
   neutralSite: boolean;
   conferenceGame: boolean;
   gameType: string | null;
