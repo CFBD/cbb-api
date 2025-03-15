@@ -49,6 +49,10 @@ export const getTeams = async (
     query = query.where('conference.abbreviation', '=', conference);
   }
 
+  if (season) {
+    query = query.where('conference.id', 'is not', null);
+  }
+
   const teams = await query.execute();
 
   return teams;
