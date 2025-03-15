@@ -151,6 +151,7 @@ export interface GameBoxScoreTeam {
    */
   opponentSeed: number | null;
   neutralSite: boolean;
+  isHome: boolean;
   conferenceGame: boolean;
   gameType: string | null;
   notes: string | null;
@@ -253,6 +254,7 @@ export interface GameBoxScorePlayers {
    */
   opponentSeed: number | null;
   neutralSite: boolean;
+  isHome: boolean;
   conferenceGame: boolean;
   gameType: string | null;
   notes: string | null;
