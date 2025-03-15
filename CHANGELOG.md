@@ -1,3 +1,10 @@
+## [1.19.1](https://github.com/CFBD/cbb-api/compare/v1.19.0...v1.19.1) (2025-03-15)
+
+
+### Bug Fixes
+
+* **gameStats:** adding isHome flags ([aefe115](https://github.com/CFBD/cbb-api/commit/aefe115b5292d54857e0ababec46e1c5f06ee593))
+
 # [1.19.0](https://github.com/CFBD/cbb-api/compare/v1.18.2...v1.19.0) (2025-03-14)
 
 
