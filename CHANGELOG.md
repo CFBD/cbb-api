@@ -1,3 +1,10 @@
+## [1.19.2](https://github.com/CFBD/cbb-api/compare/v1.19.1...v1.19.2) (2025-03-15)
+
+
+### Bug Fixes
+
+* **teams:** filter non-D1 teams when a season filter is supplied ([f88b057](https://github.com/CFBD/cbb-api/commit/f88b0574538fb50df692e8b32a8bad0b8142998d))
+
 ## [1.19.1](https://github.com/CFBD/cbb-api/compare/v1.19.0...v1.19.1) (2025-03-15)
 
 
