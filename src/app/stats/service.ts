@@ -1,5 +1,10 @@
 import { GameStatus, SeasonType } from '../enums';
-import { PlayerSeasonStats, TeamSeasonStats } from './types';
+import {
+  PlayerSeasonShootingStats,
+  PlayerSeasonStats,
+  SeasonShootingStats,
+  TeamSeasonStats,
+} from './types';
 
 import { db } from '../../config/database';
 import { sql } from 'kysely';
@@ -8,6 +13,10 @@ import {
   calculatePlayerSeasonDefensiveRating,
   calculatePlayerSeasonOffenseRatings,
 } from '../../globals/calculations';
+
+const shootingTypes = [
+  558, 572, 574, 437, 20424, 20437, 20574, 20572, 20558, 30558,
+];
 
 export const getTeamSeasonStats = async (
   season?: number,
@@ -696,6 +705,790 @@ export const getPlayerSeasonStats = async (
             (40000 * (offensiveWinShares + defensiveWinShares)) /
               Number(player.minutes ?? 0),
           ) / 1000,
+      },
+    };
+  });
+};
+
+export const getTeamSeasonShootingStats = async (
+  season: number,
+  seasonType?: SeasonType,
+  team?: string,
+  conference?: string,
+  startDateRange?: Date,
+  endDateRange?: Date,
+): Promise<SeasonShootingStats[]> => {
+  if (!team && !conference) {
+    throw new ValidateError(
+      {
+        team: {
+          value: team,
+          message: 'Either team or conference parameter is required',
+        },
+        conference: {
+          value: conference,
+          message: 'Either team or conference parameter is required',
+        },
+      },
+      'Validation error',
+    );
+  }
+
+  let query = db
+    .selectFrom('team')
+    .innerJoin('gameTeam', 'team.id', 'gameTeam.teamId')
+    .innerJoin('game', 'gameTeam.gameId', 'game.id')
+    .innerJoin('conferenceTeam', (join) =>
+      join
+        .onRef('team.id', '=', 'conferenceTeam.teamId')
+        .onRef('conferenceTeam.startYear', '<=', 'game.season')
+        .on((eb) =>
+          eb.or([
+            eb('conferenceTeam.endYear', '>=', eb.ref('game.season')),
+            eb('conferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .innerJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .innerJoin('play', (join) =>
+      join
+        .onRef('game.id', '=', 'play.gameId')
+        .onRef('team.id', '=', 'play.teamId')
+        .on('play.playTypeId', 'in', shootingTypes),
+    )
+    .innerJoin('playType', 'play.playTypeId', 'playType.id')
+    .where('game.season', '=', season)
+    .groupBy([
+      'game.season',
+      'team.id',
+      'team.school',
+      'conference.abbreviation',
+    ])
+    .select([
+      'game.season',
+      'team.id as teamId',
+      'team.school as team',
+      'conference.abbreviation as conference',
+    ])
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', '=', 'DunkShot')
+        .as('dunkAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'DunkShot'),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('dunksMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'DunkShot'),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('dunksAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', 'in', ['LayUpShot', 'LayupShot'])
+        .as('layupAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('layupsMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('layupsAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', '=', 'TipShot')
+        .as('tipShotAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'TipShot'),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('tipShotsMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+          ]),
+        )
+        .as('twoPointJumperAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('twoPointJumpersMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('twoPointJumpersAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+          ]),
+        )
+        .as('threePointJumperAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('threePointJumpersMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('threePointJumpersAssisted'),
+    );
+
+  if (seasonType) {
+    query = query.where('game.seasonType', '=', seasonType);
+  }
+
+  if (team) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['team.school']),
+      '=',
+      team.toLowerCase(),
+    );
+  }
+
+  if (conference) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['conference.abbreviation']),
+      '=',
+      conference.toLowerCase(),
+    );
+  }
+
+  if (startDateRange) {
+    query = query.where('game.startDate', '>=', startDateRange);
+  }
+
+  if (endDateRange) {
+    query = query.where('game.startDate', '<=', endDateRange);
+  }
+
+  const teams = await query.execute();
+  return teams.map((team): SeasonShootingStats => {
+    const trackedShots =
+      Number(team.dunkAttempts) +
+      Number(team.layupAttempts) +
+      Number(team.tipShotAttempts) +
+      Number(team.twoPointJumperAttempts) +
+      Number(team.threePointJumperAttempts);
+
+    return {
+      season: team.season,
+      teamId: team.teamId,
+      team: team.team,
+      conference: team.conference,
+      trackedShots: Number(trackedShots),
+      assistedPct:
+        Number(trackedShots) > 0
+          ? Math.round(
+              ((Number(team.dunksAssisted) +
+                Number(team.layupsAssisted) +
+                Number(team.twoPointJumpersAssisted) +
+                Number(team.threePointJumpersAssisted)) /
+                Number(trackedShots)) *
+                1000,
+            ) / 10
+          : 0,
+      dunks: {
+        attempted: Number(team.dunkAttempts),
+        made: Number(team.dunksMade),
+        pct:
+          Number(team.dunkAttempts) > 0
+            ? Math.round(
+                (Number(team.dunksMade) / Number(team.dunkAttempts)) * 1000,
+              ) / 10
+            : 0,
+        assisted: Number(team.dunksAssisted),
+        assistedPct:
+          Number(team.dunksMade) > 0
+            ? Math.round(
+                (Number(team.dunksAssisted) / Number(team.dunksMade)) * 1000,
+              ) / 10
+            : 0,
+      },
+      layups: {
+        attempted: Number(team.layupAttempts),
+        made: Number(team.layupsMade),
+        pct:
+          Number(team.layupAttempts) > 0
+            ? Math.round(
+                (Number(team.layupsMade) / Number(team.layupAttempts)) * 1000,
+              ) / 10
+            : 0,
+        assisted: Number(team.layupsAssisted),
+        assistedPct:
+          Number(team.layupsMade) > 0
+            ? Math.round(
+                (Number(team.layupsAssisted) / Number(team.layupsMade)) * 1000,
+              ) / 10
+            : 0,
+      },
+      tipIns: {
+        attempted: Number(team.tipShotAttempts),
+        made: Number(team.tipShotsMade),
+        pct:
+          Number(team.tipShotAttempts) > 0
+            ? Math.round(
+                (Number(team.tipShotsMade) / Number(team.tipShotAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      twoPointJumpers: {
+        attempted: Number(team.twoPointJumperAttempts),
+        made: Number(team.twoPointJumpersMade),
+        pct:
+          Number(team.twoPointJumperAttempts) > 0
+            ? Math.round(
+                (Number(team.twoPointJumpersMade) /
+                  Number(team.twoPointJumperAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+        assisted: Number(team.twoPointJumpersAssisted),
+        assistedPct:
+          Number(team.twoPointJumpersMade) > 0
+            ? Math.round(
+                (Number(team.twoPointJumpersAssisted) /
+                  Number(team.twoPointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      threePointJumpers: {
+        attempted: Number(team.threePointJumperAttempts),
+        made: Number(team.threePointJumpersMade),
+        pct:
+          Number(team.threePointJumperAttempts) > 0
+            ? Math.round(
+                (Number(team.threePointJumpersMade) /
+                  Number(team.threePointJumperAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+        assisted: Number(team.threePointJumpersAssisted),
+        assistedPct:
+          Number(team.threePointJumpersMade) > 0
+            ? Math.round(
+                (Number(team.threePointJumpersAssisted) /
+                  Number(team.threePointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      attemptsBreakdown: {
+        dunks:
+          Math.round(
+            (Number(team.dunkAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        layups:
+          Math.round(
+            (Number(team.layupAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        tipIns:
+          Math.round(
+            (Number(team.tipShotAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        twoPointJumpers:
+          Math.round(
+            (Number(team.twoPointJumperAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        threePointJumpers:
+          Math.round(
+            (Number(team.threePointJumperAttempts) / Number(trackedShots)) *
+              1000,
+          ) / 10,
+      },
+    };
+  });
+};
+
+export const getPlayerSeasonShootingStats = async (
+  season: number,
+  seasonType?: SeasonType,
+  team?: string,
+  conference?: string,
+  startDateRange?: Date,
+  endDateRange?: Date,
+): Promise<PlayerSeasonShootingStats[]> => {
+  if (!team && !conference) {
+    throw new ValidateError(
+      {
+        team: {
+          value: team,
+          message: 'Either team or conference parameter is required',
+        },
+        conference: {
+          value: conference,
+          message: 'Either team or conference parameter is required',
+        },
+      },
+      'Validation error',
+    );
+  }
+
+  let query = db
+    .selectFrom('team')
+    .innerJoin('gameTeam', 'team.id', 'gameTeam.teamId')
+    .innerJoin('game', 'gameTeam.gameId', 'game.id')
+    .innerJoin('conferenceTeam', (join) =>
+      join
+        .onRef('team.id', '=', 'conferenceTeam.teamId')
+        .onRef('conferenceTeam.startYear', '<=', 'game.season')
+        .on((eb) =>
+          eb.or([
+            eb('conferenceTeam.endYear', '>=', eb.ref('game.season')),
+            eb('conferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .innerJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .innerJoin('play', (join) =>
+      join
+        .onRef('game.id', '=', 'play.gameId')
+        .onRef('team.id', '=', 'play.teamId')
+        .on('play.playTypeId', 'in', shootingTypes),
+    )
+    .innerJoin('athlete', (join) =>
+      join
+        .on(
+          'athlete.sourceId',
+          '=',
+          sql<string>`ANY(play.participants:: varchar[])`,
+        )
+        .on((eb) =>
+          eb.or([
+            eb(
+              'play.playText',
+              'like',
+              sql<string>`CONCAT('%', athlete.name, ' made %')`,
+            ),
+            eb(
+              'play.playText',
+              'like',
+              sql<string>`CONCAT('%', athlete.name, ' missed %')`,
+            ),
+          ]),
+        ),
+    )
+    .innerJoin('playType', 'play.playTypeId', 'playType.id')
+    .where('game.season', '=', season)
+    .groupBy([
+      'game.season',
+      'team.id',
+      'team.school',
+      'conference.abbreviation',
+      'athlete.id',
+      'athlete.name',
+    ])
+    .select([
+      'game.season',
+      'team.id as teamId',
+      'team.school as team',
+      'conference.abbreviation as conference',
+      'athlete.id',
+      'athlete.name',
+    ])
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', '=', 'DunkShot')
+        .as('dunkAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'DunkShot'),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('dunksMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'DunkShot'),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('dunksAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', 'in', ['LayUpShot', 'LayupShot'])
+        .as('layupAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('layupsMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('layupsAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('playType.name', '=', 'TipShot')
+        .as('tipShotAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'TipShot'),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('tipShotsMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+          ]),
+        )
+        .as('twoPointJumperAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('twoPointJumpersMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('playType.name', '=', 'JumpShot'),
+            qb('play.scoreValue', '=', 2),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('twoPointJumpersAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+          ]),
+        )
+        .as('threePointJumperAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('threePointJumpersMade'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.scoreValue', '=', 3),
+            qb('play.scoringPlay', '=', true),
+            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+          ]),
+        )
+        .as('threePointJumpersAssisted'),
+    );
+
+  if (seasonType) {
+    query = query.where('game.seasonType', '=', seasonType);
+  }
+
+  if (team) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['team.school']),
+      '=',
+      team.toLowerCase(),
+    );
+  }
+
+  if (conference) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['conference.abbreviation']),
+      '=',
+      conference.toLowerCase(),
+    );
+  }
+
+  if (startDateRange) {
+    query = query.where('game.startDate', '>=', startDateRange);
+  }
+
+  if (endDateRange) {
+    query = query.where('game.startDate', '<=', endDateRange);
+  }
+
+  const players = await query.execute();
+  return players.map((player): PlayerSeasonShootingStats => {
+    const trackedShots =
+      Number(player.dunkAttempts) +
+      Number(player.layupAttempts) +
+      Number(player.tipShotAttempts) +
+      Number(player.twoPointJumperAttempts) +
+      Number(player.threePointJumperAttempts);
+
+    return {
+      season: player.season,
+      teamId: player.teamId,
+      team: player.team,
+      conference: player.conference,
+      athleteId: player.id,
+      athleteName: player.name,
+      trackedShots: Number(trackedShots),
+      assistedPct:
+        Number(trackedShots) > 0
+          ? Math.round(
+              ((Number(player.dunksAssisted) +
+                Number(player.layupsAssisted) +
+                Number(player.twoPointJumpersAssisted) +
+                Number(player.threePointJumpersAssisted)) /
+                Number(trackedShots)) *
+                1000,
+            ) / 10
+          : 0,
+      dunks: {
+        attempted: Number(player.dunkAttempts),
+        made: Number(player.dunksMade),
+        pct:
+          Number(player.dunkAttempts) > 0
+            ? Math.round(
+                (Number(player.dunksMade) / Number(player.dunkAttempts)) * 1000,
+              ) / 10
+            : 0,
+        assisted: Number(player.dunksAssisted),
+        assistedPct:
+          Number(player.dunksMade) > 0
+            ? Math.round(
+                (Number(player.dunksAssisted) / Number(player.dunksMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      layups: {
+        attempted: Number(player.layupAttempts),
+        made: Number(player.layupsMade),
+        pct:
+          Number(player.layupAttempts) > 0
+            ? Math.round(
+                (Number(player.layupsMade) / Number(player.layupAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+        assisted: Number(player.layupsAssisted),
+        assistedPct:
+          Number(player.layupsMade) > 0
+            ? Math.round(
+                (Number(player.layupsAssisted) / Number(player.layupsMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      tipIns: {
+        attempted: Number(player.tipShotAttempts),
+        made: Number(player.tipShotsMade),
+        pct:
+          Number(player.tipShotAttempts) > 0
+            ? Math.round(
+                (Number(player.tipShotsMade) / Number(player.tipShotAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      twoPointJumpers: {
+        attempted: Number(player.twoPointJumperAttempts),
+        made: Number(player.twoPointJumpersMade),
+        pct:
+          Number(player.twoPointJumperAttempts) > 0
+            ? Math.round(
+                (Number(player.twoPointJumpersMade) /
+                  Number(player.twoPointJumperAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+        assisted: Number(player.twoPointJumpersAssisted),
+        assistedPct:
+          Number(player.twoPointJumpersMade) > 0
+            ? Math.round(
+                (Number(player.twoPointJumpersAssisted) /
+                  Number(player.twoPointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      threePointJumpers: {
+        attempted: Number(player.threePointJumperAttempts),
+        made: Number(player.threePointJumpersMade),
+        pct:
+          Number(player.threePointJumperAttempts) > 0
+            ? Math.round(
+                (Number(player.threePointJumpersMade) /
+                  Number(player.threePointJumperAttempts)) *
+                  1000,
+              ) / 10
+            : 0,
+        assisted: Number(player.threePointJumpersAssisted),
+        assistedPct:
+          Number(player.threePointJumpersMade) > 0
+            ? Math.round(
+                (Number(player.threePointJumpersAssisted) /
+                  Number(player.threePointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      attemptsBreakdown: {
+        dunks:
+          Math.round(
+            (Number(player.dunkAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        layups:
+          Math.round(
+            (Number(player.layupAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        tipIns:
+          Math.round(
+            (Number(player.tipShotAttempts) / Number(trackedShots)) * 1000,
+          ) / 10,
+        twoPointJumpers:
+          Math.round(
+            (Number(player.twoPointJumperAttempts) / Number(trackedShots)) *
+              1000,
+          ) / 10,
+        threePointJumpers:
+          Math.round(
+            (Number(player.threePointJumperAttempts) / Number(trackedShots)) *
+              1000,
+          ) / 10,
       },
     };
   });

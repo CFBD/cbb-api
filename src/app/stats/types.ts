@@ -147,3 +147,77 @@ export interface PlayerSeasonStats {
     totalPer40: number | null;
   };
 }
+
+export interface ShotTypeBreakdown {
+  /**
+   * @isInt
+   */
+  made: number;
+  /**
+   * @isInt
+   */
+  attempted: number;
+  pct: number;
+}
+
+export interface SeasonShootingStats {
+  /**
+   * @isInt
+   */
+  season: number;
+  /**
+   * @isInt
+   */
+  teamId: number;
+  team: string;
+  conference: string | null;
+  /**
+   * @isInt
+   */
+  trackedShots: number;
+  assistedPct: number;
+  dunks: ShotTypeBreakdown & {
+    /**
+     * @isInt
+     */
+    assisted: number;
+    assistedPct: number;
+  };
+  layups: ShotTypeBreakdown & {
+    /**
+     * @isInt
+     */
+    assisted: number;
+    assistedPct: number;
+  };
+  tipIns: ShotTypeBreakdown;
+  twoPointJumpers: ShotTypeBreakdown & {
+    /**
+     * @isInt
+     */
+    assisted: number;
+    assistedPct: number;
+  };
+  threePointJumpers: ShotTypeBreakdown & {
+    /**
+     * @isInt
+     */
+    assisted: number;
+    assistedPct: number;
+  };
+  attemptsBreakdown: {
+    dunks: number;
+    layups: number;
+    tipIns: number;
+    twoPointJumpers: number;
+    threePointJumpers: number;
+  };
+}
+
+export interface PlayerSeasonShootingStats extends SeasonShootingStats {
+  /**
+   * @isInt
+   */
+  athleteId: number;
+  athleteName: string;
+}
