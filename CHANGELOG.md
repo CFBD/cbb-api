@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/CFBD/cbb-api/compare/v1.19.2...v1.20.0) (2025-03-16)
+
+
+### Features
+
+* **stats:** shot tracking endpoints ([9ebea11](https://github.com/CFBD/cbb-api/commit/9ebea116eabe0a4823a520e492020906d300dae5))
+
 ## [1.19.2](https://github.com/CFBD/cbb-api/compare/v1.19.1...v1.19.2) (2025-03-15)
 
 
