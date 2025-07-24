@@ -284,7 +284,8 @@ export const getTeamSeasonStats = async (
                 Number(team.fga),
             ) / 10,
           turnoverRatio:
-            Math.round((Number(team.to) / Number(team.possessions)) * 10) / 10,
+            Math.round((Number(team.to) / Number(team.possessions)) * 100) /
+            100,
           offensiveReboundPct:
             Math.round(1000 * (Number(team.oreb) / Number(team.reb))) / 10,
           freeThrowRate:
@@ -374,8 +375,8 @@ export const getTeamSeasonStats = async (
             ) / 10,
           turnoverRatio:
             Math.round(
-              (Number(team.toOpp) / Number(team.possessionsOpp)) * 10,
-            ) / 10,
+              (Number(team.toOpp) / Number(team.possessionsOpp)) * 100,
+            ) / 100,
           offensiveReboundPct:
             Math.round(1000 * (Number(team.orebOpp) / Number(team.rebOpp))) /
             10,
