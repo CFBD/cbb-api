@@ -1,3 +1,10 @@
+## [1.20.1](https://github.com/CFBD/cbb-api/compare/v1.20.0...v1.20.1) (2025-07-24)
+
+
+### Bug Fixes
+
+* **teamStats:** rounding for turnover ratio ([6fcd0c4](https://github.com/CFBD/cbb-api/commit/6fcd0c49a34b679e0b6df6f6cd9362fb1e7b9a8c))
+
 # [1.20.0](https://github.com/CFBD/cbb-api/compare/v1.19.2...v1.20.0) (2025-03-16)
 
 
