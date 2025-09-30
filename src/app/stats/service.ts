@@ -652,8 +652,8 @@ export const getPlayerSeasonStats = async (
         Math.round(
           (Number(player.points) /
             (2 * (Number(player.fga) + 0.44 * Number(player.fta)))) *
-            10,
-        ) / 10,
+            1000,
+        ) / 1000,
       fieldGoals: {
         made: Number(player.fgm),
         attempted: Number(player.fga),
