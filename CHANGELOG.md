@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/CFBD/cbb-api/compare/v1.20.2...v1.21.0) (2025-10-22)
+
+
+### Features
+
+* **stats:** adding free throws to shot breakdowns ([3f27aac](https://github.com/CFBD/cbb-api/commit/3f27aacab069b263deb9c6d89d30a3e76f651723))
+
 ## [1.20.2](https://github.com/CFBD/cbb-api/compare/v1.20.1...v1.20.2) (2025-09-30)
 
 
