@@ -176,6 +176,7 @@ export interface SeasonShootingStats {
    */
   trackedShots: number;
   assistedPct: number;
+  freeThrowRate: number;
   dunks: ShotTypeBreakdown & {
     /**
      * @isInt
@@ -205,6 +206,7 @@ export interface SeasonShootingStats {
     assisted: number;
     assistedPct: number;
   };
+  freeThrows: ShotTypeBreakdown;
   attemptsBreakdown: {
     dunks: number;
     layups: number;

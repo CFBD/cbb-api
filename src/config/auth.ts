@@ -41,7 +41,7 @@ export const expressAuthentication = async (
     ) {
       return Promise.reject(
         new AuthorizationError(
-          'Unauthorized. Did you forget to add "Bearer " before your key? Go to CollegeFootballData.com to register for your free API key. See the CFBD Blog for examples on usage: https://blog.collegefootballdata.com/using-api-keys-with-the-cfbd-api.',
+          'Unauthorized. Did you forget to add "Bearer " before your key? Go to CollegeBasketballData.com to register for your free API key. See the CFBD Blog for examples on usage: https://blog.collegefootballdata.com/using-api-keys-with-the-cfbd-api.',
         ),
       );
     } else {
@@ -49,7 +49,7 @@ export const expressAuthentication = async (
       if (!token?.groups?.['token']) {
         return Promise.reject(
           new AuthorizationError(
-            'Unauthorized. No token provided. Go to CollegeFootballData.com to register for your free API key.',
+            'Unauthorized. No token provided. Go to CollegeBasketballData.com to register for your free API key.',
           ),
         );
       } else {

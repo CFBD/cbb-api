@@ -15,7 +15,7 @@ import {
 } from '../../globals/calculations';
 
 const shootingTypes = [
-  558, 572, 574, 437, 20424, 20437, 20574, 20572, 20558, 30558,
+  558, 572, 574, 437, 20424, 20437, 20574, 20572, 20558, 30558, 540,
 ];
 
 export const getTeamSeasonStats = async (
@@ -917,6 +917,23 @@ export const getTeamSeasonShootingStats = async (
           ]),
         )
         .as('threePointJumpersAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('play.playTypeId', '=', 540)
+        .as('freeThrowAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', '=', 540),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('freeThrowsMade'),
     );
 
   if (seasonType) {
@@ -962,6 +979,13 @@ export const getTeamSeasonShootingStats = async (
       team: team.team,
       conference: team.conference,
       trackedShots: Number(trackedShots),
+      freeThrowRate:
+        Number(trackedShots) > 0
+          ? Math.round(
+              (1000 * Number(team.freeThrowAttempts ?? 0)) /
+                Number(trackedShots),
+            ) / 10
+          : 0,
       assistedPct:
         Number(trackedShots) > 0
           ? Math.round(
@@ -1056,6 +1080,17 @@ export const getTeamSeasonShootingStats = async (
             ? Math.round(
                 (Number(team.threePointJumpersAssisted) /
                   Number(team.threePointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      freeThrows: {
+        attempted: Number(team.freeThrowAttempts),
+        made: Number(team.freeThrowsMade),
+        pct:
+          Number(team.freeThrowAttempts) > 0
+            ? Math.round(
+                (Number(team.freeThrowsMade) / Number(team.freeThrowAttempts)) *
                   1000,
               ) / 10
             : 0,
@@ -1319,6 +1354,23 @@ export const getPlayerSeasonShootingStats = async (
           ]),
         )
         .as('threePointJumpersAssisted'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere('play.playTypeId', '=', 540)
+        .as('freeThrowAttempts'),
+    )
+    .select((eb) =>
+      eb.fn
+        .countAll()
+        .filterWhere((qb) =>
+          qb.and([
+            qb('play.playTypeId', '=', 540),
+            qb('play.scoringPlay', '=', true),
+          ]),
+        )
+        .as('freeThrowsMade'),
     );
 
   if (seasonType) {
@@ -1366,6 +1418,13 @@ export const getPlayerSeasonShootingStats = async (
       athleteId: player.id,
       athleteName: player.name,
       trackedShots: Number(trackedShots),
+      freeThrowRate:
+        Number(trackedShots) > 0
+          ? Math.round(
+              (1000 * Number(player.freeThrowAttempts ?? 0)) /
+                Number(trackedShots),
+            ) / 10
+          : 0,
       assistedPct:
         Number(trackedShots) > 0
           ? Math.round(
@@ -1463,6 +1522,18 @@ export const getPlayerSeasonShootingStats = async (
             ? Math.round(
                 (Number(player.threePointJumpersAssisted) /
                   Number(player.threePointJumpersMade)) *
+                  1000,
+              ) / 10
+            : 0,
+      },
+      freeThrows: {
+        attempted: Number(player.freeThrowAttempts),
+        made: Number(player.freeThrowsMade),
+        pct:
+          Number(player.freeThrowAttempts) > 0
+            ? Math.round(
+                (Number(player.freeThrowsMade) /
+                  Number(player.freeThrowAttempts)) *
                   1000,
               ) / 10
             : 0,

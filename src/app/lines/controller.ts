@@ -34,6 +34,9 @@ export class LinesController extends Controller {
     );
   }
 
+  /**
+   * Returns a list of available line providers
+   */
   @Get('providers')
   public async getProviders(): Promise<LineProviderInfo[]> {
     return await getProviders();
