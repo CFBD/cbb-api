@@ -299,7 +299,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          repository: john-b-edwards/cbbd-r
+          repository: CFBD/cbbd-r
           token: ${{ secrets.GH_PAT }}
           ref: main
           path: cbbd-r
