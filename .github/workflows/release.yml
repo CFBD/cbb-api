@@ -275,3 +275,47 @@ jobs:
             echo "Pushing to remote..."
             git push
           fi
+
+  buildR:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+            extra-packages: |
+              jsonlite
+              snakecase
+              purrr
+              stringr
+              styler
+              devtools
+              data.table,
+              janitor,
+              keyring,
+              RcppSimdJson
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: john-b-edwards/cbbd-r
+          token: ${{ secrets.GH_PAT }}
+          ref: main
+          path: cbbd-r
+      - name: Copy and push generated code
+        run: |
+          cd cbbd-r
+          echo "Building package..."
+          Rscript scripts/build-package.R
+          echo "Configuring git..."
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git status --porcelain --
+          then
+            git add .
+            echo "Committing changes ..."
+            git commit -am "$COMMIT_MESSAGE"
+            echo "Pushing to remote..."
+            git push
+          fi
