@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/CFBD/cbb-api/compare/v1.21.0...v1.21.1) (2025-10-29)
+
+
+### Bug Fixes
+
+* **ci:** workflow tree ([26953d9](https://github.com/CFBD/cbb-api/commit/26953d9b7c40f04ded0f01be0849813ff327e068))
+
 # [1.21.0](https://github.com/CFBD/cbb-api/compare/v1.20.2...v1.21.0) (2025-10-22)
 
 
