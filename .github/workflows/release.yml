@@ -277,6 +277,7 @@ jobs:
           fi
 
   buildR:
+    needs: deploy
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -285,17 +286,17 @@ jobs:
           use-public-rspm: true
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-            extra-packages: |
-              jsonlite
-              snakecase
-              purrr
-              stringr
-              styler
-              devtools
-              data.table,
-              janitor,
-              keyring,
-              RcppSimdJson
+          extra-packages: |
+            jsonlite
+            snakecase
+            purrr
+            stringr
+            styler
+            devtools
+            data.table,
+            janitor,
+            keyring,
+            RcppSimdJson
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
