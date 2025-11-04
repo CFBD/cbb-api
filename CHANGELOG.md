@@ -1,3 +1,10 @@
+## [1.21.2](https://github.com/CFBD/cbb-api/compare/v1.21.1...v1.21.2) (2025-11-04)
+
+
+### Bug Fixes
+
+* **lineups:** remove extraneous filtering for game lineup combos ([6450d25](https://github.com/CFBD/cbb-api/commit/6450d252442d91eabbd838d477bd6c07e2118553))
+
 ## [1.21.1](https://github.com/CFBD/cbb-api/compare/v1.21.0...v1.21.1) (2025-10-29)
 
 
