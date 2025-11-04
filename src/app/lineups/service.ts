@@ -788,12 +788,11 @@ const getLineupStats = async (
   const results = await query.execute();
   return results
     .filter(
-      (result) =>
-        Number(result.duration ?? 0) >= 0 &&
-        Number(result.possessions ?? 0) > 0 &&
-        Number(result.oppPossessions ?? 0) > 0 &&
-        Number(result.points ?? 0) > 0 &&
-        Number(result.oppPoints ?? 0) > 0,
+      (result) => Number(result.duration ?? 0) >= 0, //&&
+      // Number(result.possessions ?? 0) > 0 &&
+      // Number(result.oppPossessions ?? 0) > 0 &&
+      // Number(result.points ?? 0) > 0 &&
+      // Number(result.oppPoints ?? 0) > 0,
     )
     .map((result): LineupStats => {
       return {
