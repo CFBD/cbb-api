@@ -35,9 +35,6 @@ export interface Recruit {
    */
   year: number;
   name: string;
-  /**
-   * @isInt
-   */
   heightInches: number | null;
   /**
    * @isInt

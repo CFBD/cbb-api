@@ -55,9 +55,6 @@ export interface DraftPick {
    * @isInt
    */
   positionRank: number | null;
-  /**
-   * @isInt
-   */
   height: number | null;
   /**
    * @isInt
