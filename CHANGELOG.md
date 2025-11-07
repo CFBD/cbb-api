@@ -1,3 +1,10 @@
+## [1.21.3](https://github.com/CFBD/cbb-api/compare/v1.21.2...v1.21.3) (2025-11-07)
+
+
+### Bug Fixes
+
+* height values should be numeric ([08ab0cd](https://github.com/CFBD/cbb-api/commit/08ab0cdc8108c610eb3476e445b201a371043892))
+
 ## [1.21.2](https://github.com/CFBD/cbb-api/compare/v1.21.1...v1.21.2) (2025-11-04)
 
 
