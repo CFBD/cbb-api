@@ -55,8 +55,13 @@ export const getPlaysByTournament = async (
 export const getPlaysByDate = async (
   date: Date,
   shootingPlaysOnly?: boolean,
+  utcOffset?: number,
 ): Promise<PlayInfo[]> => {
   const endRange = new Date(date);
+  if (utcOffset) {
+    date.setHours(date.getHours() + utcOffset);
+  }
+
   endRange.setDate(date.getDate() + 1);
   return await getPlays(
     undefined,

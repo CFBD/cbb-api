@@ -66,13 +66,15 @@ export class PlaysController extends Controller {
    * Retrieve all plays for a given UTC date
    * @param date Required date filter in ISO 8601 format (YYYY-MM-DD)
    * @param shootingPlaysOnly Optional filter to only return shooting plays
+   * @param utcOffset Optional UTC offset in hours to adjust the date range
    */
   @Get('date')
   public async getPlaysByDate(
     @Query() date: Date,
     @Query() shootingPlaysOnly?: boolean,
+    @Query() utcOffset?: number,
   ): Promise<PlayInfo[]> {
-    return await getPlaysByDate(date, shootingPlaysOnly);
+    return await getPlaysByDate(date, shootingPlaysOnly, utcOffset);
   }
 
   /**
