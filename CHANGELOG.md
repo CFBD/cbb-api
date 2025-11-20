@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/CFBD/cbb-api/compare/v1.21.3...v1.22.0) (2025-11-20)
+
+
+### Features
+
+* **plays:** add utcOffset param to plays by date ([fe18507](https://github.com/CFBD/cbb-api/commit/fe1850765a17ea8a90a18630bbc7f64e059f535d))
+
 ## [1.21.3](https://github.com/CFBD/cbb-api/compare/v1.21.2...v1.21.3) (2025-11-07)
 
 
