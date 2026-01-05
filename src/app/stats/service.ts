@@ -15,7 +15,8 @@ import {
 } from '../../globals/calculations';
 
 const shootingTypes = [
-  558, 572, 574, 437, 20424, 20437, 20574, 20572, 20558, 30558, 540,
+  558, 572, 574, 437, 20424, 20429, 20437, 20574, 20572, 20558, 30495, 30558,
+  540,
 ];
 
 export const getTeamSeasonStats = async (
