@@ -1,3 +1,10 @@
+## [1.22.3](https://github.com/CFBD/cbb-api/compare/v1.22.2...v1.22.3) (2026-01-05)
+
+
+### Bug Fixes
+
+* **shots:** adding new shot types ([b34d461](https://github.com/CFBD/cbb-api/commit/b34d461735ee2b7764f62d6150cad192806fb106))
+
 ## [1.22.2](https://github.com/CFBD/cbb-api/compare/v1.22.1...v1.22.2) (2026-01-05)
 
 
