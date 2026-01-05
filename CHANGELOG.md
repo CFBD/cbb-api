@@ -1,3 +1,10 @@
+## [1.22.2](https://github.com/CFBD/cbb-api/compare/v1.22.1...v1.22.2) (2026-01-05)
+
+
+### Bug Fixes
+
+* **plays:** assist parsing for new pbp format ([f25d1cd](https://github.com/CFBD/cbb-api/commit/f25d1cd70d9456707c8578df35d8a6d07b6e223d))
+
 ## [1.22.1](https://github.com/CFBD/cbb-api/compare/v1.22.0...v1.22.1) (2026-01-05)
 
 
