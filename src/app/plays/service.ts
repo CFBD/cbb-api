@@ -302,7 +302,8 @@ const getPlays = async (
       const assistedBy =
         play.shootingPlay &&
         shooter &&
-        play.playText?.toLowerCase().includes('assisted by') &&
+        (play.playText?.toLowerCase().includes('assisted by') ||
+          play.playText?.toLocaleLowerCase().includes('assists')) &&
         (play.participants?.length ?? 0) > 1
           ? (play.participants.find((p) => p.id !== shooter?.id) ?? null)
           : null;
