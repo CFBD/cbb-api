@@ -126,7 +126,7 @@ const getShooter = (
   } else if (participants.length === 1) {
     return participants[0];
   } else {
-    const parts = playText.split(' made ');
+    const parts = playText.split(/ (makes|made) /g);
     if (parts.length > 1) {
       const shooterText = parts[0].trim();
       let shooter =
