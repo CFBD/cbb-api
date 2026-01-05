@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/CFBD/cbb-api/compare/v1.22.0...v1.22.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* **plays:** shooter info parsing with new pbp format ([94b16b4](https://github.com/CFBD/cbb-api/commit/94b16b4ce2d6f47ea8e1cc33e6b517057786deb8))
+
 # [1.22.0](https://github.com/CFBD/cbb-api/compare/v1.21.3...v1.22.0) (2025-11-20)
 
 
