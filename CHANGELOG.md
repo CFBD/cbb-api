@@ -1,3 +1,10 @@
+## [1.22.4](https://github.com/CFBD/cbb-api/compare/v1.22.3...v1.22.4) (2026-01-05)
+
+
+### Bug Fixes
+
+* **shots:** tracked shot parsing ([a69c3c3](https://github.com/CFBD/cbb-api/commit/a69c3c35016bf3ee40fd795a43dd9243305d291c))
+
 ## [1.22.3](https://github.com/CFBD/cbb-api/compare/v1.22.2...v1.22.3) (2026-01-05)
 
 
