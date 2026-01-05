@@ -796,7 +796,10 @@ export const getTeamSeasonShootingStats = async (
           qb.and([
             qb('playType.name', '=', 'DunkShot'),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('dunksAssisted'),
@@ -825,7 +828,10 @@ export const getTeamSeasonShootingStats = async (
           qb.and([
             qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('layupsAssisted'),
@@ -852,7 +858,7 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
           ]),
         )
@@ -863,7 +869,7 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
             qb('play.scoringPlay', '=', true),
           ]),
@@ -875,10 +881,13 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('twoPointJumpersAssisted'),
@@ -888,7 +897,7 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
           ]),
         )
@@ -899,7 +908,7 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
             qb('play.scoringPlay', '=', true),
           ]),
@@ -911,10 +920,13 @@ export const getTeamSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('threePointJumpersAssisted'),
@@ -1186,7 +1198,17 @@ export const getPlayerSeasonShootingStats = async (
             eb(
               'play.playText',
               'like',
+              sql<string>`CONCAT('%', athlete.name, ' makes %')`,
+            ),
+            eb(
+              'play.playText',
+              'like',
               sql<string>`CONCAT('%', athlete.name, ' missed %')`,
+            ),
+            eb(
+              'play.playText',
+              'like',
+              sql<string>`CONCAT('%', athlete.name, ' misses %')`,
             ),
           ]),
         ),
@@ -1233,7 +1255,10 @@ export const getPlayerSeasonShootingStats = async (
           qb.and([
             qb('playType.name', '=', 'DunkShot'),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('dunksAssisted'),
@@ -1262,7 +1287,10 @@ export const getPlayerSeasonShootingStats = async (
           qb.and([
             qb('playType.name', 'in', ['LayUpShot', 'LayupShot']),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('layupsAssisted'),
@@ -1289,7 +1317,7 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
           ]),
         )
@@ -1300,7 +1328,7 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
             qb('play.scoringPlay', '=', true),
           ]),
@@ -1312,10 +1340,13 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('playType.name', '=', 'JumpShot'),
+            qb('playType.name', 'in', ['JumpShot', 'RegularJumpShot']),
             qb('play.scoreValue', '=', 2),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('twoPointJumpersAssisted'),
@@ -1325,7 +1356,7 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
           ]),
         )
@@ -1336,7 +1367,7 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
             qb('play.scoringPlay', '=', true),
           ]),
@@ -1348,10 +1379,13 @@ export const getPlayerSeasonShootingStats = async (
         .countAll()
         .filterWhere((qb) =>
           qb.and([
-            qb('play.playTypeId', 'in', [558, 30558]),
+            qb('play.playTypeId', 'in', [558, 30558, 30495]),
             qb('play.scoreValue', '=', 3),
             qb('play.scoringPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)'),
+            ]),
           ]),
         )
         .as('threePointJumpersAssisted'),
