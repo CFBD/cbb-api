@@ -666,7 +666,10 @@ const getLineupStats = async (
           qb.and([
             qb('play.teamId', '=', qb.ref('ranges.teamId')),
             qb('play.shootingPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)%'),
+            ]),
           ]),
         )
         .as('assists'),
@@ -678,7 +681,10 @@ const getLineupStats = async (
           qb.and([
             qb('play.teamId', '<>', qb.ref('ranges.teamId')),
             qb('play.shootingPlay', '=', true),
-            qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+            qb.or([
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assisted by %'),
+              qb(qb.fn('lower', ['play.playText']), 'like', '% assists)%'),
+            ]),
           ]),
         )
         .as('oppAssists'),
