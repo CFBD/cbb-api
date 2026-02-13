@@ -1,3 +1,10 @@
+## [1.22.5](https://github.com/CFBD/cbb-api/compare/v1.22.4...v1.22.5) (2026-02-13)
+
+
+### Bug Fixes
+
+* **lineups:** missing assists ([2c59a46](https://github.com/CFBD/cbb-api/commit/2c59a46dda4f4f1a9c4958e39d675828165d619b))
+
 ## [1.22.4](https://github.com/CFBD/cbb-api/compare/v1.22.3...v1.22.4) (2026-01-05)
 
 
