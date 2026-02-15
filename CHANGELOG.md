@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/CFBD/cbb-api/compare/v1.22.5...v1.23.0) (2026-02-15)
+
+
+### Features
+
+* **ratings:** initial Elo rollout ([1a7c2fe](https://github.com/CFBD/cbb-api/commit/1a7c2fed238a2560af4b9b6c6b94c325d700186f))
+
 ## [1.22.5](https://github.com/CFBD/cbb-api/compare/v1.22.4...v1.22.5) (2026-02-13)
 
 
