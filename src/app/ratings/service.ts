@@ -1,6 +1,6 @@
 import { db } from '../../config/database';
 
-import { AdjustedEfficiencyInfo, SrsInfo } from './types';
+import { AdjustedEfficiencyInfo, SrsInfo, TeamElo } from './types';
 
 export const getSrs = async (
   year?: number,
@@ -151,4 +151,77 @@ export const getAdjustedEfficiency = async (
       net: Number(r.netRank),
     },
   }));
+};
+
+export const getElo = async (
+  year?: number,
+  team?: string,
+  conference?: string,
+): Promise<TeamElo[]> => {
+  const query = db
+    .with('elos', (eb) => {
+      let cte = eb
+        .selectFrom('game')
+        .innerJoin('gameTeam', 'game.id', 'gameTeam.gameId')
+        .innerJoin('team', 'gameTeam.teamId', 'team.id')
+        .innerJoin('conferenceTeam', (join) =>
+          join
+            .onRef('team.id', '=', 'conferenceTeam.teamId')
+            .onRef('conferenceTeam.startYear', '<=', 'game.season')
+            .on((eb) =>
+              eb.or([
+                eb('conferenceTeam.endYear', 'is', null),
+                eb('conferenceTeam.endYear', '>=', eb.ref('game.season')),
+              ]),
+            ),
+        )
+        .innerJoin('conference', 'conferenceTeam.conferenceId', 'conference.id')
+        .where('gameTeam.endElo', 'is not', null)
+        .where('game.status', '=', 'final')
+        .select((eb) =>
+          eb.fn
+            .agg<number>('rank')
+            .over((over) =>
+              over
+                .partitionBy(['game.season', 'team.school'])
+                .orderBy('game.startDate', 'desc'),
+            )
+            .as('rowNum'),
+        )
+        .select([
+          'game.season',
+          'team.id as teamId',
+          'team.school as team',
+          'conference.name as conference',
+          'gameTeam.endElo as elo',
+        ]);
+
+      if (year) {
+        cte = cte.where('game.season', '=', year);
+      }
+
+      if (team) {
+        cte = cte.where((eb) =>
+          eb(eb.fn('lower', ['team.school']), '=', team.toLowerCase()),
+        );
+      }
+
+      if (conference) {
+        cte = cte.where((eb) =>
+          eb(
+            eb.fn('lower', ['conference.abbreviation']),
+            '=',
+            conference.toLowerCase(),
+          ),
+        );
+      }
+
+      return cte;
+    })
+    .selectFrom('elos')
+    .select(['season', 'teamId', 'team', 'conference', 'elo'])
+    .where('rowNum', '=', 1);
+
+  const results = await query.execute();
+  return results;
 };

@@ -32,3 +32,20 @@ export interface AdjustedEfficiencyInfo {
     net: number;
   };
 }
+
+export interface TeamElo {
+  /**
+   * @isInt
+   */
+  season: number;
+  /**
+   * @isInt
+   */
+  teamId: number;
+  team: string;
+  conference: string;
+  /**
+   * @isInt
+   */
+  elo: number | null;
+}

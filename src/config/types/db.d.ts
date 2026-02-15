@@ -162,9 +162,11 @@ export interface GameInfo {
   attendance: number | null;
   awayConference: string | null;
   awayConferenceId: number | null;
+  awayEndElo: number | null;
   awayPeriodPoints: number[] | null;
   awayPoints: number | null;
   awaySeed: number | null;
+  awayStartElo: number | null;
   awayTeam: string | null;
   awayTeamId: number | null;
   awayWinner: boolean | null;
@@ -173,9 +175,11 @@ export interface GameInfo {
   gameType: string | null;
   homeConference: string | null;
   homeConferenceId: number | null;
+  homeEndElo: number | null;
   homePeriodPoints: number[] | null;
   homePoints: number | null;
   homeSeed: number | null;
+  homeStartElo: number | null;
   homeTeam: string | null;
   homeTeamId: number | null;
   homeWinner: boolean | null;
@@ -249,12 +253,14 @@ export interface GamePlayerStats {
 
 export interface GameTeam {
   gameId: number;
+  endElo: number | null;
   id: Generated<number>;
   isHome: boolean;
   isWinner: boolean | null;
   periodPoints: number[] | null;
   points: number | null;
   seed: number | null;
+  startElo: number | null;
   teamId: number;
 }
 

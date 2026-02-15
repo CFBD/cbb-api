@@ -50,6 +50,14 @@ export interface GameInfo {
   /**
    * @isInt
    */
+  homeTeamEloStart: number | null;
+  /**
+   * @isInt
+   */
+  homeTeamEloEnd: number | null;
+  /**
+   * @isInt
+   */
   awayTeamId: number;
   awayTeam: string;
   /**
@@ -70,6 +78,14 @@ export interface GameInfo {
    */
   awayPeriodPoints: number[] | null;
   awayWinner: boolean | null;
+  /**
+   * @isInt
+   */
+  awayTeamEloStart: number | null;
+  /**
+   * @isInt
+   */
+  awayTeamEloEnd: number | null;
   excitement: number | null;
   /**
    * @isInt
