@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/CFBD/cbb-api/compare/v1.23.0...v1.23.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* **stats:** non null shot breakdowns ([a39e773](https://github.com/CFBD/cbb-api/commit/a39e773e7145375689e8dc30a738c95b7031926f))
+
 # [1.23.0](https://github.com/CFBD/cbb-api/compare/v1.22.5...v1.23.0) (2026-02-15)
 
 
