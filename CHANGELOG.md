@@ -1,3 +1,10 @@
+## [1.23.2](https://github.com/CFBD/cbb-api/compare/v1.23.1...v1.23.2) (2026-02-27)
+
+
+### Bug Fixes
+
+* **plays:** assisted flag ([756b1a4](https://github.com/CFBD/cbb-api/commit/756b1a4c7b5fd0b896a996ad04235fd62a1fa4cd))
+
 ## [1.23.1](https://github.com/CFBD/cbb-api/compare/v1.23.0...v1.23.1) (2026-02-27)
 
 
