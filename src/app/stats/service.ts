@@ -978,6 +978,7 @@ export const getTeamSeasonShootingStats = async (
   }
 
   const teams = await query.execute();
+  // @ts-ignore
   return teams.map((team): SeasonShootingStats => {
     const trackedShots =
       Number(team.dunkAttempts) +
@@ -1110,26 +1111,37 @@ export const getTeamSeasonShootingStats = async (
       },
       attemptsBreakdown: {
         dunks:
-          Math.round(
-            (Number(team.dunkAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(team.dunkAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         layups:
-          Math.round(
-            (Number(team.layupAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(team.layupAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         tipIns:
-          Math.round(
-            (Number(team.tipShotAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(team.tipShotAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         twoPointJumpers:
-          Math.round(
-            (Number(team.twoPointJumperAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(team.twoPointJumperAttempts) / Number(trackedShots)) *
+                  1000,
+              ) / 10
+            : 0,
         threePointJumpers:
-          Math.round(
-            (Number(team.threePointJumperAttempts) / Number(trackedShots)) *
-              1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(team.threePointJumperAttempts) / Number(trackedShots)) *
+                  1000,
+              ) / 10
+            : 0,
       },
     };
   });
@@ -1575,27 +1587,38 @@ export const getPlayerSeasonShootingStats = async (
       },
       attemptsBreakdown: {
         dunks:
-          Math.round(
-            (Number(player.dunkAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(player.dunkAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         layups:
-          Math.round(
-            (Number(player.layupAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(player.layupAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         tipIns:
-          Math.round(
-            (Number(player.tipShotAttempts) / Number(trackedShots)) * 1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(player.tipShotAttempts) / Number(trackedShots)) * 1000,
+              ) / 10
+            : 0,
         twoPointJumpers:
-          Math.round(
-            (Number(player.twoPointJumperAttempts) / Number(trackedShots)) *
-              1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(player.twoPointJumperAttempts) / Number(trackedShots)) *
+                  1000,
+              ) / 10
+            : 0,
         threePointJumpers:
-          Math.round(
-            (Number(player.threePointJumperAttempts) / Number(trackedShots)) *
-              1000,
-          ) / 10,
+          trackedShots && trackedShots > 0
+            ? Math.round(
+                (Number(player.threePointJumperAttempts) /
+                  Number(trackedShots)) *
+                  1000,
+              ) / 10
+            : 0,
       },
     };
   });
