@@ -1,5 +1,5 @@
 import { db } from '../../config/database';
-import { Recruit } from './types';
+import { Recruit, TeamRecruitingRanking } from './types';
 
 export const getRecruits = async (
   year?: number,
@@ -116,5 +116,67 @@ export const getRecruits = async (
     stars: r.stars,
     rating: r.rating,
     ranking: r.ranking,
+  }));
+};
+
+export const getTeamRankings = async (
+  year?: number,
+  team?: string,
+  conference?: string,
+): Promise<TeamRecruitingRanking[]> => {
+  let query = db
+    .selectFrom('teamRecruiting')
+    .innerJoin('team', 'team.id', 'teamRecruiting.teamId')
+    .leftJoin('conferenceTeam', (join) =>
+      join
+        .onRef('conferenceTeam.teamId', '=', 'team.id')
+        .onRef('conferenceTeam.startYear', '<=', 'teamRecruiting.year')
+        .on((eb) =>
+          eb.or([
+            eb('conferenceTeam.endYear', '>=', eb.ref('teamRecruiting.year')),
+            eb('conferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .leftJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .select([
+      'team.id as teamId',
+      'team.school as team',
+      'conference.abbreviation as conference',
+      'teamRecruiting.year',
+      'teamRecruiting.rank as ranking',
+      'teamRecruiting.points',
+    ])
+    .orderBy('teamRecruiting.year', 'desc')
+    .orderBy('teamRecruiting.rank');
+
+  if (year) {
+    query = query.where('teamRecruiting.year', '=', year);
+  }
+
+  if (team) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('team.school')]),
+      '=',
+      team.toLowerCase(),
+    );
+  }
+
+  if (conference) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('conference.abbreviation')]),
+      '=',
+      conference.toLowerCase(),
+    );
+  }
+
+  const rankings = await query.execute();
+  return rankings.map((r) => ({
+    teamId: r.teamId,
+    team: r.team,
+    conference: r.conference,
+    year: r.year,
+    ranking: r.ranking,
+    rating: Number(r.points),
   }));
 };

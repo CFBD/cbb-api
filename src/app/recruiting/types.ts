@@ -50,3 +50,21 @@ export interface Recruit {
    */
   ranking: number | null;
 }
+
+export interface TeamRecruitingRanking {
+  /**
+   * @isInt
+   */
+  teamId: number;
+  team: string;
+  conference: string | null;
+  /**
+   * @isInt
+   */
+  year: number;
+  /**
+   * @isInt
+   */
+  ranking: number;
+  rating: number;
+}

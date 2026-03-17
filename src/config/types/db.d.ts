@@ -252,8 +252,8 @@ export interface GamePlayerStats {
 }
 
 export interface GameTeam {
-  gameId: number;
   endElo: number | null;
+  gameId: number;
   id: Generated<number>;
   isHome: boolean;
   isWinner: boolean | null;
@@ -430,6 +430,7 @@ export interface Substitution {
 export interface Team {
   abbreviation: string | null;
   active: Generated<boolean>;
+  altNames: string[] | null;
   currentNcaaVid: number | null;
   displayName: string | null;
   homeVenueId: number | null;
@@ -443,6 +444,14 @@ export interface Team {
   shortDisplayName: string | null;
   sourceId: string;
   srInfo: Json | null;
+}
+
+export interface TeamRecruiting {
+  id: Generated<number>;
+  points: Numeric;
+  rank: number;
+  teamId: number;
+  year: number;
 }
 
 export interface Tournament {
@@ -497,6 +506,7 @@ export interface DB {
   srs: Srs;
   substitution: Substitution;
   team: Team;
+  teamRecruiting: TeamRecruiting;
   tournament: Tournament;
   venue: Venue;
 }
