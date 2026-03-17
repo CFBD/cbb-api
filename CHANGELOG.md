@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/CFBD/cbb-api/compare/v1.23.2...v1.24.0) (2026-03-17)
+
+
+### Features
+
+* **recruiting:** team composite rankings ([f70c4f6](https://github.com/CFBD/cbb-api/commit/f70c4f6a4ef53222bbf5ead982913c8fec3c3669))
+
 ## [1.23.2](https://github.com/CFBD/cbb-api/compare/v1.23.1...v1.23.2) (2026-02-27)
 
 
