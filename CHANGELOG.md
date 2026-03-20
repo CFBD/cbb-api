@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/CFBD/cbb-api/compare/v1.24.0...v1.25.0) (2026-03-20)
+
+
+### Features
+
+* **scoreboard:** live scores endpoint ([a8906e8](https://github.com/CFBD/cbb-api/commit/a8906e895007286917d828aa088b2ba787e48b70))
+
 # [1.24.0](https://github.com/CFBD/cbb-api/compare/v1.23.2...v1.24.0) (2026-03-17)
 
 
