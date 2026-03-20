@@ -3,7 +3,7 @@ import { authDb } from '../database';
 import { ApiUser } from 'src/globals';
 import { sql } from 'kysely';
 
-export const ignoredPaths: string[] = [];
+export const ignoredPaths: string[] = ['/scoreboard'];
 
 export const checkCallQuotas = async (
   req: Request,

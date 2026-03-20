@@ -7,6 +7,7 @@ import {
   GameBoxScoreTeam,
   GameInfo,
   GameMediaInfo,
+  ScoreboardGame,
 } from './types';
 import {
   getPlayerDefensiveRating,
@@ -1027,4 +1028,74 @@ export const getGamePlayerStatistics = async (
       }),
     };
   });
+};
+
+export const getScoreboard = async (
+  conference?: string,
+): Promise<ScoreboardGame[]> => {
+  let query = db.selectFrom('scoreboard').selectAll();
+
+  if (conference) {
+    query = query.where((eb) =>
+      eb.or([
+        eb(
+          eb.fn('lower', ['scoreboard.homeConferenceAbbreviation']),
+          '=',
+          conference.toLowerCase(),
+        ),
+        eb(
+          eb.fn('lower', ['scoreboard.awayConferenceAbbreviation']),
+          '=',
+          conference.toLowerCase(),
+        ),
+      ]),
+    );
+  }
+
+  const scoreboard = await query
+    .orderBy('scoreboard.startDate', 'asc')
+    .execute();
+
+  return scoreboard.map(
+    (game): ScoreboardGame => ({
+      id: game.id ?? -1,
+      startDate: game.startDate ?? new Date(0),
+      startTimeTbd: game.startTimeTbd ?? false,
+      tv: game.tv,
+      neutralSite: game.neutralSite ?? false,
+      conferenceGame: game.conferenceGame ?? false,
+      status: (game.status ?? GameStatus.Scheduled) as GameStatus,
+      period: game.currentPeriod,
+      clock: game.currentClock,
+      venue: game.venue,
+      city: game.city,
+      state: game.state,
+      homeTeam: {
+        id: game.homeId ?? -1,
+        name: game.homeTeam ?? '',
+        location: game.homeLocation,
+        conference: game.homeConference,
+        conferenceAbbreviation: game.homeConferenceAbbreviation,
+        points: game.homePoints,
+        lineScores: game.homeLineScores,
+      },
+      awayTeam: {
+        id: game.awayId ?? -1,
+        name: game.awayTeam ?? '',
+        location: game.awayLocation,
+        conference: game.awayConference,
+        conferenceAbbreviation: game.awayConferenceAbbreviation,
+        points: game.awayPoints,
+        lineScores: game.awayLineScores,
+      },
+      betting: {
+        spread: game.spread !== null ? Number(game.spread) : null,
+        overUnder: game.overUnder !== null ? Number(game.overUnder) : null,
+        homeMoneyline:
+          game.moneylineHome !== null ? Number(game.moneylineHome) : null,
+        awayMoneyline:
+          game.moneylineAway !== null ? Number(game.moneylineAway) : null,
+      },
+    }),
+  );
 };

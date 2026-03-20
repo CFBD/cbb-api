@@ -4,12 +4,14 @@ import {
   getGamePlayerStatistics,
   getGames,
   getGameTeamStatistics,
+  getScoreboard,
 } from './service';
 import {
   GameBoxScorePlayers,
   GameBoxScoreTeam,
   GameInfo,
   GameMediaInfo,
+  ScoreboardGame,
 } from './types';
 import { GameStatus, SeasonType } from '../enums';
 
@@ -145,5 +147,21 @@ export class GamesController extends Controller {
       seasonType,
       tournament,
     );
+  }
+}
+
+@Route('scoreboard')
+@Middlewares(middlewares.standard)
+@Tags('games')
+export class ScoreboardController extends Controller {
+  /**
+   * Retrieves live scoreboard data
+   * @param conference Optional conference filter
+   */
+  @Get()
+  public async getScoreboard(
+    @Query() conference?: string,
+  ): Promise<ScoreboardGame[]> {
+    return await getScoreboard(conference);
   }
 }

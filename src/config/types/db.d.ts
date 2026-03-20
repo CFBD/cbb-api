@@ -141,6 +141,12 @@ export interface DraftTeam {
 export interface Game {
   attendance: number | null;
   conferenceGame: Generated<boolean>;
+  currentAwayPeriodPoints: number[] | null;
+  currentAwayScore: number | null;
+  currentClock: string | null;
+  currentHomePeriodPoints: number[] | null;
+  currentHomeScore: number | null;
+  currentPeriod: number | null;
   excitement: Numeric | null;
   gameType: string | null;
   id: Generated<number>;
@@ -404,6 +410,39 @@ export interface RecruitSchool {
   name: string;
 }
 
+export interface Scoreboard {
+  awayConference: string | null;
+  awayConferenceAbbreviation: string | null;
+  awayId: number | null;
+  awayLineScores: number[] | null;
+  awayLocation: string | null;
+  awayPoints: number | null;
+  awayTeam: string | null;
+  city: string | null;
+  conferenceGame: boolean | null;
+  currentClock: string | null;
+  currentPeriod: number | null;
+  homeConference: string | null;
+  homeConferenceAbbreviation: string | null;
+  homeId: number | null;
+  homeLineScores: number[] | null;
+  homeLocation: string | null;
+  homePoints: number | null;
+  homeTeam: string | null;
+  id: number | null;
+  moneylineAway: Numeric | null;
+  moneylineHome: Numeric | null;
+  neutralSite: boolean | null;
+  overUnder: Numeric | null;
+  spread: Numeric | null;
+  startDate: Timestamp | null;
+  startTimeTbd: boolean | null;
+  state: string | null;
+  status: GameStatus | null;
+  tv: string | null;
+  venue: string | null;
+}
+
 export interface Srs {
   id: Generated<number>;
   rating: Numeric;
@@ -503,6 +542,7 @@ export interface DB {
   recruit: Recruit;
   recruitPosition: RecruitPosition;
   recruitSchool: RecruitSchool;
+  scoreboard: Scoreboard;
   srs: Srs;
   substitution: Substitution;
   team: Team;

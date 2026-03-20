@@ -132,6 +132,72 @@ export interface GameMediaInfo {
   }[];
 }
 
+export interface ScoreboardGame {
+  /**
+   * @isInt
+   */
+  id: number;
+  /**
+   * @isDateTime
+   */
+  startDate: Date;
+  startTimeTbd: boolean;
+  tv: string | null;
+  neutralSite: boolean;
+  conferenceGame: boolean;
+  status: GameStatus;
+  /**
+   * @isInt
+   */
+  period: number | null;
+  clock: string | null;
+  venue: string | null;
+  city: string | null;
+  state: string | null;
+  homeTeam: {
+    /**
+     * @isInt
+     */
+    id: number;
+    name: string;
+    location: string | null;
+    conference: string | null;
+    conferenceAbbreviation: string | null;
+    /**
+     * @isInt
+     */
+    points: number | null;
+    /**
+     * @isInt
+     */
+    lineScores: number[] | null;
+  };
+  awayTeam: {
+    /**
+     * @isInt
+     */
+    id: number;
+    name: string;
+    location: string | null;
+    conference: string | null;
+    conferenceAbbreviation: string | null;
+    /**
+     * @isInt
+     */
+    points: number | null;
+    /**
+     * @isInt
+     */
+    lineScores: number[] | null;
+  };
+  betting: {
+    spread: number | null;
+    overUnder: number | null;
+    homeMoneyline: number | null;
+    awayMoneyline: number | null;
+  };
+}
+
 export interface GameBoxScoreTeam {
   /**
    * @isInt

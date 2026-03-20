@@ -5,9 +5,9 @@ import { AuthorizationError } from '../globals';
 
 const keyPattern = /Bearer (?<token>.+)/;
 
-// export const patreonLocked: Record<string, number> = {
-//   '/controller/route': 1,
-// };
+export const patreonLocked: Record<string, number> = {
+  '/scoreboard': 1,
+};
 
 const corsOrigin: string =
   process.env.CORS_ORIGIN || 'https://collegebasketballdata.com';
@@ -20,8 +20,8 @@ export const expressAuthentication = async (
 ) => {
   if (securityName === 'apiKey') {
     if (
-      !request.headers.authorization //&&
-      // !Object.keys(patreonLocked).includes(request.path)
+      !request.headers.authorization &&
+      !Object.keys(patreonLocked).includes(request.path)
     ) {
       const origin = request.get('origin');
       const host = request.get('host');
@@ -59,23 +59,16 @@ export const expressAuthentication = async (
           .selectAll()
           .executeTakeFirst();
         if (user && !user?.blacklisted) {
-          // if (!user?.patronLevel || (user?.patronLevel ?? 0) < 1) {
-          //   return Promise.reject(
-          //     new AuthorizationError(
-          //       'Unauthorized. This API is in limited preview for Patreon subscribers. Go to https://www.patreon.com/c/collegefootballdata to subscribe.',
-          //     ),
-          //   );
-          // }
-          // if (Object.keys(patreonLocked).includes(request.path)) {
-          //   const requiredLevel = patreonLocked[request.path];
-          //   if (!user.patron_level || user.patron_level < requiredLevel) {
-          //     return Promise.reject(
-          //       new AuthorizationError(
-          //         `Unauthorized. This endpoint requires a Patreon subscription at Tier ${requiredLevel} or higher.`,
-          //       ),
-          //     );
-          //   }
-          // }
+          if (Object.keys(patreonLocked).includes(request.path)) {
+            const requiredLevel = patreonLocked[request.path];
+            if (!user.patronLevel || user.patronLevel < requiredLevel) {
+              return Promise.reject(
+                new AuthorizationError(
+                  `Unauthorized. This endpoint requires a Patreon subscription at Tier ${requiredLevel} or higher.`,
+                ),
+              );
+            }
+          }
 
           try {
             await authDb
