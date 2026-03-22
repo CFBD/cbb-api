@@ -129,10 +129,10 @@ describe('generic auth tests', () => {
     expect(user as ApiUser).toBeDefined();
   });
 
-  test('Tier 2 Patreon user cannot access premium leaderboard', async () => {
+  test('Tier 1 Patreon user cannot access premium leaderboard', async () => {
     mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
       ...mockDatabaseUser,
-      patronLevel: 2,
+      patronLevel: 1,
     });
 
     const request = getMockReq({
@@ -147,10 +147,10 @@ describe('generic auth tests', () => {
     ).rejects.toBeInstanceOf(AuthorizationError);
   });
 
-  test('Tier 3 Patreon user can access premium leaderboard', async () => {
+  test('Tier 2 Patreon user can access premium leaderboard', async () => {
     mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
       ...mockDatabaseUser,
-      patronLevel: 3,
+      patronLevel: 2,
     });
 
     const request = getMockReq({

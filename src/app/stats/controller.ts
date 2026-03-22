@@ -22,7 +22,7 @@ import middlewares from '../../config/middleware';
 @Tags('stats')
 export class StatsController extends Controller {
   /**
-   * Returns premium team leaderboard statistics by season, team, or conference (requires a Patreon Tier 3 subscription or higher)
+   * Returns premium team leaderboard statistics by season, team, or conference (requires a Patreon Tier 2 subscription or higher)
    * @param season Optional season filter
    * @param team Optional team name filter
    * @param conference Optional conference abbreviation filter
