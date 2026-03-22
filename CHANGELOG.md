@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/CFBD/cbb-api/compare/v1.25.0...v1.26.0) (2026-03-22)
+
+
+### Features
+
+* **stats:** premium team stats endpoint ([50be7ba](https://github.com/CFBD/cbb-api/commit/50be7baa79a6eb5270fd74905f119d67776c724b))
+
 # [1.25.0](https://github.com/CFBD/cbb-api/compare/v1.24.0...v1.25.0) (2026-03-20)
 
 
