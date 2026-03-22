@@ -1,3 +1,10 @@
+## [1.26.1](https://github.com/CFBD/cbb-api/compare/v1.26.0...v1.26.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* **stats:** switching premium stats endpoint to tier 2 ([8f9f600](https://github.com/CFBD/cbb-api/commit/8f9f600577dab5426889e0ecfd6873df4c67d5cd))
+
 # [1.26.0](https://github.com/CFBD/cbb-api/compare/v1.25.0...v1.26.0) (2026-03-22)
 
 
