@@ -128,6 +128,42 @@ describe('generic auth tests', () => {
 
     expect(user as ApiUser).toBeDefined();
   });
+
+  test('Tier 2 Patreon user cannot access premium leaderboard', async () => {
+    mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
+      ...mockDatabaseUser,
+      patronLevel: 2,
+    });
+
+    const request = getMockReq({
+      path: '/stats/team/leaderboard',
+      headers: {
+        authorization: 'Bearer my_api_key',
+      },
+    });
+
+    await expect(
+      expressAuthentication(toRequest(request), 'apiKey'),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  test('Tier 3 Patreon user can access premium leaderboard', async () => {
+    mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
+      ...mockDatabaseUser,
+      patronLevel: 3,
+    });
+
+    const request = getMockReq({
+      path: '/stats/team/leaderboard',
+      headers: {
+        authorization: 'Bearer my_api_key',
+      },
+    });
+
+    const user = await expressAuthentication(toRequest(request), 'apiKey');
+
+    expect(user as ApiUser).toBeDefined();
+  });
 });
 
 describe('CORS auth tests', () => {

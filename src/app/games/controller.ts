@@ -155,7 +155,7 @@ export class GamesController extends Controller {
 @Tags('games')
 export class ScoreboardController extends Controller {
   /**
-   * Retrieves live scoreboard data
+   * Retrieves live scoreboard data (requires a Patreon Tier 1 subscription or higher)
    * @param conference Optional conference filter
    */
   @Get()

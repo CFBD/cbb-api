@@ -3,11 +3,13 @@ import {
   PlayerSeasonShootingStats,
   PlayerSeasonStats,
   SeasonShootingStats,
+  TeamStatsLeaderboardRecord,
   TeamSeasonStats,
 } from './types';
 import {
   getPlayerSeasonShootingStats,
   getPlayerSeasonStats,
+  getTeamLeaderboardStats,
   getTeamSeasonShootingStats,
   getTeamSeasonStats,
 } from './service';
@@ -19,6 +21,21 @@ import middlewares from '../../config/middleware';
 @Middlewares(middlewares.standard)
 @Tags('stats')
 export class StatsController extends Controller {
+  /**
+   * Returns premium team leaderboard statistics by season, team, or conference (requires a Patreon Tier 3 subscription or higher)
+   * @param season Optional season filter
+   * @param team Optional team name filter
+   * @param conference Optional conference abbreviation filter
+   */
+  @Get('team/leaderboard')
+  public async getTeamLeaderboardStats(
+    @Query() season?: number,
+    @Query() team?: string,
+    @Query() conference?: string,
+  ): Promise<TeamStatsLeaderboardRecord[]> {
+    return await getTeamLeaderboardStats(season, team, conference);
+  }
+
   /**
    * Returns team season statistics by year or team
    * @param season Optional season filter, required if team is not provided

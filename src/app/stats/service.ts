@@ -3,6 +3,7 @@ import {
   PlayerSeasonShootingStats,
   PlayerSeasonStats,
   SeasonShootingStats,
+  TeamStatsLeaderboardRecord,
   TeamSeasonStats,
 } from './types';
 
@@ -18,6 +19,340 @@ const shootingTypes = [
   558, 572, 574, 437, 20424, 20429, 20437, 20574, 20572, 20558, 30495, 30558,
   540,
 ];
+
+const toNumber = (value: unknown): number => Number(value);
+
+const toNullableNumber = (value: unknown): number | null =>
+  value == null ? null : Number(value);
+
+const buildLeaderboardUnitStats = (stats: {
+  points: number;
+  pointsInPaint: number;
+  pointsOffTo: number;
+  pointsFastBreak: number;
+  possessions: number;
+  rawOffensiveRating: number | null;
+  trueShootingPct: number | null;
+  efgPct: number | null;
+  turnoverRatio: number | null;
+  offReboundPct: number | null;
+  freeThrowRate: number | null;
+  fgm: number;
+  fga: number;
+  twoPm: number;
+  twoPa: number;
+  threePm: number;
+  threePa: number;
+  ftm: number;
+  fta: number;
+  oreb: number;
+  dreb: number;
+  reb: number;
+  to: number;
+  tto: number;
+  toto: number;
+  pf: number;
+  tech: number;
+  flag: number;
+  ast: number;
+  blk: number;
+  stl: number;
+}) => ({
+  points: {
+    total: stats.points,
+    inPaint: stats.pointsInPaint,
+    offTurnovers: stats.pointsOffTo,
+    fastBreak: stats.pointsFastBreak,
+  },
+  possessions: stats.possessions,
+  rawOffensiveRating: stats.rawOffensiveRating,
+  trueShootingPct: stats.trueShootingPct,
+  effectiveFieldGoalPct: stats.efgPct,
+  turnoverRatio: stats.turnoverRatio,
+  offensiveReboundPct: stats.offReboundPct,
+  freeThrowRate: stats.freeThrowRate,
+  fieldGoals: {
+    made: stats.fgm,
+    attempted: stats.fga,
+  },
+  twoPointFieldGoals: {
+    made: stats.twoPm,
+    attempted: stats.twoPa,
+  },
+  threePointFieldGoals: {
+    made: stats.threePm,
+    attempted: stats.threePa,
+  },
+  freeThrows: {
+    made: stats.ftm,
+    attempted: stats.fta,
+  },
+  rebounds: {
+    offensive: stats.oreb,
+    defensive: stats.dreb,
+    total: stats.reb,
+  },
+  turnovers: {
+    total: stats.to,
+    team: stats.tto,
+    technical: stats.toto,
+  },
+  fouls: {
+    total: stats.pf,
+    technical: stats.tech,
+    flagrant: stats.flag,
+  },
+  assists: stats.ast,
+  blocks: stats.blk,
+  steals: stats.stl,
+});
+
+export const getTeamLeaderboardStats = async (
+  season?: number,
+  team?: string,
+  conference?: string,
+): Promise<TeamStatsLeaderboardRecord[]> => {
+  let query = db
+    .with('adjusted', (eb) =>
+      eb
+        .selectFrom('adjustedEfficiency')
+        .select([
+          'adjustedEfficiency.season',
+          'adjustedEfficiency.teamId',
+          'adjustedEfficiency.offense as offensiveRating',
+          'adjustedEfficiency.defense as defensiveRating',
+          'adjustedEfficiency.net as netRating',
+        ])
+        .select((innerEb) =>
+          innerEb.fn
+            .agg<number>('rank')
+            .over((ob) =>
+              ob
+                .partitionBy('adjustedEfficiency.season')
+                .orderBy('adjustedEfficiency.offense', 'desc'),
+            )
+            .as('offenseRank'),
+        )
+        .select((innerEb) =>
+          innerEb.fn
+            .agg<number>('rank')
+            .over((ob) =>
+              ob
+                .partitionBy('adjustedEfficiency.season')
+                .orderBy('adjustedEfficiency.defense'),
+            )
+            .as('defenseRank'),
+        )
+        .select((innerEb) =>
+          innerEb.fn
+            .agg<number>('rank')
+            .over((ob) =>
+              ob
+                .partitionBy('adjustedEfficiency.season')
+                .orderBy('adjustedEfficiency.net', 'desc'),
+            )
+            .as('netRank'),
+        ),
+    )
+    .selectFrom('teamStatsLeaderboard')
+    .innerJoin('team', 'team.id', 'teamStatsLeaderboard.teamId')
+    .leftJoin('adjusted', (join) =>
+      join
+        .onRef('adjusted.teamId', '=', 'teamStatsLeaderboard.teamId')
+        .onRef('adjusted.season', '=', 'teamStatsLeaderboard.season'),
+    )
+    .selectAll('teamStatsLeaderboard')
+    .select([
+      'team.school as team',
+      'adjusted.offensiveRating',
+      'adjusted.defensiveRating',
+      'adjusted.netRating',
+      'adjusted.offenseRank',
+      'adjusted.defenseRank',
+      'adjusted.netRank',
+    ])
+    .orderBy('teamStatsLeaderboard.season', 'desc')
+    .orderBy('adjusted.netRank', 'asc');
+
+  if (season) {
+    query = query.where('teamStatsLeaderboard.season', '=', season);
+  }
+
+  if (team) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['team.school']),
+      '=',
+      team.toLowerCase(),
+    );
+  }
+
+  if (conference) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['teamStatsLeaderboard.conferenceAbbreviation']),
+      '=',
+      conference.toLowerCase(),
+    );
+  }
+
+  const leaderboard = await query.execute();
+
+  return leaderboard.map((row): TeamStatsLeaderboardRecord => {
+    const hasAdjustedEfficiency =
+      row.offensiveRating != null ||
+      row.defensiveRating != null ||
+      row.netRating != null;
+
+    return {
+      season: toNumber(row.season),
+      teamId: toNumber(row.teamId),
+      team: row.team,
+      conference: {
+        id: toNullableNumber(row.conferenceId),
+        abbreviation: row.conferenceAbbreviation,
+      },
+      record: {
+        games: toNumber(row.games),
+        wins: toNumber(row.wins),
+        losses: toNumber(row.losses),
+      },
+      summary: {
+        totalMinutes: toNumber(row.totalMinutes),
+        trackedShots: toNumber(row.trackedShots),
+        pace: toNullableNumber(row.pace),
+        rawNetRating: toNullableNumber(row.rawNetRating),
+      },
+      teamStats: buildLeaderboardUnitStats({
+        points: toNumber(row.teamPoints),
+        pointsInPaint: toNumber(row.teamPointsInPaint),
+        pointsOffTo: toNumber(row.teamPointsOffTo),
+        pointsFastBreak: toNumber(row.teamPointsFastBreak),
+        possessions: toNumber(row.teamPossessions),
+        rawOffensiveRating: toNullableNumber(row.teamOffensiveRating),
+        trueShootingPct: toNullableNumber(row.teamTrueShootingPct),
+        efgPct: toNullableNumber(row.teamEfgPct),
+        turnoverRatio: toNullableNumber(row.teamTurnoverRatio),
+        offReboundPct: toNullableNumber(row.teamOffReboundPct),
+        freeThrowRate: toNullableNumber(row.teamFreeThrowRate),
+        fgm: toNumber(row.teamFgm),
+        fga: toNumber(row.teamFga),
+        twoPm: toNumber(row.team2pm),
+        twoPa: toNumber(row.team2pa),
+        threePm: toNumber(row.team3pm),
+        threePa: toNumber(row.team3pa),
+        ftm: toNumber(row.teamFtm),
+        fta: toNumber(row.teamFta),
+        oreb: toNumber(row.teamOreb),
+        dreb: toNumber(row.teamDreb),
+        reb: toNumber(row.teamReb),
+        to: toNumber(row.teamTo),
+        tto: toNumber(row.teamTto),
+        toto: toNumber(row.teamToto),
+        pf: toNumber(row.teamPf),
+        tech: toNumber(row.teamTech),
+        flag: toNumber(row.teamFlag),
+        ast: toNumber(row.teamAst),
+        blk: toNumber(row.teamBlk),
+        stl: toNumber(row.teamStl),
+      }),
+      opponentStats: buildLeaderboardUnitStats({
+        points: toNumber(row.oppPoints),
+        pointsInPaint: toNumber(row.oppPointsInPaint),
+        pointsOffTo: toNumber(row.oppPointsOffTo),
+        pointsFastBreak: toNumber(row.oppPointsFastBreak),
+        possessions: toNumber(row.oppPossessions),
+        rawOffensiveRating: toNullableNumber(row.oppOffensiveRating),
+        trueShootingPct: toNullableNumber(row.oppTrueShootingPct),
+        efgPct: toNullableNumber(row.oppEfgPct),
+        turnoverRatio: toNullableNumber(row.oppTurnoverRatio),
+        offReboundPct: toNullableNumber(row.oppOffReboundPct),
+        freeThrowRate: toNullableNumber(row.oppFreeThrowRate),
+        fgm: toNumber(row.oppFgm),
+        fga: toNumber(row.oppFga),
+        twoPm: toNumber(row.opp2pm),
+        twoPa: toNumber(row.opp2pa),
+        threePm: toNumber(row.opp3pm),
+        threePa: toNumber(row.opp3pa),
+        ftm: toNumber(row.oppFtm),
+        fta: toNumber(row.oppFta),
+        oreb: toNumber(row.oppOreb),
+        dreb: toNumber(row.oppDreb),
+        reb: toNumber(row.oppReb),
+        to: toNumber(row.oppTo),
+        tto: toNumber(row.oppTto),
+        toto: toNumber(row.oppToto),
+        pf: toNumber(row.oppPf),
+        tech: toNumber(row.oppTech),
+        flag: toNumber(row.oppFlag),
+        ast: toNumber(row.oppAst),
+        blk: toNumber(row.oppBlk),
+        stl: toNumber(row.oppStl),
+      }),
+      shotProfile: {
+        assistedPct: toNumber(row.assistedPct),
+        atRim: {
+          rate: toNullableNumber(row.atRimRate),
+          pct: toNullableNumber(row.atRimPct),
+          assistedPct: toNullableNumber(row.assistedRimPct),
+        },
+        dunk: {
+          attempts: toNumber(row.dunkAttempts),
+          made: toNumber(row.dunkMade),
+          assisted: toNumber(row.dunkAssisted),
+          rate: toNullableNumber(row.dunkRate),
+        },
+        layup: {
+          attempts: toNumber(row.layupAttempts),
+          made: toNumber(row.layupMade),
+          assisted: toNumber(row.layupAssisted),
+          rate: toNullableNumber(row.layupRate),
+        },
+        tipIn: {
+          attempts: toNumber(row.tipInAttempts),
+          made: toNumber(row.tipInMade),
+          rate: toNullableNumber(row.tipInRate),
+        },
+        twoPointJumper: {
+          attempts: toNumber(row.twoPointJumperAttempts),
+          made: toNumber(row.twoPointJumperMade),
+          assisted: toNumber(row.twoPointJumperAssisted),
+          rate: toNullableNumber(row.twoPointJumperRate),
+          pct: toNullableNumber(row.twoPointJumperPct),
+          assistedPct: toNullableNumber(row.assistedTwoPointJumperPct),
+        },
+        threePointJumper: {
+          attempts: toNumber(row.threePointJumperAttempts),
+          made: toNumber(row.threePointJumperMade),
+          assisted: toNumber(row.threePointJumperAssisted),
+          rate: toNullableNumber(row.threePointJumperRate),
+          pct: toNullableNumber(row.threePointJumperPct),
+          assistedPct: toNullableNumber(row.assistedThreePointJumperPct),
+        },
+        freeThrows: {
+          attempts: toNumber(row.shootingFreeThrowAttempts),
+          made: toNumber(row.shootingFreeThrowMade),
+          rate: toNumber(row.shootingFreeThrowRate),
+        },
+        distribution: {
+          midrangeRate: toNullableNumber(row.midrangeRate),
+          jumperRate: toNullableNumber(row.jumperRate),
+          threeRate: toNullableNumber(row.threeRate),
+        },
+      },
+      adjustedEfficiency: hasAdjustedEfficiency
+        ? {
+            offensiveRating: toNullableNumber(row.offensiveRating),
+            defensiveRating: toNullableNumber(row.defensiveRating),
+            netRating: toNullableNumber(row.netRating),
+            rankings: {
+              offense: toNullableNumber(row.offenseRank),
+              defense: toNullableNumber(row.defenseRank),
+              net: toNullableNumber(row.netRank),
+            },
+          }
+        : null,
+    };
+  });
+};
 
 export const getTeamSeasonStats = async (
   season?: number,

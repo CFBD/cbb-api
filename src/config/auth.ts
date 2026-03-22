@@ -7,6 +7,7 @@ const keyPattern = /Bearer (?<token>.+)/;
 
 export const patreonLocked: Record<string, number> = {
   '/scoreboard': 1,
+  '/stats/team/leaderboard': 3,
 };
 
 const corsOrigin: string =

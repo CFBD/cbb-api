@@ -223,3 +223,153 @@ export interface PlayerSeasonShootingStats extends SeasonShootingStats {
   athleteId: number;
   athleteName: string;
 }
+
+export interface TeamLeaderboardAdjustedEfficiency {
+  offensiveRating: number | null;
+  defensiveRating: number | null;
+  netRating: number | null;
+  rankings: {
+    offense: number | null;
+    defense: number | null;
+    net: number | null;
+  };
+}
+
+export interface TeamStatsLeaderboardConference {
+  id: number | null;
+  abbreviation: string | null;
+}
+
+export interface TeamStatsLeaderboardRecordSummary {
+  games: number;
+  wins: number;
+  losses: number;
+}
+
+export interface TeamStatsLeaderboardSummary {
+  totalMinutes: number;
+  trackedShots: number;
+  pace: number | null;
+  rawNetRating: number | null;
+}
+
+export interface TeamStatsLeaderboardUnitStats {
+  points: {
+    total: number;
+    inPaint: number;
+    offTurnovers: number;
+    fastBreak: number;
+  };
+  possessions: number;
+  rawOffensiveRating: number | null;
+  trueShootingPct: number | null;
+  effectiveFieldGoalPct: number | null;
+  turnoverRatio: number | null;
+  offensiveReboundPct: number | null;
+  freeThrowRate: number | null;
+  fieldGoals: {
+    made: number;
+    attempted: number;
+  };
+  twoPointFieldGoals: {
+    made: number;
+    attempted: number;
+  };
+  threePointFieldGoals: {
+    made: number;
+    attempted: number;
+  };
+  freeThrows: {
+    made: number;
+    attempted: number;
+  };
+  rebounds: {
+    offensive: number;
+    defensive: number;
+    total: number;
+  };
+  turnovers: {
+    total: number;
+    team: number;
+    technical: number;
+  };
+  fouls: {
+    total: number;
+    technical: number;
+    flagrant: number;
+  };
+  assists: number;
+  blocks: number;
+  steals: number;
+}
+
+export interface TeamStatsLeaderboardShotProfile {
+  assistedPct: number;
+  atRim: {
+    rate: number | null;
+    pct: number | null;
+    assistedPct: number | null;
+  };
+  dunk: {
+    attempts: number;
+    made: number;
+    assisted: number;
+    rate: number | null;
+  };
+  layup: {
+    attempts: number;
+    made: number;
+    assisted: number;
+    rate: number | null;
+  };
+  tipIn: {
+    attempts: number;
+    made: number;
+    rate: number | null;
+  };
+  twoPointJumper: {
+    attempts: number;
+    made: number;
+    assisted: number;
+    rate: number | null;
+    pct: number | null;
+    assistedPct: number | null;
+  };
+  threePointJumper: {
+    attempts: number;
+    made: number;
+    assisted: number;
+    rate: number | null;
+    pct: number | null;
+    assistedPct: number | null;
+  };
+  freeThrows: {
+    attempts: number;
+    made: number;
+    rate: number;
+  };
+  distribution: {
+    midrangeRate: number | null;
+    jumperRate: number | null;
+    threeRate: number | null;
+  };
+}
+
+export interface TeamStatsLeaderboardRecord {
+  /**
+   * @isInt
+   */
+  season: number;
+  /**
+   * @isInt
+   */
+  teamId: number;
+  team: string;
+  conference: TeamStatsLeaderboardConference;
+  record: TeamStatsLeaderboardRecordSummary;
+  summary: TeamStatsLeaderboardSummary;
+  teamStats: TeamStatsLeaderboardUnitStats;
+  opponentStats: TeamStatsLeaderboardUnitStats;
+  shotProfile: TeamStatsLeaderboardShotProfile;
+  adjustedEfficiency: TeamLeaderboardAdjustedEfficiency | null;
+}
