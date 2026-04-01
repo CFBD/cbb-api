@@ -1,3 +1,10 @@
+## [1.26.2](https://github.com/CFBD/cbb-api/compare/v1.26.1...v1.26.2) (2026-04-01)
+
+
+### Bug Fixes
+
+* **lineups:** performance fix ([e1c2edb](https://github.com/CFBD/cbb-api/commit/e1c2edbd87be87d66e70197a7370cf089f494167))
+
 ## [1.26.1](https://github.com/CFBD/cbb-api/compare/v1.26.0...v1.26.1) (2026-03-22)
 
 
