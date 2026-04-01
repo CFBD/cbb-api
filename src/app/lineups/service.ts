@@ -27,6 +27,145 @@ const getLineupStats = async (
 ): Promise<LineupStats[]> => {
   let query = db
     .with('ranges', (eb) => {
+      if (team) {
+        let cte = eb
+          .selectFrom('team')
+          .where(
+            (qb) => qb.fn('lower', ['team.school']),
+            '=',
+            team.toLowerCase(),
+          )
+          .innerJoin('gameTeam', 'gameTeam.teamId', 'team.id')
+          .innerJoin('game', 'game.id', 'gameTeam.gameId')
+          .innerJoin('conferenceTeam', (join) =>
+            join
+              .onRef('conferenceTeam.teamId', '=', 'team.id')
+              .onRef('conferenceTeam.startYear', '<=', 'game.season')
+              .on((qb) =>
+                qb.or([
+                  qb('conferenceTeam.endYear', '>=', qb.ref('game.season')),
+                  qb('conferenceTeam.endYear', 'is', null),
+                ]),
+              ),
+          )
+          .innerJoin(
+            'conference',
+            'conference.id',
+            'conferenceTeam.conferenceId',
+          )
+          .innerJoin('substitution as s1', (join) =>
+            join
+              .onRef('s1.gameId', '=', 'game.id')
+              .onRef('s1.teamId', '=', 'team.id'),
+          )
+          .innerJoin('substitution as s2', (join) =>
+            join
+              .onRef('s2.gameId', '=', 'game.id')
+              .onRef('s2.teamId', '=', 'team.id')
+              .onRef('s2.athleteId', '>', 's1.athleteId')
+              .onRef('s2.timeRange', '&&', 's1.timeRange'),
+          )
+          .innerJoin('substitution as s3', (join) =>
+            join
+              .onRef('s3.gameId', '=', 'game.id')
+              .onRef('s3.teamId', '=', 'team.id')
+              .onRef('s3.athleteId', '>', 's2.athleteId')
+              .on((qb) =>
+                qb(
+                  's3.timeRange',
+                  '&&',
+                  qb('s1.timeRange', '*', qb.ref('s2.timeRange')),
+                ),
+              ),
+          )
+          .innerJoin('substitution as s4', (join) =>
+            join
+              .onRef('s4.gameId', '=', 'game.id')
+              .onRef('s4.teamId', '=', 'team.id')
+              .onRef('s4.athleteId', '>', 's3.athleteId')
+              .on((qb) =>
+                qb(
+                  's4.timeRange',
+                  '&&',
+                  qb(
+                    's1.timeRange',
+                    '*',
+                    qb('s2.timeRange', '*', qb.ref('s3.timeRange')),
+                  ),
+                ),
+              ),
+          )
+          .innerJoin('substitution as s5', (join) =>
+            join
+              .onRef('s5.gameId', '=', 'game.id')
+              .onRef('s5.teamId', '=', 'team.id')
+              .onRef('s5.athleteId', '>', 's4.athleteId')
+              .on((qb) =>
+                qb(
+                  's5.timeRange',
+                  '&&',
+                  qb(
+                    's1.timeRange',
+                    '*',
+                    qb(
+                      's2.timeRange',
+                      '*',
+                      qb('s3.timeRange', '*', qb.ref('s4.timeRange')),
+                    ),
+                  ),
+                ),
+              ),
+          )
+          .select([
+            'game.id',
+            'team.id as teamId',
+            'team.school as team',
+            'conference.abbreviation as conference',
+          ])
+          .select(
+            sql<string>`s1.athlete_id || '-' || s2.athlete_id || '-' || s3.athlete_id || '-' || s4.athlete_id || '-' || s5.athlete_id`.as(
+              'idHash',
+            ),
+          )
+          .select(
+            sql<Range>`s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range`.as(
+              'timeRange',
+            ),
+          )
+          .select(
+            sql<number>`case
+              when lower_inc(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range)
+                then ceil(lower(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint
+              else floor(lower(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint + 1
+            end`.as('startSeconds'),
+          )
+          .select(
+            sql<number>`case
+              when upper_inc(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range)
+                then floor(upper(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint
+              else ceil(upper(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint - 1
+            end`.as('endSeconds'),
+          );
+
+        if (season) {
+          cte = cte.where('game.season', '=', season);
+        }
+
+        if (gameId) {
+          cte = cte.where('game.id', '=', gameId);
+        }
+
+        if (startDateRange) {
+          cte = cte.where('game.startDate', '>=', startDateRange);
+        }
+
+        if (endDateRange) {
+          cte = cte.where('game.startDate', '<=', endDateRange);
+        }
+
+        return cte;
+      }
+
       let cte = eb
         .selectFrom('game')
         .innerJoin('substitution as s1', 's1.gameId', 'game.id')
@@ -116,24 +255,21 @@ const getLineupStats = async (
           sql<Range>`s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range`.as(
             'timeRange',
           ),
+        )
+        .select(
+          sql<number>`case
+            when lower_inc(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range)
+              then ceil(lower(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint
+            else floor(lower(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint + 1
+          end`.as('startSeconds'),
+        )
+        .select(
+          sql<number>`case
+            when upper_inc(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range)
+              then floor(upper(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint
+            else ceil(upper(s1.time_range * s2.time_range * s3.time_range * s4.time_range * s5.time_range))::smallint - 1
+          end`.as('endSeconds'),
         );
-
-      if (team) {
-        cte = cte.where((eb) =>
-          eb(
-            'team.id',
-            '=',
-            eb
-              .selectFrom('team')
-              .where(
-                (qb) => qb.fn('lower', ['team.school']),
-                '=',
-                team.toLowerCase(),
-              )
-              .select('team.id'),
-          ),
-        );
-      }
 
       if (season) {
         cte = cte.where('game.season', '=', season);
@@ -157,7 +293,8 @@ const getLineupStats = async (
     .innerJoin('play', (join) =>
       join
         .onRef('play.gameId', '=', 'ranges.id')
-        .on('ranges.timeRange', '@>', sql`play.seconds_elapsed::numeric`),
+        .onRef('play.secondsElapsed', '>=', 'ranges.startSeconds')
+        .onRef('play.secondsElapsed', '<=', 'ranges.endSeconds'),
     )
     .innerJoin('playType', 'play.playTypeId', 'playType.id')
     .groupBy([
