@@ -14,6 +14,7 @@ import {
   calculatePlayerSeasonDefensiveRating,
   calculatePlayerSeasonOffenseRatings,
 } from '../../globals/calculations';
+import { getSummedGameMinutesSql } from '../../globals/minutes';
 
 const shootingTypes = [
   558, 572, 574, 437, 20424, 20429, 20437, 20574, 20572, 20558, 30495, 30558,
@@ -477,9 +478,9 @@ export const getTeamSeasonStats = async (
       eb.fn.sum('oppStats.pointsFastBreak').as('pointsFastBreakOpp'),
       eb.fn.sum('oppStats.pointsInPaint').as('pointsInPaintOpp'),
       eb.fn.sum('oppStats.pointsOffTo').as('pointsOffToOpp'),
-      sql<number>`SUM(case when array_length(game_team.period_points, 1) > 2 THEN 40 + array_length(game_team.period_points, 1) * 5 ELSE 40 END)`.as(
-        'minutes',
-      ),
+      getSummedGameMinutesSql(
+        sql<number>`array_length(game_team.period_points, 1)`,
+      ).as('minutes'),
     ]);
 
   if (season) {
@@ -828,9 +829,9 @@ export const getPlayerSeasonStats = async (
       eb.fn.sum('oppStats.to').as('toOpp'),
       eb.fn.sum('oppStats.tto').as('ttoOpp'),
       eb.fn.sum('oppStats.toto').as('totoOpp'),
-      sql<number>`SUM(case when array_length(game_team.period_points, 1) > 2 THEN 40 + array_length(game_team.period_points, 1) * 5 ELSE 40 END)`.as(
-        'teamMinutes',
-      ),
+      getSummedGameMinutesSql(
+        sql<number>`array_length(game_team.period_points, 1)`,
+      ).as('teamMinutes'),
       eb.fn
         .countAll()
         .filterWhere('gamePlayerStats.starter', '=', true)

@@ -14,6 +14,7 @@ import {
   getPlayerOffensiveRatings,
   getUsage,
 } from '../../globals/calculations';
+import { getGameMinutesFromPeriodCount } from '../../globals/minutes';
 
 export const getGames = async (
   startDateRange?: Date,
@@ -460,11 +461,9 @@ export const getGameTeamStatistics = async (
   const games = await query.execute();
 
   return games.map((game): GameBoxScoreTeam => {
-    const gameMinutes = game.periodPoints
-      ? game.periodPoints.length > 2
-        ? 40 + (game.periodPoints.length - 2) * 5
-        : 40
-      : null;
+    const gameMinutes = getGameMinutesFromPeriodCount(
+      game.periodPoints?.length ?? null,
+    );
     const pace =
       gameMinutes && game.possessions && game.opponentPossessions
         ? Math.round(
@@ -909,9 +908,7 @@ export const getGamePlayerStatistics = async (
   const games = await query.execute();
   return games.map((game): GameBoxScorePlayers => {
     const gameMinutes =
-      game.periodPoints && game.periodPoints.length > 2
-        ? 40 + (game.periodPoints.length - 2) * 5
-        : 40;
+      getGameMinutesFromPeriodCount(game.periodPoints?.length ?? 2) ?? 40;
     const gamePace =
       gameMinutes && game.teamPossessions && game.opponentPossessions
         ? Math.round(
