@@ -1,3 +1,10 @@
+## [1.26.3](https://github.com/CFBD/cbb-api/compare/v1.26.2...v1.26.3) (2026-04-03)
+
+
+### Bug Fixes
+
+* **stats:** overtime periods computation ([d0f7adc](https://github.com/CFBD/cbb-api/commit/d0f7adc55267f8bbfa3af85f1e6d3e05f94535ba))
+
 ## [1.26.2](https://github.com/CFBD/cbb-api/compare/v1.26.1...v1.26.2) (2026-04-01)
 
 
