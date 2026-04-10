@@ -11,3 +11,11 @@ export enum GameStatus {
   Postponed = 'postponed',
   Cancelled = 'cancelled',
 }
+
+export enum TransferEligibility {
+  Withdrawn = 'Withdrawn',
+  TBD = 'TBD',
+  PendingAppeal = 'PendingAppeal',
+  SittingOne = 'SittingOne',
+  Immediate = 'Immediate',
+}

@@ -1,3 +1,5 @@
+import { TransferEligibility } from '../enums';
+
 export interface Recruit {
   /**
    * @isInt
@@ -67,4 +69,44 @@ export interface TeamRecruitingRanking {
    */
   ranking: number;
   rating: number;
+}
+
+export interface Transfer {
+  /**
+   * @isInt
+   */
+  id: number;
+  sourceId: string;
+  /**
+   * @isInt
+   */
+  year: number;
+  firstName: string;
+  lastName: string;
+  position: string;
+  origin: {
+    /** * @isInt
+     */
+    id: number | null;
+    name: string | null;
+    conference: string | null;
+  } | null;
+  destination: {
+    /**
+     * @isInt
+     */
+    id: number | null;
+    name: string | null;
+    conference: string | null;
+  } | null;
+  eligibility: TransferEligibility | null;
+  /**
+   * @isInt
+   */
+  yearsRemaining: number | null;
+  /**
+   * @isInt
+   */
+  stars: number | null;
+  rating: number | null;
 }

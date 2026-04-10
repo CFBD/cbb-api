@@ -611,6 +611,23 @@ export interface Tournament {
   shortName: string;
 }
 
+export interface Transfer {
+  athleteId: number | null;
+  eligibility: string | null;
+  firstName: string;
+  fromTeamId: number | null;
+  id: Generated<number>;
+  lastName: string;
+  positionId: number;
+  rating: Numeric | null;
+  season: number;
+  sourceId: string;
+  stars: number | null;
+  toTeamId: number | null;
+  transferDate: Timestamp | null;
+  yearsRemaining: number | null;
+}
+
 export interface Venue {
   capacity: number | null;
   city: string | null;
@@ -661,5 +678,6 @@ export interface DB {
   teamRecruiting: TeamRecruiting;
   teamStatsLeaderboard: TeamStatsLeaderboard;
   tournament: Tournament;
+  transfer: Transfer;
   venue: Venue;
 }

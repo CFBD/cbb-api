@@ -1,5 +1,6 @@
 import { db } from '../../config/database';
-import { Recruit, TeamRecruitingRanking } from './types';
+import { TransferEligibility } from '../enums';
+import { Recruit, TeamRecruitingRanking, Transfer } from './types';
 
 export const getRecruits = async (
   year?: number,
@@ -178,5 +179,145 @@ export const getTeamRankings = async (
     year: r.year,
     ranking: r.ranking,
     rating: Number(r.points),
+  }));
+};
+
+export const getTransfers = async (
+  season?: number,
+  sourceTeam?: string,
+  destinationTeam?: string,
+  sourceConference?: string,
+  destinationConference?: string,
+  position?: string,
+): Promise<Transfer[]> => {
+  let query = db
+    .selectFrom('transfer')
+    .innerJoin('recruitPosition', 'recruitPosition.id', 'transfer.positionId')
+    .leftJoin('team as fromTeam', 'fromTeam.id', 'transfer.fromTeamId')
+    .leftJoin('conferenceTeam as fromConferenceTeam', (join) =>
+      join
+        .onRef('fromConferenceTeam.teamId', '=', 'fromTeam.id')
+        .onRef('fromConferenceTeam.startYear', '<=', 'transfer.season')
+        .on((eb) =>
+          eb.or([
+            eb('fromConferenceTeam.endYear', '>=', eb.ref('transfer.season')),
+            eb('fromConferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .leftJoin(
+      'conference as fromConference',
+      'fromConference.id',
+      'fromConferenceTeam.conferenceId',
+    )
+    .leftJoin('team as toTeam', 'toTeam.id', 'transfer.toTeamId')
+    .leftJoin('conferenceTeam as toConferenceTeam', (join) =>
+      join
+        .onRef('toConferenceTeam.teamId', '=', 'toTeam.id')
+        .onRef('toConferenceTeam.startYear', '<=', 'transfer.season')
+        .on((eb) =>
+          eb.or([
+            eb('toConferenceTeam.endYear', '>=', eb.ref('transfer.season')),
+            eb('toConferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .leftJoin(
+      'conference as toConference',
+      'toConference.id',
+      'toConferenceTeam.conferenceId',
+    )
+    .select([
+      'transfer.id',
+      'transfer.sourceId',
+      'transfer.season',
+      'transfer.firstName',
+      'transfer.lastName',
+      'recruitPosition.position as position',
+      'fromTeam.id as sourceTeamId',
+      'fromTeam.school as sourceTeam',
+      'fromConference.abbreviation as sourceConference',
+      'toTeam.id as destinationTeamId',
+      'toTeam.school as destinationTeam',
+      'toConference.abbreviation as destinationConference',
+      'transfer.stars',
+      'transfer.rating',
+      'transfer.eligibility',
+      'transfer.yearsRemaining',
+    ])
+    .orderBy('transfer.season', 'desc')
+    .orderBy('transfer.lastName')
+    .orderBy('transfer.firstName');
+
+  if (season) {
+    query = query.where('transfer.season', '=', season);
+  }
+
+  if (sourceTeam) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('fromTeam.school')]),
+      '=',
+      sourceTeam.toLowerCase(),
+    );
+  }
+
+  if (destinationTeam) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('toTeam.school')]),
+      '=',
+      destinationTeam.toLowerCase(),
+    );
+  }
+
+  if (sourceConference) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('fromConference.abbreviation')]),
+      '=',
+      sourceConference.toLowerCase(),
+    );
+  }
+
+  if (destinationConference) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('toConference.abbreviation')]),
+      '=',
+      destinationConference.toLowerCase(),
+    );
+  }
+
+  if (position) {
+    query = query.where(
+      (eb) => eb.fn('lower', [eb.ref('recruitPosition.position')]),
+      '=',
+      position.toLowerCase(),
+    );
+  }
+
+  const transfers = await query.execute();
+  return transfers.map((t) => ({
+    id: t.id,
+    sourceId: t.sourceId,
+    year: t.season,
+    firstName: t.firstName,
+    lastName: t.lastName,
+    position: t.position,
+    origin: t.sourceTeamId
+      ? {
+          id: t.sourceTeamId,
+          name: t.sourceTeam,
+          conference: t.sourceConference,
+        }
+      : null,
+    destination: t.destinationTeamId
+      ? {
+          id: t.destinationTeamId,
+          name: t.destinationTeam,
+          conference: t.destinationConference,
+        }
+      : null,
+    stars: t.stars,
+    rating: t.rating ? Number(t.rating) : null,
+    eligibility: t.eligibility ? (t.eligibility as TransferEligibility) : null,
+    yearsRemaining: t.yearsRemaining,
   }));
 };

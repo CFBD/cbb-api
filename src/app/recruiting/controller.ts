@@ -1,8 +1,8 @@
 import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
 
 import middlewares from '../../config/middleware';
-import { Recruit, TeamRecruitingRanking } from './types';
-import { getRecruits, getTeamRankings } from './service';
+import { Recruit, TeamRecruitingRanking, Transfer } from './types';
+import { getRecruits, getTeamRankings, getTransfers } from './service';
 
 @Route('recruiting')
 @Middlewares(middlewares.standard)
@@ -40,5 +40,34 @@ export class RecruitingController extends Controller {
     @Query() conference?: string,
   ): Promise<TeamRecruitingRanking[]> {
     return await getTeamRankings(year, team, conference);
+  }
+
+  /**
+   * Retrieves historical transfer portal activity
+   * @param season Season filter
+   * @param sourceTeam Source team filter
+   * @param destinationTeam Destination team filter
+   * @param sourceConference Source conference filter
+   * @param destinationConference Destination conference filter
+   * @param position Position filter
+   * @isInt season
+   */
+  @Get('portal')
+  public async getPortalTransfers(
+    @Query() year?: number,
+    @Query() sourceTeam?: string,
+    @Query() destinationTeam?: string,
+    @Query() sourceConference?: string,
+    @Query() destinationConference?: string,
+    @Query() position?: string,
+  ): Promise<Transfer[]> {
+    return await getTransfers(
+      year,
+      sourceTeam,
+      destinationTeam,
+      sourceConference,
+      destinationConference,
+      position,
+    );
   }
 }
