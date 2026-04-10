@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/CFBD/cbb-api/compare/v1.26.3...v1.27.0) (2026-04-10)
+
+
+### Features
+
+* **portal:** new transfer portal endpoint ([b642a49](https://github.com/CFBD/cbb-api/commit/b642a49b7dd4e47777ad8862b5be8133a77cf9e9))
+
 ## [1.26.3](https://github.com/CFBD/cbb-api/compare/v1.26.2...v1.26.3) (2026-04-03)
 
 
