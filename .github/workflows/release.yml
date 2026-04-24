@@ -262,6 +262,7 @@ jobs:
         run: |
           npx @hey-api/openapi-ts -i api-docs.json -o src -c @hey-api/client-fetch
           sed -i 's/createConfig()/createConfig({ baseUrl: '\''https:\/\/api.collegebasketballdata.com'\'' })/g' src/sdk.gen.ts
+          sed -i '$a export * from '\''./client.gen.ts'\'';' src/index.ts
       - name: Commit and push changes
         run: |
           echo "Configuring git..."
