@@ -1,3 +1,10 @@
+## [1.27.2](https://github.com/CFBD/cbb-api/compare/v1.27.1...v1.27.2) (2026-04-24)
+
+
+### Bug Fixes
+
+* **typescript:** typescript code gen ([bef9272](https://github.com/CFBD/cbb-api/commit/bef9272cd0c1498fc8363e61d012ea1b4488eb91))
+
 ## [1.27.1](https://github.com/CFBD/cbb-api/compare/v1.27.0...v1.27.1) (2026-04-24)
 
 
