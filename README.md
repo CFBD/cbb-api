@@ -2,7 +2,7 @@
 
 This is the repository for the CBBD API, currently hosted at [api.CollegeBasketballData.com](https://api.collegebasketballdata.com). The API is built on NodeJS using TypeScript and Express over a PostgreSQL database.
 
-This project is an offshoot of CollegeFootballData.com. You can retrieve an API key at the CollegeFootballData.com website that will work with both the CFBD and CBBD APIs. A standalone website for CollegeBasketballData.com is planned for the future.
+This project is an offshoot of CollegeFootballData.com. You can retrieve an API key at the CollegeBasketballData.com website that will work with both the CFBD and CBBD APIs.
 
 ## Getting Started
 
@@ -12,6 +12,7 @@ This repo uses `pnpm` for dependency management. Run the following commands to i
 pnpm install
 pnpm dev
 ```
+
 ### Code Formatting
 
 This repo uses `prettier` and `eslint` for code formatting. Run the following command to format your code before committing:
@@ -35,6 +36,7 @@ This project uses [tsoa](https://tsoa-community.github.io/docs/) to generate Ope
 Data access is implemented using [kysely](https://kysely.dev/), a lightweight SQL query builder for TypeScript.
 
 ### Folder Structure
+
 ```
 src/
 ├── app/ - application logic
@@ -51,3 +53,4 @@ src/
 │   └── express.ts - express configuration
 ├── globals/ - global types and constants
 └── app.ts - application entrypoint
+```
