@@ -9,11 +9,11 @@ import { getRecruits, getTeamRankings, getTransfers } from './service';
 @Tags('recruiting')
 export class RecruitingController extends Controller {
   /**
-   * Retrieves historical composite player recruiting ranking and ratings
-   * @param year Optional year filter
-   * @param team Optional college team filter
-   * @param conference Optional college conference filter
-   * @param position Optional position filter
+   * Returns historical composite player recruiting rankings and ratings.
+   * @param year Filters results to the specified recruiting year.
+   * @param team Filters results to the specified college team.
+   * @param conference Filters results to the specified conference abbreviation.
+   * @param position Filters results to the specified player position.
    * @isInt year
    */
   @Get('players')
@@ -27,10 +27,10 @@ export class RecruitingController extends Controller {
   }
 
   /**
-   * Retrieves historical composite team recruiting rankings
-   * @param year Optional year filter
-   * @param team Optional team filter
-   * @param conference Optional conference abbreviation filter
+   * Returns historical composite team recruiting rankings.
+   * @param year Filters results to the specified recruiting year.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    * @isInt year
    */
   @Get('teams')
@@ -43,14 +43,13 @@ export class RecruitingController extends Controller {
   }
 
   /**
-   * Retrieves historical transfer portal activity
-   * @param season Season filter
-   * @param sourceTeam Source team filter
-   * @param destinationTeam Destination team filter
-   * @param sourceConference Source conference filter
-   * @param destinationConference Destination conference filter
-   * @param position Position filter
-   * @isInt season
+   * Returns historical transfer portal activity.
+   * @param year Filters results to the specified transfer season.
+   * @param sourceTeam Filters results to the specified source team.
+   * @param destinationTeam Filters results to the specified destination team.
+   * @param sourceConference Filters results to the specified source conference abbreviation.
+   * @param destinationConference Filters results to the specified destination conference abbreviation.
+   * @param position Filters results to the specified player position.
    */
   @Get('portal')
   public async getPortalTransfers(

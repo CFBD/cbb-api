@@ -9,8 +9,8 @@ import { getSubsByGameId, getSubsByPlayerId, getSubsByTeam } from './service';
 @Tags('plays')
 export class SubstitutionsController extends Controller {
   /**
-   * Returns all player substitutions for a given game
-   * @param gameId Game id filter
+   * Returns all recorded player substitutions for a game.
+   * @param gameId The game ID.
    * @isInt gameId
    */
   @Get('game/{gameId}')
@@ -21,9 +21,9 @@ export class SubstitutionsController extends Controller {
   }
 
   /**
-   * Retrieve all player substitutions for a given player and season
-   * @param playerId Required player id filter
-   * @param season Required season filter
+   * Returns all recorded player substitutions for a player and season.
+   * @param playerId The player ID.
+   * @param season The season to return.
    * @isInt playerId
    * @isInt season
    */
@@ -36,9 +36,9 @@ export class SubstitutionsController extends Controller {
   }
 
   /**
-   * Retrieve all player substitutions for a given team and season
-   * @param season Required season filter
-   * @param team Required team filter
+   * Returns all recorded player substitutions for a team and season.
+   * @param season The season to return.
+   * @param team The team name to return.
    * @isInt season
    */
   @Get('team')

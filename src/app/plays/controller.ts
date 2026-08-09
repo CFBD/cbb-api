@@ -16,9 +16,9 @@ import middlewares from '../../config/middleware';
 @Tags('plays')
 export class PlaysController extends Controller {
   /**
-   * Returns all plays for a given game
-   * @param gameId Game id filter
-   * @param shootingPlaysOnly Optional filter to only return shooting plays
+   * Returns all recorded plays for a game.
+   * @param gameId The game ID.
+   * @param shootingPlaysOnly When true, returns only shooting plays.
    * @isInt gameId
    */
   @Get('game/{gameId}')
@@ -30,10 +30,10 @@ export class PlaysController extends Controller {
   }
 
   /**
-   * Retrieve all plays for a given player and season
-   * @param playerId Required player id filter
-   * @param season Required season filter
-   * @param shootingPlaysOnly Optional filter to only return shooting plays
+   * Returns all recorded plays for a player and season.
+   * @param playerId The player ID.
+   * @param season The season to return.
+   * @param shootingPlaysOnly When true, returns only shooting plays.
    * @isInt playerId
    * @isInt season
    */
@@ -47,10 +47,10 @@ export class PlaysController extends Controller {
   }
 
   /**
-   * Retrieve all plays for a given team and season
-   * @param season Required season filter
-   * @param team Required team filter
-   * @param shootingPlaysOnly Optional filter to only return shooting plays
+   * Returns all recorded plays for a team and season.
+   * @param season The season to return.
+   * @param team The team name to return.
+   * @param shootingPlaysOnly When true, returns only shooting plays.
    * @isInt season
    */
   @Get('team')
@@ -63,10 +63,10 @@ export class PlaysController extends Controller {
   }
 
   /**
-   * Retrieve all plays for a given UTC date
-   * @param date Required date filter in ISO 8601 format (YYYY-MM-DD)
-   * @param shootingPlaysOnly Optional filter to only return shooting plays
-   * @param utcOffset Optional UTC offset in hours to adjust the date range
+   * Returns all recorded plays for a UTC date.
+   * @param date The date to return in ISO 8601 format (YYYY-MM-DD).
+   * @param shootingPlaysOnly When true, returns only shooting plays.
+   * @param utcOffset Shifts the date range by this number of hours from UTC.
    */
   @Get('date')
   public async getPlaysByDate(
@@ -78,10 +78,10 @@ export class PlaysController extends Controller {
   }
 
   /**
-   * Retrieve all plays for a given tournament and season
-   * @param tournament Required tournament filter (e.g. NCAA, NIT, etc)
-   * @param season Required season filter
-   * @param shootingPlaysOnly Optional filter to only return shooting plays
+   * Returns all recorded plays for a tournament and season.
+   * @param tournament The tournament to return, such as NCAA or NIT.
+   * @param season The season to return.
+   * @param shootingPlaysOnly When true, returns only shooting plays.
    */
   @Get('tournament')
   public async getPlaysByTournament(
@@ -93,7 +93,7 @@ export class PlaysController extends Controller {
   }
 
   /**
-   * Retrieve list of play types
+   * Returns available play types and their identifiers.
    */
   @Get('types')
   public async getPlayTypes(): Promise<PlayTypeInfo[]> {

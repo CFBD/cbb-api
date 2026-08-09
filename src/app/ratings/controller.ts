@@ -9,10 +9,10 @@ import { getAdjustedEfficiency, getElo, getSrs } from './service';
 @Tags('ratings')
 export class RatingsController extends Controller {
   /**
-   * Retrieves SRS ratings for the provided season, team, or conference.
-   * @param season Optional season filter
-   * @param team Optional team filter
-   * @param conference Optional conference abbreviation filter
+   * Returns Simple Rating System (SRS) ratings.
+   * @param season Filters results to the specified season.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    * @isInt season
    */
   @Get('srs')
@@ -25,10 +25,10 @@ export class RatingsController extends Controller {
   }
 
   /**
-   * Retrieves adjusted efficiency ratings for the provided season, team, or conference.
-   * @param season Optional season filter
-   * @param team Optional team filter
-   * @param conference Optional conference abbreviation filter
+   * Returns adjusted offensive and defensive efficiency ratings.
+   * @param season Filters results to the specified season.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    * @isInt season
    */
   @Get('adjusted')
@@ -41,10 +41,10 @@ export class RatingsController extends Controller {
   }
 
   /**
-   * Retrieves historical Elo ratings
-   * @param season Optional season filter
-   * @param team Optional team filter
-   * @param conference Optional conference filter
+   * Returns historical Elo ratings.
+   * @param season Filters results to the specified season.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    * @isInt season
    */
   @Get('elo')

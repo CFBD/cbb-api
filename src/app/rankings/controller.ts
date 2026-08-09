@@ -9,13 +9,13 @@ import { SeasonType } from '../enums';
 @Tags('rankings')
 export class RankingsController extends Controller {
   /**
-   * Retrieves historical poll data
-   * @param season Optional season filter
-   * @param seasonType Optional season type filter
-   * @param week Optional week filter
-   * @param pollType Optional poll type filter ("ap" or "coaches")
-   * @param team Optional team filter
-   * @param conference Optional conference filter
+   * Returns historical poll rankings.
+   * @param season Filters results to the specified season.
+   * @param seasonType Filters results to the specified season type.
+   * @param week Filters results to the specified week.
+   * @param pollType Filters results to the AP or Coaches Poll.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    * @isInt season
    * @isInt week
    */

@@ -9,11 +9,11 @@ import { LineupStats } from './types';
 @Tags('lineups')
 export class LineupsController extends Controller {
   /**
-   * Queries lineup statistics for a given team and season
-   * @param season Required season filter
-   * @param team Required team filter
-   * @param startDateRange Optional start date range filter
-   * @param endDateRange Optional end date range filter
+   * Returns lineup statistics for a team and season.
+   * @param season The season to return.
+   * @param team The team name to return.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    * @isInt season
    */
   @Get('team')
@@ -32,8 +32,8 @@ export class LineupsController extends Controller {
   }
 
   /**
-   * Queries lineup statistics for a specific game
-   * @param gameId Required game id filter
+   * Returns lineup statistics for a game.
+   * @param gameId The game ID.
    * @isInt gameId
    */
   @Get('game/{gameId}')

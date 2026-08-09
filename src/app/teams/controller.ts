@@ -9,9 +9,9 @@ import middlewares from '../../config/middleware';
 @Tags('teams')
 export class TeamsController extends Controller {
   /**
-   * Retrieves historical team information
-   * @param conference Optional conference filter
-   * @param season Optional season filter
+   * Returns team and conference information.
+   * @param conference Filters results to the specified conference abbreviation.
+   * @param season Returns conference membership for the specified season.
    * @isInt season
    */
   @Get()
@@ -23,9 +23,9 @@ export class TeamsController extends Controller {
   }
 
   /**
-   * Retrieves team roster information
-   * @param season Season filter
-   * @param team Optional team filter
+   * Returns team rosters for a season.
+   * @param season The season to return.
+   * @param team Filters results to the specified team name.
    * @isInt season
    */
   @Get('roster')

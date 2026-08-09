@@ -7,11 +7,11 @@
     "specVersion": 3,
     "host": "api.collegebasketballdata.com",
     "name": "College Basketball Data API",
-    "description": "This is an API for query various college basketball datasets and analytics. API keys can be acquired by registering on the CollegeBasketballData.com website.",
-    "license": "",
+    "description": "Use the College Basketball Data API to query game, team, player, recruiting, and analytics data. Request an API key at [CollegeBasketballData.com](https://collegebasketballdata.com/key).",
+    "license": "MIT",
     "contact": {
       "email": "admin@collegefootballdata.com",
-      "name": "the developer"
+      "name": "College Basketball Data"
     },
     "securityDefinitions": {
       "apiKey": {
@@ -27,51 +27,51 @@
     "tags": [
       {
         "name": "games",
-        "description": "Games scores and statistics"
+        "description": "Game schedules, scores, broadcasts, and box scores."
       },
       {
         "name": "plays",
-        "description": "Play by play data"
+        "description": "Play-by-play data and substitution events."
       },
       {
         "name": "teams",
-        "description": "Team information"
+        "description": "Team information and rosters."
       },
       {
         "name": "conferences",
-        "description": "Conference information"
+        "description": "Conference information and membership history."
       },
       {
         "name": "venues",
-        "description": "Information about venues"
+        "description": "Venue and location information."
       },
       {
         "name": "stats",
-        "description": "Statistical data"
+        "description": "Team and player season statistics."
       },
       {
         "name": "rankings",
-        "description": "Historical polls and rankings"
+        "description": "Historical polls and rankings."
       },
       {
         "name": "ratings",
-        "description": "Historical ratings systems"
+        "description": "Historical team rating systems."
       },
       {
         "name": "lines",
-        "description": "Historical spreads and betting data"
+        "description": "Historical betting lines and providers."
       },
       {
         "name": "lineups",
-        "description": "Statistics and data around specific lineups"
+        "description": "Five-player lineup statistics."
       },
       {
         "name": "draft",
-        "description": "Historical NBA draft data"
+        "description": "Historical NBA draft data."
       },
       {
         "name": "recruiting",
-        "description": "Historical recruiting data"
+        "description": "Historical recruiting and transfer portal data."
       }
     ]
   },

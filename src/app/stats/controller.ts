@@ -22,10 +22,10 @@ import middlewares from '../../config/middleware';
 @Tags('stats')
 export class StatsController extends Controller {
   /**
-   * Returns premium team leaderboard statistics by season, team, or conference (requires a Patreon Tier 2 subscription or higher)
-   * @param season Optional season filter
-   * @param team Optional team name filter
-   * @param conference Optional conference abbreviation filter
+   * Returns team leaderboard statistics. This endpoint requires Patreon Tier 2 access or higher.
+   * @param season Filters results to the specified season.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
    */
   @Get('team/leaderboard')
   public async getTeamLeaderboardStats(
@@ -37,11 +37,13 @@ export class StatsController extends Controller {
   }
 
   /**
-   * Returns team season statistics by year or team
-   * @param season Optional season filter, required if team is not provided
-   * @param seasonType Optional season type filter
-   * @param team Optional team name filter, required if season is not provided
-   * @param conference Optional conference abbreviation filter
+   * Returns team season statistics. Provide at least a season or team.
+   * @param season Filters results to the specified season. Required when team is not provided.
+   * @param seasonType Filters results to the specified season type.
+   * @param team Filters results to the specified team name. Required when season is not provided.
+   * @param conference Filters results to the specified conference abbreviation.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    */
   @Get('team/season')
   public async getTeamSeasonStats(
@@ -63,13 +65,13 @@ export class StatsController extends Controller {
   }
 
   /**
-   * Retrieves team season shooting statistics
-   * @param season Required season filter
-   * @param seasonType Optional season type filter
-   * @param team Team filter, required if conference is not provided
-   * @param conference Conference abbreviation filter, required if team is not provided
-   * @param startDateRange Optional start date range filter
-   * @param endDateRange Optional end date range filter
+   * Returns team shooting statistics for a season. Provide a team or conference.
+   * @param season The season to return.
+   * @param seasonType Filters results to the specified season type.
+   * @param team Filters results to the specified team name. Required when conference is not provided.
+   * @param conference Filters results to the specified conference abbreviation. Required when team is not provided.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    * @isInt season
    */
   @Get('team/shooting/season')
@@ -92,11 +94,13 @@ export class StatsController extends Controller {
   }
 
   /**
-   * Returns player statistics by season
-   * @param season Required season filter
-   * @param seasonType Optional season type filter
-   * @param team Optional team name filter
-   * @param conference Optional conference abbreviation filter
+   * Returns player statistics for a season.
+   * @param season The season to return.
+   * @param seasonType Filters results to the specified season type.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    */
   @Get('player/season')
   public async getPlayerSeasonStats(
@@ -118,13 +122,13 @@ export class StatsController extends Controller {
   }
 
   /**
-   * Retrieves player season shooting statistics
-   * @param season Required season filter
-   * @param seasonType Optional season type filter
-   * @param team Team filter, required if conference is not provided
-   * @param conference Conference abbreviation filter, required if team is not provided
-   * @param startDateRange Optional start date range filter
-   * @param endDateRange Optional end date range filter
+   * Returns player shooting statistics for a season. Provide a team or conference.
+   * @param season The season to return.
+   * @param seasonType Filters results to the specified season type.
+   * @param team Filters results to the specified team name. Required when conference is not provided.
+   * @param conference Filters results to the specified conference abbreviation. Required when team is not provided.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    * @isInt season
    */
   @Get('player/shooting/season')

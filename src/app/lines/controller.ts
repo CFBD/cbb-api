@@ -9,12 +9,12 @@ import { getLines, getProviders } from './service';
 @Tags('lines')
 export class LinesController extends Controller {
   /**
-   * Returns betting lines for the first 3000 games that match the provided filters, ordered by start date.
-   * @param season Optional season filter
-   * @param team Optional team name filter
-   * @param conference Optional conference abbreviation filter
-   * @param startDateRange Optional start timestamp in ISO 8601 format
-   * @param endDateRange Optional end timestamp in ISO 8601 format
+   * Returns betting lines for up to 3,000 games that match the filters, ordered by start date.
+   * @param season Filters results to the specified season.
+   * @param team Filters results to the specified team name.
+   * @param conference Filters results to the specified conference abbreviation.
+   * @param startDateRange Includes games starting at or after this ISO 8601 timestamp.
+   * @param endDateRange Includes games starting at or before this ISO 8601 timestamp.
    * @isInt season
    */
   @Get()
@@ -35,7 +35,7 @@ export class LinesController extends Controller {
   }
 
   /**
-   * Returns a list of available line providers
+   * Returns available betting line providers.
    */
   @Get('providers')
   public async getProviders(): Promise<LineProviderInfo[]> {

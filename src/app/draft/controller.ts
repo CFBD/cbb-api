@@ -9,7 +9,7 @@ import { DraftPick, DraftPosition, DraftTeam } from './types';
 @Tags('draft')
 export class DraftController extends Controller {
   /**
-   * Retrieves list of NBA teams
+   * Returns NBA teams represented in the draft data.
    */
   @Get('teams')
   public async getDraftTeams(): Promise<DraftTeam[]> {
@@ -17,7 +17,7 @@ export class DraftController extends Controller {
   }
 
   /**
-   * Retrieves list of position names for NBA draft prospects
+   * Returns player positions represented in the draft data.
    */
   @Get('positions')
   public async getDraftPositions(): Promise<DraftPosition[]> {
@@ -25,11 +25,11 @@ export class DraftController extends Controller {
   }
 
   /**
-   * Retrieves historical NBA draft picks
-   * @param year Optional draft year filter
-   * @param draftTeam Optional NBA team filter
-   * @param sourceTeam Optional source team (e.g. NCAA) filter
-   * @param position Optional player position abbreviation filter
+   * Returns historical NBA draft picks.
+   * @param year Filters results to the specified draft year.
+   * @param draftTeam Filters results to the specified NBA team.
+   * @param sourceTeam Filters results to the specified college team.
+   * @param position Filters results to the specified player position abbreviation.
    * @isInt year
    */
   @Get('picks')

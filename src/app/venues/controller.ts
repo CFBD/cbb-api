@@ -9,7 +9,7 @@ import middlewares from '../../config/middleware';
 @Tags('venues')
 export class VenuesController extends Controller {
   /**
-   * Retrieves list of available venues
+   * Returns available venues and location information.
    */
   @Get()
   public async getVenues(): Promise<VenueInfo[]> {

@@ -9,7 +9,7 @@ import middlewares from '../../config/middleware';
 @Tags('conferences')
 export class ConferencesController extends Controller {
   /**
-   * Retrieves list of available conferences
+   * Returns available conferences and their identifiers.
    */
   @Get()
   public async getConferences(): Promise<ConferenceInfo[]> {
@@ -17,8 +17,8 @@ export class ConferencesController extends Controller {
   }
 
   /**
-   * Retrieves historical conference membership information
-   * @param conference Optional conference abbreviation filter
+   * Returns historical conference membership records.
+   * @param conference Filters results to the specified conference abbreviation.
    */
   @Get('history')
   public async getConferenceHistory(

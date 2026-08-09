@@ -3,3 +3,4 @@ docs-site/dist/
 node_modules/
 .env
 .codex
+/docs
