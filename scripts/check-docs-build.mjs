@@ -115,6 +115,7 @@ const authoredRoutes = [
   'authentication.html',
   'usage-and-access.html',
   'libraries/python.html',
+  'libraries/r.html',
   'libraries/typescript.html',
 ];
 for (const route of authoredRoutes) {

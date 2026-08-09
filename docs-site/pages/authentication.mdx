@@ -37,8 +37,9 @@ curl --get 'https://api.collegebasketballdata.com/games' \
   --header "Authorization: Bearer ${CBBD_API_KEY}"
 ```
 
-The official [Python](/libraries/python) and
-[TypeScript](/libraries/typescript) clients use the same bearer contract
+The official [Python](/libraries/python),
+[TypeScript](/libraries/typescript), and [R](/libraries/r) clients use the same bearer contract. The R
+package stores the key securely with `keyring`; the other clients receive it
 through their client configuration.
 
 ## Protect the key

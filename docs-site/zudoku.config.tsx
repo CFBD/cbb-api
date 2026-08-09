@@ -43,6 +43,7 @@ const config: ZudokuConfig = {
               label: 'TypeScript',
               href: 'https://www.npmjs.com/package/cbbd',
             },
+            { label: 'R', href: 'https://github.com/CFBD/cbbd-r' },
             { label: 'API source', href: 'https://github.com/CFBD/cbb-api' },
           ],
         },
@@ -141,6 +142,11 @@ const config: ZudokuConfig = {
           file: 'libraries/typescript',
           label: 'TypeScript quickstart',
         },
+        {
+          type: 'doc',
+          file: 'libraries/r',
+          label: 'R quickstart',
+        },
       ],
     },
     {
@@ -194,7 +200,7 @@ const config: ZudokuConfig = {
     maxSubResults: 3,
   },
   syntaxHighlighting: {
-    languages: ['bash', 'http', 'python', 'typescript'],
+    languages: ['bash', 'http', 'python', 'r', 'typescript'],
   },
   aiAssistants: ['claude', 'chatgpt'],
   theme: {

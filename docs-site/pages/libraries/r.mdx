@@ -1,0 +1,53 @@
+---
+title: R quickstart
+description: Install the official R package and retrieve game data.
+---
+
+# Use the official R client
+
+The official `cbbdr` package provides R functions for querying the API and
+working with the returned college basketball data.
+
+## Install the package
+
+Install the development version from GitHub:
+
+```r
+install.packages("devtools")
+devtools::install_github("cfbd/cbbd-r")
+```
+
+## Store your API key
+
+Load the package and run `set_api_key()`:
+
+```r
+library(cbbdr)
+set_api_key()
+```
+
+Enter your API key when prompted. The package uses R's `keyring` package to
+store the credential securely across sessions instead of placing it in your
+source code.
+
+## Retrieve games
+
+This example retrieves the same Duke games as `GET
+/games?season=2024&team=Duke`:
+
+```r
+games <- cbbdr::get_games(
+  team = "Duke",
+  season = 2024
+)
+
+utils::head(games, 1)
+```
+
+The package returns API data in analysis-friendly rectangular structures. Pass
+the same filters documented in the [API reference](/api) to the corresponding
+`cbbdr` function.
+
+See the [official source repository](https://github.com/CFBD/cbbd-r) for the
+complete function reference, installation details, and current package
+information.

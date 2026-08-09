@@ -65,6 +65,7 @@ describe('documentation GA routes', () => {
       '/authentication',
       '/usage-and-access',
       '/libraries/python',
+      '/libraries/r',
       '/libraries/typescript',
       '/api',
       '/api/games',

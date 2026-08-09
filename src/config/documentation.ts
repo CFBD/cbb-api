@@ -14,6 +14,7 @@ const documentationRoutes = [
   '/usage-and-access',
   '/libraries/python',
   '/libraries/typescript',
+  '/libraries/r',
   '/api',
   '/api/*',
 ];
