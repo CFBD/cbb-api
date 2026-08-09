@@ -165,10 +165,10 @@ jobs:
           nodetail: true
           title: 'New version of CBB API deployed'
           url: 'https://github.com/CFBD/cbb-api'
-          color: 0x38b0ff
+          color: 0xf24f02
           description: |
             v${{ env.api_version}}
-            ${{ env.COMMIT_MESSAGE }}
+            - ${{ join(github.event.commits.*.message, fromJSON('"\n- "')) }}
 
   buildPython:
     needs: deploy
