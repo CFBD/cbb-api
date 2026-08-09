@@ -13,6 +13,18 @@ pnpm install
 pnpm dev
 ```
 
+Documentation commands use the generated TSOA OpenAPI document as their source:
+
+```bash
+pnpm docs:build    # generate OpenAPI and build the Zudoku site
+pnpm docs:dev      # generate OpenAPI and start the Zudoku dev server
+```
+
+The deployed [Zudoku documentation](https://api.collegebasketballdata.com/) is
+served by the API application. The generated OpenAPI document remains available
+at `/api-docs.json`, and the previous Swagger UI remains available at
+`/swagger` during the transition.
+
 ### Code Formatting
 
 This repo uses `prettier` and `eslint` for code formatting. Run the following command to format your code before committing:

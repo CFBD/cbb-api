@@ -1,0 +1,60 @@
+---
+title: Getting started
+description: Get an API key, retrieve games, and choose an integration path.
+---
+
+# Get started with the API
+
+Use the College Basketball Data REST API to retrieve game, team, player,
+recruiting, ranking, and analytics data. Send requests to this base URL:
+
+```text
+https://api.collegebasketballdata.com
+```
+
+## Get an API key
+
+[Request a free API key](https://collegebasketballdata.com/key). Keep it out of
+source code by storing it in an environment variable:
+
+```bash
+export CBBD_API_KEY='your-api-key'
+```
+
+## Make your first request
+
+Start by retrieving Duke's games from the 2024 season:
+
+```http
+GET /games?season=2024&team=Duke
+```
+
+Run the same request with cURL:
+
+```bash
+curl --get 'https://api.collegebasketballdata.com/games' \
+  --data-urlencode 'season=2024' \
+  --data-urlencode 'team=Duke' \
+  --header "Authorization: Bearer ${CBBD_API_KEY}"
+```
+
+A successful request returns a JSON array of game objects.
+
+## Choose how to keep building
+
+- Use the [API reference playground](/api/games#getgames) to inspect the games
+  operation, enter parameters, and send a live request.
+- Keep using raw HTTP for direct control over requests and responses.
+- Use the [Python quickstart](/libraries/python) to retrieve data with the
+  official Python package.
+- Use the [TypeScript quickstart](/libraries/typescript) to call typed
+  operations with the official TypeScript package.
+
+Before building further, review [Authentication](/authentication) for
+credential guidance and [Usage and access](/usage-and-access) for current
+access information and common API responses.
+
+Prefer the new API reference for current documentation. If you need the
+previous interface, the [legacy Swagger
+UI](https://api.collegebasketballdata.com/swagger) remains available during the
+transition.

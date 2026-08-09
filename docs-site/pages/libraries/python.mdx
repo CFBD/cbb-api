@@ -1,0 +1,54 @@
+---
+title: Python quickstart
+description: Install the official Python package and retrieve game data.
+---
+
+# Use the official Python client
+
+The official `cbbd` package provides generated Python clients and models for
+working with the API.
+
+## Install the package
+
+```bash
+python -m pip install cbbd
+```
+
+Set your key outside source code:
+
+```bash
+export CBBD_API_KEY='your-api-key'
+```
+
+## Retrieve games
+
+This example retrieves the same Duke games as `GET
+/games?season=2024&team=Duke`:
+
+```python
+import os
+
+import cbbd
+from cbbd.rest import ApiException
+
+configuration = cbbd.Configuration(
+    access_token=os.environ['CBBD_API_KEY'],
+)
+
+try:
+    with cbbd.ApiClient(configuration) as api_client:
+        games_api = cbbd.GamesApi(api_client)
+        games = games_api.get_games(season=2024, team='Duke')
+
+        if games:
+            print(games[0])
+except ApiException as error:
+    print(f'College Basketball Data API request failed: {error}')
+```
+
+The client returns a list of generated game model objects. Handle
+`ApiException` according to your application's logging and retry policy.
+
+See the [official source repository](https://github.com/CFBD/cbbd-python) and
+the [package on PyPI](https://pypi.org/project/cbbd/) for the complete generated
+client reference and current package information.

@@ -1,123 +1,210 @@
-// import { getMockReq, getMockRes } from '@jest-mock/express';
+import { getMockReq, getMockRes } from '@jest-mock/express';
+import { NextFunction, Request, Response } from 'express';
 
-// import { authDb } from '../database';
+import { ApiUser } from '../../globals';
 
-// const dbSpy = jest.spyOn(authDb, 'executeTakeFirstOrThrow');
-// dbSpy.mockImplementation(() => Promise.resolve({ remainingCalls: 1000 }));
+type QuotaTestRequest = Request & {
+  quotaReserved?: boolean;
+  user?: ApiUser;
+};
 
-// beforeEach(() => {
-//   jest.resetAllMocks();
-//   dbSpy.mockImplementation(() => Promise.resolve({ remainingCalls: 1000 }));
-// });
+const toQuotaRequest = (
+  request: ReturnType<typeof getMockReq>,
+): QuotaTestRequest => request as unknown as QuotaTestRequest;
 
-// import { ignoredPaths, checkCallQuotas, updateQuotas } from './quotas';
+const toResponse = (response: unknown): Response => response as Response;
+const toNext = (next: unknown): NextFunction => next as NextFunction;
 
-// describe('check quotas tests', () => {
-//   test('calls next if no user', async () => {
-//     const req = getMockReq({ user: null });
-//     const { res, next } = getMockRes();
+const mockReserveExecuteTakeFirst = jest.fn();
+const mockRefundExecuteTakeFirstOrThrow = jest.fn();
+const mockReturning = jest.fn(() => ({
+  executeTakeFirst: mockReserveExecuteTakeFirst,
+  executeTakeFirstOrThrow: mockRefundExecuteTakeFirstOrThrow,
+}));
+const mockSecondWhere = jest.fn(() => ({ returning: mockReturning }));
+const mockFirstWhere = jest.fn(() => ({
+  where: mockSecondWhere,
+  returning: mockReturning,
+}));
+const mockSet = jest.fn(() => ({ where: mockFirstWhere }));
+const mockUpdateTable = jest.fn(() => ({ set: mockSet }));
 
-//     await checkCallQuotas(req, res, next);
+jest.mock('../database', () => ({
+  authDb: {
+    updateTable: mockUpdateTable,
+  },
+}));
 
-//     expect(next).toHaveBeenCalled();
-//   });
+import { ignoredPaths, checkCallQuotas, updateQuotas } from './quotas';
 
-//   test('calls next if user is admin', async () => {
-//     const req = getMockReq({
-//       user: { isAdmin: true, remainingCalls: 0 },
-//     });
-//     const { res, next } = getMockRes();
+beforeEach(() => {
+  jest.clearAllMocks();
+  mockReserveExecuteTakeFirst.mockResolvedValue({ remainingCalls: 999 });
+  mockRefundExecuteTakeFirstOrThrow.mockResolvedValue({ remainingCalls: 1000 });
+});
 
-//     await checkCallQuotas(req, res, next);
+describe('check quotas tests', () => {
+  test('calls next if no user', async () => {
+    const req = getMockReq({ user: null });
+    const { res, next } = getMockRes();
 
-//     expect(next).toHaveBeenCalled();
-//   });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//   test.each(ignoredPaths)('calls next if path is %s', async (path) => {
-//     const req = getMockReq({ user: { remainingCalls: 0 }, path });
-//     const { res, next } = getMockRes();
+    expect(next).toHaveBeenCalled();
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+  });
 
-//     await checkCallQuotas(req, res, next);
+  test('calls next if user is admin', async () => {
+    const req = getMockReq({
+      user: { isAdmin: true, remainingCalls: 0 },
+    });
+    const { res, next } = getMockRes();
 
-//     expect(next).toHaveBeenCalled();
-//   });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//   test('calls next if user has calls remaining', async () => {
-//     const req = getMockReq({ user: { remainingCalls: 1 } });
-//     const { res, next } = getMockRes();
+    expect(next).toHaveBeenCalled();
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+  });
 
-//     await checkCallQuotas(req, res, next);
+  test.each(ignoredPaths)('calls next if path is %s', async (path) => {
+    const req = getMockReq({ user: { remainingCalls: 0 }, path });
+    const { res, next } = getMockRes();
 
-//     expect(next).toHaveBeenCalled();
-//   });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//   test('returns 429 if user has no calls remaining', async () => {
-//     const req = getMockReq({ user: { remainingCalls: 0 } });
-//     const { res, next } = getMockRes();
+    expect(next).toHaveBeenCalled();
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+  });
 
-//     await checkCallQuotas(req, res, next);
+  test('reserves a call if user has calls remaining', async () => {
+    const req = getMockReq({
+      user: { id: 1, isAdmin: false, remainingCalls: 1 },
+      path: '/plays',
+    });
+    const { res, next } = getMockRes();
 
-//     expect(res.status).toHaveBeenCalledWith(429);
-//     expect(res.send).toHaveBeenCalledWith({
-//       message: 'Monthly call quota exceeded.',
-//     });
-//   });
-// });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-// describe('update quotas tests', () => {
-//   test('calls not updated if no user', async () => {
-//     const req = getMockReq({ user: null });
-//     const { res, next } = getMockRes({ statusCode: 200 });
+    expect(mockUpdateTable).toHaveBeenCalledWith('user');
+    expect(mockFirstWhere).toHaveBeenCalledWith('id', '=', 1);
+    expect(mockSecondWhere).toHaveBeenCalledWith('remainingCalls', '>', 0);
+    const quotaReq = toQuotaRequest(req);
 
-//     await updateQuotas(req, res, next);
-//     res.send({});
+    expect(quotaReq.quotaReserved).toEqual(true);
+    expect(quotaReq.user?.remainingCalls).toEqual(999);
+    expect(next).toHaveBeenCalled();
+  });
 
-//     expect(authDb.one).not.toHaveBeenCalled();
-//   });
+  test('returns 429 if user has no calls remaining', async () => {
+    const req = getMockReq({
+      user: { id: 1, isAdmin: false, remainingCalls: 0 },
+      path: '/plays',
+    });
+    const { res, next } = getMockRes();
 
-//   test('calls not updated if unsuccessful response', async () => {
-//     const req = getMockReq({ user: { id: 1 } });
-//     const { res, next } = getMockRes({ statusCode: 500 });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//     await updateQuotas(req, res, next);
-//     res.send({});
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.send).toHaveBeenCalledWith({
+      message: 'Monthly call quota exceeded.',
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
 
-//     expect(authDb.one).not.toHaveBeenCalled();
-//   });
+  test('returns 429 if atomic quota reservation finds no calls remaining', async () => {
+    mockReserveExecuteTakeFirst.mockResolvedValueOnce(undefined);
+    const req = getMockReq({
+      user: { id: 1, isAdmin: false, remainingCalls: 1 },
+      path: '/plays',
+    });
+    const { res, next } = getMockRes();
 
-//   test.each(ignoredPaths)('calls not updated if path is %s', async (path) => {
-//     const req = getMockReq({ user: { id: 1 }, path });
-//     const { res, next } = getMockRes({ statusCode: 200 });
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//     await updateQuotas(req, res, next);
-//     res.send({});
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.send).toHaveBeenCalledWith({
+      message: 'Monthly call quota exceeded.',
+    });
+    const quotaReq = toQuotaRequest(req);
 
-//     expect(authDb.one).not.toHaveBeenCalled();
-//   });
+    expect(quotaReq.user?.remainingCalls).toEqual(0);
+    expect(quotaReq.quotaReserved).toBeUndefined();
+    expect(next).not.toHaveBeenCalled();
+  });
 
-//   test('calls not updated if successful response', async () => {
-//     const req = getMockReq({
-//       user: { id: 1, remainingCalls: 1000 },
-//       path: '/plays',
-//     });
-//     const { res, next } = getMockRes({ statusCode: 200 });
+  test('returns 503 if quota reservation fails', async () => {
+    const consoleSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    mockReserveExecuteTakeFirst.mockRejectedValueOnce(new Error('locked'));
+    const req = getMockReq({
+      user: { id: 1, isAdmin: false, remainingCalls: 1 },
+      path: '/plays',
+    });
+    const { res, next } = getMockRes();
 
-//     await updateQuotas(req, res, next);
-//     res.send({});
+    await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
-//     expect(authDb.one).toHaveBeenCalled();
-//   });
+    expect(res.status).toHaveBeenCalledWith(503);
+    expect(res.send).toHaveBeenCalledWith({
+      message: 'Unable to verify call quota. Please retry later.',
+    });
+    expect(next).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
+  });
+});
 
-//   test('calls remaining header if user exists', async () => {
-//     const req = getMockReq({
-//       user: { id: 1, remainingCalls: 1000 },
-//       path: '/plays',
-//     });
-//     const { res, next } = getMockRes({ statusCode: 200 });
+describe('update quotas tests', () => {
+  test('does not refund if there is no user', async () => {
+    const req = getMockReq({ user: null });
+    const { res, next } = getMockRes({ statusCode: 500 });
 
-//     await updateQuotas(req, res, next);
-//     await res.send({});
+    await updateQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
+    await res.send({});
 
-//     expect(res.setHeader).toHaveBeenCalledWith('X-CallLimit-Remaining', 1000);
-//   });
-// });
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+  });
+
+  test('does not refund if quota was not reserved', async () => {
+    const req = getMockReq({ user: { id: 1 } });
+    const { res, next } = getMockRes({ statusCode: 500 });
+
+    await updateQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
+    await res.send({});
+
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+  });
+
+  test('does not refund reserved quota for a successful response', async () => {
+    const req = getMockReq({
+      user: { id: 1, remainingCalls: 999 },
+      quotaReserved: true,
+    });
+    const { res, next } = getMockRes({ statusCode: 204 });
+
+    await updateQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
+    await res.send({});
+
+    expect(mockUpdateTable).not.toHaveBeenCalled();
+    expect(res.setHeader).toHaveBeenCalledWith('X-CallLimit-Remaining', 999);
+  });
+
+  test('refunds reserved quota for an unsuccessful response', async () => {
+    const req = getMockReq({
+      user: { id: 1, remainingCalls: 999 },
+      quotaReserved: true,
+    });
+    const { res, next } = getMockRes({ statusCode: 500 });
+
+    await updateQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
+    await res.send({});
+
+    expect(mockUpdateTable).toHaveBeenCalledWith('user');
+    expect(mockFirstWhere).toHaveBeenCalledWith('id', '=', 1);
+    const quotaReq = toQuotaRequest(req);
+
+    expect(quotaReq.user?.remainingCalls).toEqual(1000);
+    expect(res.setHeader).toHaveBeenCalledWith('X-CallLimit-Remaining', 1000);
+  });
+});
