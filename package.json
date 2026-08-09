@@ -1,6 +1,6 @@
 {
   "name": "cbb-api",
-  "version": "1.27.3",
+  "version": "1.28.0",
   "packageManager": "pnpm@11.20.0",
   "repository": {
     "type": "git",

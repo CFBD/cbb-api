@@ -1,3 +1,15 @@
+# [1.28.0](https://github.com/CFBD/cbb-api/compare/v1.27.3...v1.28.0) (2026-08-09)
+
+
+### Bug Fixes
+
+* **docs:** adding docs for official r package ([251e5b2](https://github.com/CFBD/cbb-api/commit/251e5b299d3310a4c5250564be212d58236d0d18))
+
+
+### Features
+
+* **docs:** new docs platform ([7c86bcb](https://github.com/CFBD/cbb-api/commit/7c86bcbde8f3a29b8e5c91ef9621179825c987b2))
+
 ## [1.27.3](https://github.com/CFBD/cbb-api/compare/v1.27.2...v1.27.3) (2026-04-24)
 
 
