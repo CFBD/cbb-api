@@ -1,9 +1,39 @@
-import type { ZudokuConfig } from 'zudoku';
+import type { ZudokuConfig, ZudokuPlugin } from 'zudoku';
 
 import { generateCodeSnippet } from './sdk-snippets';
 import './styles.css';
 
+const siteOrigin = 'https://api.collegebasketballdata.com';
+const socialDescription =
+  'Documentation and API reference for the College Basketball Data API.';
+
+const seoPlugin: ZudokuPlugin = {
+  getHead: ({ location }) => (
+    <>
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="College Basketball Data API" />
+      <meta
+        property="og:title"
+        content="College Basketball Data API documentation"
+      />
+      <meta property="og:description" content={socialDescription} />
+      <meta
+        property="og:image"
+        content={`${siteOrigin}/brand/cbbd-watermark.png`}
+      />
+      <meta property="og:image:alt" content="College Basketball Data" />
+      <meta
+        property="og:url"
+        content={new URL(location.pathname, siteOrigin).toString()}
+      />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:site" content="@CFB_Data" />
+    </>
+  ),
+};
+
 const config: ZudokuConfig = {
+  canonicalUrlOrigin: siteOrigin,
   site: {
     title: 'College Basketball Data API',
     logo: {
@@ -75,13 +105,13 @@ const config: ZudokuConfig = {
     },
   },
   metadata: {
-    title: '%s | College Basketball Data API',
+    title: '%s | CBBD',
     defaultTitle: 'College Basketball Data API documentation',
-    description:
-      'Documentation and API reference for the College Basketball Data API.',
+    description: socialDescription,
     favicon: '/favicon.ico',
     applicationName: 'College Basketball Data API documentation',
   },
+  plugins: [seoPlugin],
   header: {
     navigation: [
       {
@@ -156,6 +186,11 @@ const config: ZudokuConfig = {
     },
   ],
   redirects: [{ from: '/', to: '/getting-started' }],
+  sitemap: {
+    siteUrl: siteOrigin,
+    changefreq: 'weekly',
+    autoLastmod: false,
+  },
   docs: {
     files: ['/pages/**/*.{md,mdx}'],
     publishMarkdown: true,

@@ -27,50 +27,62 @@
     "tags": [
       {
         "name": "games",
+        "x-displayName": "Games",
         "description": "Game schedules, scores, broadcasts, and box scores."
       },
       {
         "name": "plays",
+        "x-displayName": "Plays",
         "description": "Play-by-play data and substitution events."
       },
       {
         "name": "teams",
+        "x-displayName": "Teams",
         "description": "Team information and rosters."
       },
       {
         "name": "conferences",
+        "x-displayName": "Conferences",
         "description": "Conference information and membership history."
       },
       {
         "name": "venues",
+        "x-displayName": "Venues",
         "description": "Venue and location information."
       },
       {
         "name": "stats",
+        "x-displayName": "Stats",
         "description": "Team and player season statistics."
       },
       {
         "name": "rankings",
+        "x-displayName": "Rankings",
         "description": "Historical polls and rankings."
       },
       {
         "name": "ratings",
+        "x-displayName": "Ratings",
         "description": "Historical team rating systems."
       },
       {
         "name": "lines",
+        "x-displayName": "Lines",
         "description": "Historical betting lines and providers."
       },
       {
         "name": "lineups",
+        "x-displayName": "Lineups",
         "description": "Five-player lineup statistics."
       },
       {
         "name": "draft",
+        "x-displayName": "Draft",
         "description": "Historical NBA draft data."
       },
       {
         "name": "recruiting",
+        "x-displayName": "Recruiting",
         "description": "Historical recruiting and transfer portal data."
       }
     ]

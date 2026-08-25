@@ -5,6 +5,7 @@ import { ApiUser, AuthorizationError } from '../globals';
 
 const mockSelectUserExecuteTakeFirst = jest.fn();
 const mockInsertMetricsExecute = jest.fn();
+const mockIsDeniedCfbWebsitePrincipal = jest.fn((_userId: number) => false);
 
 jest.mock('./database', () => ({
   authDb: {
@@ -21,6 +22,11 @@ jest.mock('./database', () => ({
       })),
     })),
   },
+}));
+
+jest.mock('./cfbServicePrincipals', () => ({
+  isDeniedCfbWebsitePrincipal: (userId: number) =>
+    mockIsDeniedCfbWebsitePrincipal(userId),
 }));
 
 const mockDatabaseUser = {
@@ -40,6 +46,7 @@ describe('generic auth tests', () => {
     jest.clearAllMocks();
     mockSelectUserExecuteTakeFirst.mockResolvedValue(mockDatabaseUser);
     mockInsertMetricsExecute.mockResolvedValue(undefined);
+    mockIsDeniedCfbWebsitePrincipal.mockReturnValue(false);
   });
 
   test('non api key auth type', async () => {
@@ -91,6 +98,21 @@ describe('generic auth tests', () => {
     await expect(
       expressAuthentication(toRequest(request), 'apiKey'),
     ).rejects.toBeInstanceOf(AuthorizationError);
+  });
+
+  test('CFB website service users are denied before metrics', async () => {
+    mockIsDeniedCfbWebsitePrincipal.mockReturnValueOnce(true);
+    const request = getMockReq({
+      headers: {
+        authorization: 'Bearer cfb-service-key',
+      },
+    });
+
+    await expect(
+      expressAuthentication(toRequest(request), 'apiKey'),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+    expect(mockIsDeniedCfbWebsitePrincipal).toHaveBeenCalledWith(123);
+    expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
   });
 
   test('non-Patreon user cannot access scoreboard', async () => {

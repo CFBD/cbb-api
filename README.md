@@ -25,6 +25,19 @@ served by the API application. The generated OpenAPI document remains available
 at `/api-docs.json`, and the previous Swagger UI remains available at
 `/swagger` during the transition.
 
+### CFB Website Service Containment
+
+Production requires `CFBD_PUBLIC_PAGE_SERVICE_USER_ID` and
+`CFBD_EXPORTER_SERVICE_USER_ID`. These are distinct positive user IDs from the
+shared authentication database, not bearer tokens. The CBB API rejects both
+identities before recording request metrics so CFB website credentials cannot
+be reused against CBB endpoints.
+
+Deploy this containment before activating the corresponding credentials in the
+CFB website. Remove it only as part of a separately approved CBB service-
+credential migration after both CFB credentials can no longer reach the CBB
+API.
+
 ### Code Formatting
 
 This repo uses `prettier` and `eslint` for code formatting. Run the following command to format your code before committing:

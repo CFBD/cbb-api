@@ -2,6 +2,7 @@ import { Request } from 'express';
 
 import { authDb } from './database';
 import { AuthorizationError } from '../globals';
+import { isDeniedCfbWebsitePrincipal } from './cfbServicePrincipals';
 
 const keyPattern = /Bearer (?<token>.+)/;
 
@@ -60,6 +61,10 @@ export const expressAuthentication = async (
           .selectAll()
           .executeTakeFirst();
         if (user && !user?.blacklisted) {
+          if (isDeniedCfbWebsitePrincipal(user.id)) {
+            return Promise.reject(new AuthorizationError('Unauthorized'));
+          }
+
           if (Object.keys(patreonLocked).includes(request.path)) {
             const requiredLevel = patreonLocked[request.path];
             if (!user.patronLevel || user.patronLevel < requiredLevel) {
