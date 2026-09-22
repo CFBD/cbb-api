@@ -956,7 +956,7 @@ export const getGamePlayerStatistics = async (
         );
 
         return {
-          athleteId: player.id,
+          athleteId: player.athleteId,
           athleteSourceId: player.sourceId,
           name: player.name,
           position: player.position,
