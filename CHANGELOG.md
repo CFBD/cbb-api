@@ -1,3 +1,10 @@
+## [1.28.1](https://github.com/CFBD/cbb-api/compare/v1.28.0...v1.28.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* **stats:** game stats athlete id mapping fix ([a6c8328](https://github.com/CFBD/cbb-api/commit/a6c832824b65a0b9acdfdff7e44bb604a01a5f2f))
+
 # [1.28.0](https://github.com/CFBD/cbb-api/compare/v1.27.3...v1.28.0) (2026-08-09)
 
 
