@@ -1,3 +1,10 @@
+## [1.28.2](https://github.com/CFBD/cbb-api/compare/v1.28.1...v1.28.2) (2026-09-27)
+
+
+### Bug Fixes
+
+* **auth:** add scoped cbb service account access ([c7a7e30](https://github.com/CFBD/cbb-api/commit/c7a7e30658392e57f5a7339d78c4a70e12d5119a))
+
 ## [1.28.1](https://github.com/CFBD/cbb-api/compare/v1.28.0...v1.28.1) (2026-09-22)
 
 
