@@ -208,3 +208,98 @@ describe('update quotas tests', () => {
     expect(res.setHeader).toHaveBeenCalledWith('X-CallLimit-Remaining', 1000);
   });
 });
+
+test('a zero-balance page is exempt but the exporter is metered', async () => {
+  for (const principalClass of ['websitePage', 'websiteExporter']) {
+    const req = toQuotaRequest(
+      getMockReq({
+        user: { id: 7, remainingCalls: 0, principalClass },
+        path: '/teams',
+      }),
+    );
+    const { res, next } = getMockRes();
+    await checkCallQuotas(req, toResponse(res), toNext(next));
+    if (principalClass === 'websitePage') expect(next).toHaveBeenCalled();
+    else expect(res.status).toHaveBeenCalledWith(429);
+  }
+});
+
+test('canonical scoreboard remains exempt through variant raw paths', async () => {
+  const req = toQuotaRequest(
+    getMockReq({
+      user: { id: 1, remainingCalls: 0 },
+      path: '/ScOrEbOaRd/',
+      route: { path: '/scoreboard' },
+    }),
+  );
+  const { res, next } = getMockRes();
+  await checkCallQuotas(req, toResponse(res), toNext(next));
+  expect(next).toHaveBeenCalled();
+  expect(mockUpdateTable).not.toHaveBeenCalled();
+});
+
+test('simultaneous last-call reservations admit only the atomic winner', async () => {
+  mockReserveExecuteTakeFirst
+    .mockResolvedValueOnce({ remainingCalls: 0 })
+    .mockResolvedValueOnce(undefined);
+  const responses = [getMockRes(), getMockRes()];
+  await Promise.all(
+    responses.map(({ res, next }) =>
+      checkCallQuotas(
+        toQuotaRequest(
+          getMockReq({ user: { id: 1, remainingCalls: 1 }, path: '/teams' }),
+        ),
+        toResponse(res),
+        toNext(next),
+      ),
+    ),
+  );
+  expect(responses[0].next).toHaveBeenCalled();
+  expect(responses[1].res.status).toHaveBeenCalledWith(429);
+});
+
+test('send stays synchronous while a failed request refunds once, including duplicate sends', async () => {
+  let release!: (value: { remainingCalls: number }) => void;
+  mockRefundExecuteTakeFirstOrThrow.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        release = resolve;
+      }),
+  );
+  const req = toQuotaRequest(
+    getMockReq({ user: { id: 1, remainingCalls: 9 }, quotaReserved: true }),
+  );
+  const { res, next } = getMockRes({ statusCode: 400 });
+  const original = res.send;
+  updateQuotas(req, toResponse(res), toNext(next));
+  expect(res.send({ message: 'bad input' })).toBe(res);
+  expect(res.send({ message: 'duplicate' })).toBe(res);
+  expect(original).not.toHaveBeenCalled();
+  release({ remainingCalls: 10 });
+  await Promise.resolve();
+  await Promise.resolve();
+  expect(mockRefundExecuteTakeFirstOrThrow).toHaveBeenCalledTimes(1);
+  expect(original).toHaveBeenCalledTimes(1);
+});
+
+test('does not write a response closed during an asynchronous refund', async () => {
+  let release!: (value: { remainingCalls: number }) => void;
+  mockRefundExecuteTakeFirstOrThrow.mockImplementationOnce(
+    () =>
+      new Promise((resolve) => {
+        release = resolve;
+      }),
+  );
+  const req = toQuotaRequest(
+    getMockReq({ user: { id: 1, remainingCalls: 9 }, quotaReserved: true }),
+  );
+  const { res, next } = getMockRes({ statusCode: 500 });
+  const original = res.send;
+  updateQuotas(req, toResponse(res), toNext(next));
+  res.send('failure');
+  Object.defineProperty(res, 'destroyed', { value: true });
+  release({ remainingCalls: 10 });
+  await Promise.resolve();
+  expect(original).not.toHaveBeenCalled();
+  expect(mockRefundExecuteTakeFirstOrThrow).toHaveBeenCalledTimes(1);
+});

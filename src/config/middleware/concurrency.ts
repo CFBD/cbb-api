@@ -35,7 +35,12 @@ const defaultKeyGenerator = (
 ): string | null => {
   const user = (req as Request & { user?: ApiUser }).user;
 
-  if (!user || typeof user.id !== 'number') {
+  if (
+    !user ||
+    typeof user.id !== 'number' ||
+    user.principalClass === 'websitePage' ||
+    user.principalClass === 'websiteExporter'
+  ) {
     return null;
   }
 

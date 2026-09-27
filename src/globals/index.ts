@@ -1,6 +1,12 @@
 export class AuthorizationError extends Error {}
 
+export type ApiPrincipalClass =
+  | 'individual'
+  | 'websitePage'
+  | 'websiteExporter';
+
 export interface ApiUser {
+  principalClass?: ApiPrincipalClass;
   id: number;
   username: string;
   patronLevel: number;

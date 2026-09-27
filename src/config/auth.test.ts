@@ -1,11 +1,15 @@
 import { getMockReq } from '@jest-mock/express';
+import type { Request } from 'express';
 
-import { expressAuthentication, patreonLocked } from './auth';
+import { expressAuthentication } from './auth';
 import { ApiUser, AuthorizationError } from '../globals';
 
 const mockSelectUserExecuteTakeFirst = jest.fn();
 const mockInsertMetricsExecute = jest.fn();
-const mockIsDeniedCfbWebsitePrincipal = jest.fn((_userId: number) => false);
+const mockIsDeniedCfbWebsitePrincipal = jest.fn((userId: number) => {
+  void userId;
+  return false;
+});
 
 jest.mock('./database', () => ({
   authDb: {
@@ -25,6 +29,7 @@ jest.mock('./database', () => ({
 }));
 
 jest.mock('./cfbServicePrincipals', () => ({
+  ...jest.requireActual('./cfbServicePrincipals'),
   isDeniedCfbWebsitePrincipal: (userId: number) =>
     mockIsDeniedCfbWebsitePrincipal(userId),
 }));
@@ -39,7 +44,8 @@ const mockDatabaseUser = {
   isAdmin: false,
 };
 
-const toRequest = (request: ReturnType<typeof getMockReq>) => request as any;
+const toRequest = (request: ReturnType<typeof getMockReq>) =>
+  request as unknown as Request;
 
 describe('generic auth tests', () => {
   beforeEach(() => {
@@ -115,24 +121,6 @@ describe('generic auth tests', () => {
     expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
   });
 
-  test('non-Patreon user cannot access scoreboard', async () => {
-    mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
-      ...mockDatabaseUser,
-      patronLevel: 0,
-    });
-
-    const request = getMockReq({
-      path: '/scoreboard',
-      headers: {
-        authorization: 'Bearer my_api_key',
-      },
-    });
-
-    await expect(
-      expressAuthentication(toRequest(request), 'apiKey'),
-    ).rejects.toBeInstanceOf(AuthorizationError);
-  });
-
   test('Patreon user can access scoreboard', async () => {
     mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
       ...mockDatabaseUser,
@@ -149,24 +137,6 @@ describe('generic auth tests', () => {
     const user = await expressAuthentication(toRequest(request), 'apiKey');
 
     expect(user as ApiUser).toBeDefined();
-  });
-
-  test('Tier 1 Patreon user cannot access premium leaderboard', async () => {
-    mockSelectUserExecuteTakeFirst.mockResolvedValueOnce({
-      ...mockDatabaseUser,
-      patronLevel: 1,
-    });
-
-    const request = getMockReq({
-      path: '/stats/team/leaderboard',
-      headers: {
-        authorization: 'Bearer my_api_key',
-      },
-    });
-
-    await expect(
-      expressAuthentication(toRequest(request), 'apiKey'),
-    ).rejects.toBeInstanceOf(AuthorizationError);
   });
 
   test('Tier 2 Patreon user can access premium leaderboard', async () => {
@@ -188,73 +158,34 @@ describe('generic auth tests', () => {
   });
 });
 
-describe('CORS auth tests', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockSelectUserExecuteTakeFirst.mockResolvedValue(mockDatabaseUser);
-    mockInsertMetricsExecute.mockResolvedValue(undefined);
-  });
-
-  test('cors allowed for domain origin', async () => {
+describe('untrusted request identity', () => {
+  test.each([
+    'origin',
+    'host',
+    'referer',
+    'x-forwarded-for',
+    'cf-connecting-ip',
+  ])('rejects forged %s even in development', async (header) => {
+    process.env.NODE_ENV = 'development';
     const request = getMockReq({
-      headers: {
-        origin: 'https://collegebasketballdata.com',
-      },
+      headers: { [header]: 'https://collegebasketballdata.com' },
     });
-
-    (request as any).get = (header: string) =>
-      header === 'origin' ? 'https://collegebasketballdata.com' : '';
-
-    const user = await expressAuthentication(toRequest(request), 'apiKey');
-
-    expect(user).toEqual(null);
-  });
-
-  test('cors allowed for domain host', async () => {
-    const request = getMockReq({
-      headers: {
-        host: 'https://collegebasketballdata.com',
-      },
-    });
-
-    (request as any).get = (header: string) =>
-      header === 'host' ? 'https://collegebasketballdata.com' : '';
-
-    const user = await expressAuthentication(toRequest(request), 'apiKey');
-
-    expect(user).toEqual(null);
-  });
-
-  test('cors behavior for other domain respects NODE_ENV bypass', async () => {
-    const request = getMockReq({
-      headers: {
-        host: 'https://example.com',
-        origin: 'https://example.com',
-      },
-    });
-
-    (request as any).get = (header: string) =>
-      header === 'host' || header === 'origin' ? 'https://example.com' : '';
-
-    if (process.env.NODE_ENV === 'development') {
-      const user = await expressAuthentication(toRequest(request), 'apiKey');
-      expect(user).toEqual(null);
-      return;
-    }
-
     await expect(
       expressAuthentication(toRequest(request), 'apiKey'),
     ).rejects.toBeInstanceOf(AuthorizationError);
   });
-
-  test.each(Object.keys(patreonLocked))(
-    'cors not allowed for Patreon locked endpoint %s',
-    async (path) => {
-      const request = getMockReq({ path });
-
-      await expect(
-        expressAuthentication(toRequest(request), 'apiKey'),
-      ).rejects.toBeInstanceOf(AuthorizationError);
-    },
-  );
+  test.each([
+    'Bearer ',
+    'bearer abc',
+    'Bearer a b',
+    'prefix Bearer abc',
+    'Bearer abc\n',
+  ])('rejects malformed bearer %s', async (authorization) => {
+    await expect(
+      expressAuthentication(
+        toRequest(getMockReq({ headers: { authorization } })),
+        'apiKey',
+      ),
+    ).rejects.toBeInstanceOf(AuthorizationError);
+  });
 });

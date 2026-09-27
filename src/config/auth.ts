@@ -2,114 +2,145 @@ import { Request } from 'express';
 
 import { authDb } from './database';
 import { AuthorizationError } from '../globals';
+import {
+  classifyPrincipal,
+  isServiceOperationAllowed,
+} from './servicePrincipals';
 import { isDeniedCfbWebsitePrincipal } from './cfbServicePrincipals';
 
-const keyPattern = /Bearer (?<token>.+)/;
+const keyPattern = /^Bearer (?<token>\S+)$/;
 
-export const patreonLocked: Record<string, number> = {
-  '/scoreboard': 1,
-  '/stats/team/leaderboard': 2,
+type AuthOutcome =
+  | 'allowed'
+  | 'legacy_website'
+  | 'missing'
+  | 'malformed'
+  | 'unknown'
+  | 'blacklisted'
+  | 'out_of_scope';
+
+const logAuthOutcome = (
+  request: Request,
+  outcome: AuthOutcome,
+  principalClass: 'individual' | 'websitePage' | 'websiteExporter' | 'unknown',
+): void => {
+  const matchedPath =
+    typeof request.route?.path === 'string' ? request.route.path : 'unmatched';
+  console.info(
+    JSON.stringify({
+      event: 'api_request_auth',
+      principalClass,
+      operation: `${request.method.toUpperCase()} ${matchedPath}`,
+      outcome,
+    }),
+  );
 };
 
-const corsOrigin: string =
-  process.env.CORS_ORIGIN || 'https://collegebasketballdata.com';
-const nodeEnv: string = process.env.NODE_ENV || 'production';
-
 export const expressAuthentication = async (
-  // @ts-ignore
   request: Request,
   securityName: string,
 ) => {
-  if (securityName === 'apiKey') {
-    if (
-      !request.headers.authorization &&
-      !Object.keys(patreonLocked).includes(request.path)
-    ) {
-      const origin = request.get('origin');
-      const host = request.get('host');
-
-      if (
-        nodeEnv === 'development' ||
-        corsOrigin === origin ||
-        corsOrigin === host
-      ) {
-        return Promise.resolve(null);
-      }
-    }
-
-    if (
-      !request.headers.authorization ||
-      !keyPattern.test(request.headers.authorization ?? '')
-    ) {
-      return Promise.reject(
-        new AuthorizationError(
-          'Unauthorized. Did you forget to add "Bearer " before your key? Go to CollegeBasketballData.com to register for your free API key. See the CFBD Blog for examples on usage: https://blog.collegefootballdata.com/using-api-keys-with-the-cfbd-api.',
-        ),
-      );
-    } else {
-      const token = keyPattern.exec(request.headers.authorization ?? '');
-      if (!token?.groups?.['token']) {
-        return Promise.reject(
-          new AuthorizationError(
-            'Unauthorized. No token provided. Go to CollegeBasketballData.com to register for your free API key.',
-          ),
-        );
-      } else {
-        const user = await authDb
-          .selectFrom('user')
-          .where('token', '=', token?.groups?.['token'] ?? '')
-          .selectAll()
-          .executeTakeFirst();
-        if (user && !user?.blacklisted) {
-          if (isDeniedCfbWebsitePrincipal(user.id)) {
-            return Promise.reject(new AuthorizationError('Unauthorized'));
-          }
-
-          if (Object.keys(patreonLocked).includes(request.path)) {
-            const requiredLevel = patreonLocked[request.path];
-            if (!user.patronLevel || user.patronLevel < requiredLevel) {
-              return Promise.reject(
-                new AuthorizationError(
-                  `Unauthorized. This endpoint requires a Patreon subscription at Tier ${requiredLevel} or higher.`,
-                ),
-              );
-            }
-          }
-
-          try {
-            await authDb
-              .insertInto('metrics')
-              .values({
-                userId: user.id,
-                endpoint: request.path,
-                query: request.query,
-                userAgent: request.get('user-agent') ?? '',
-                apiVersion: 'cbb',
-              })
-              .execute();
-          } catch (err) {
-            console.error(err);
-          }
-
-          return Promise.resolve({
-            id: user?.id,
-            username: user?.username,
-            patronLevel: user?.patronLevel,
-            blacklisted: user?.blacklisted,
-            throttled: user?.throttled,
-            remainingCalls: user?.remainingCalls,
-            isAdmin: user?.isAdmin,
-          });
-        } else if (user?.blacklisted) {
-          return Promise.reject(
-            new AuthorizationError('Account has been blacklisted.'),
-          );
-        } else {
-          return Promise.reject(new AuthorizationError('Unauthorized'));
-        }
-      }
-    }
+  if (securityName !== 'apiKey') {
+    logAuthOutcome(request, 'malformed', 'unknown');
+    return Promise.reject(new AuthorizationError('Unauthorized'));
   }
 
-  return Promise.reject(new AuthorizationError('Unauthorized'));
+  // TEMPORARY CUTOVER: remove after the service-credential website deploys.
+  // Preserve only the old website's public GETs; credentials and paid routes
+  // must always pass the principal checks below.
+  if (
+    request.headers.authorization === undefined &&
+    request.method === 'GET' &&
+    typeof request.route?.path === 'string' &&
+    isServiceOperationAllowed('websiteExporter', {
+      method: request.method,
+      path: request.route.path,
+    }) &&
+    request.get('origin') ===
+      (process.env.CORS_ORIGIN || 'https://collegebasketballdata.com')
+  ) {
+    logAuthOutcome(request, 'legacy_website', 'unknown');
+    return null;
+  }
+
+  const authorization = request.headers.authorization;
+  const token = authorization ? keyPattern.exec(authorization) : null;
+  if (!token?.groups?.['token']) {
+    logAuthOutcome(
+      request,
+      authorization === undefined ? 'missing' : 'malformed',
+      'unknown',
+    );
+    return Promise.reject(
+      new AuthorizationError(
+        'Unauthorized. Use "Bearer <key>". Register for a free API key at CollegeBasketballData.com.',
+      ),
+    );
+  }
+
+  const user = await authDb
+    .selectFrom('user')
+    .where('token', '=', token.groups['token'])
+    .selectAll()
+    .executeTakeFirst();
+  if (!user) {
+    logAuthOutcome(request, 'unknown', 'unknown');
+    return Promise.reject(new AuthorizationError('Unauthorized'));
+  }
+  if (user.blacklisted) {
+    logAuthOutcome(request, 'blacklisted', 'unknown');
+    return Promise.reject(
+      new AuthorizationError('Account has been blacklisted.'),
+    );
+  }
+
+  if (isDeniedCfbWebsitePrincipal(user.id)) {
+    logAuthOutcome(request, 'out_of_scope', 'unknown');
+    throw new AuthorizationError('Unauthorized');
+  }
+  const principalClass = classifyPrincipal(user.id);
+  const matchedPath =
+    typeof request.route?.path === 'string' ? request.route.path : undefined;
+  if (
+    principalClass !== 'individual' &&
+    (user.isAdmin ||
+      user.patronLevel !== 0 ||
+      user.throttled ||
+      !matchedPath ||
+      !isServiceOperationAllowed(principalClass, {
+        method: request.method,
+        path: matchedPath,
+      }))
+  ) {
+    logAuthOutcome(request, 'out_of_scope', principalClass);
+    return Promise.reject(new AuthorizationError('Unauthorized'));
+  }
+
+  try {
+    await authDb
+      .insertInto('metrics')
+      .values({
+        userId: user.id,
+        endpoint: matchedPath ?? request.path,
+        query: request.query,
+        userAgent: request.get('user-agent') ?? '',
+        apiVersion: 'cbb',
+      })
+      .execute();
+  } catch {
+    console.error('API metrics write failed.');
+  }
+
+  logAuthOutcome(request, 'allowed', principalClass);
+
+  return Promise.resolve({
+    id: user.id,
+    username: user.username,
+    patronLevel: user.patronLevel,
+    blacklisted: user.blacklisted,
+    throttled: user.throttled,
+    remainingCalls: user.remainingCalls,
+    isAdmin: user.isAdmin,
+    principalClass,
+  });
 };

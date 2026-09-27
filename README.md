@@ -25,18 +25,40 @@ served by the API application. The generated OpenAPI document remains available
 at `/api-docs.json`, and the previous Swagger UI remains available at
 `/swagger` during the transition.
 
-### CFB Website Service Containment
+### Website service principals
 
-Production requires `CFBD_PUBLIC_PAGE_SERVICE_USER_ID` and
-`CFBD_EXPORTER_SERVICE_USER_ID`. These are distinct positive user IDs from the
-shared authentication database, not bearer tokens. The CBB API rejects both
-identities before recording request metrics so CFB website credentials cannot
-be reused against CBB endpoints.
+**Release phase: temporary compatibility deployment.** The marked
+`TEMPORARY CUTOVER` block in `src/config/auth.ts` still accepts the existing
+website Origin for eligible public GETs without credentials. Paid operations,
+other methods, and requests carrying credentials cannot use that branch.
+This is not completed remediation. After deploying the migrated website, remove
+that block, its `legacy_website` log outcome, and the temporary HTTP test; replace
+the test with strict public-route Origin denial coverage. There is no runtime
+switch for enabling the bypass.
 
-Deploy this containment before activating the corresponding credentials in the
-CFB website. Remove it only as part of a separately approved CBB service-
-credential migration after both CFB credentials can no longer reach the CBB
-API.
+The final implementation requires bearer authentication for data in all
+modes; Origin/Host headers never authenticate. Production requires four disjoint
+positive safe integer IDs: `CBBD_PUBLIC_PAGE_SERVICE_USER_ID`,
+`CBBD_EXPORTER_SERVICE_USER_ID`, `CFBD_PUBLIC_PAGE_SERVICE_USER_ID`, and
+`CFBD_EXPORTER_SERVICE_USER_ID`. Both CFB users are rejected before metrics or
+quota. CBB services must be unrestricted, non-admin, Tier 0 users. Pages have an
+exact five-operation scope and no monthly debit; exporter GET scope excludes
+scoreboard and leaderboard and has its own normal atomic allowance.
+
+Tier guards attach to generated handlers, including alternate URL spellings.
+Direct API admins still need Tier 1 for scoreboard and Tier 2 for leaderboard.
+Only the scoped page service has the explicit leaderboard exception. Enrollment
+and documentation remain public. The existing quota wrapper retains synchronous
+Express sends and refunds failed reservations exactly once.
+
+`REDIS_URL` / `REDIS_PASSWORD` reuse the existing CFB connection. CBB snapshot and
+lock keys use `cbb-api:v1:scoreboard:*`; successful canonical snapshots live for
+60 seconds, with authorized DB fallback on cache failures.
+
+Production rollout is in progress. Follow the adjacent web repository's
+[CBB cutover runbook](../web/docs/runbooks/cbb-api-access-cutover.md). Do not deploy
+strict auth before the migrated website and proxy gates. Foreign containment
+must remain permanently in both APIs; never remove it during this migration.
 
 ### Code Formatting
 

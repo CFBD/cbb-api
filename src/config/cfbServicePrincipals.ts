@@ -12,7 +12,7 @@ const parseId = (
   }
 
   const parsed = Number(value);
-  if (!Number.isInteger(parsed) || parsed <= 0) {
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
     throw new Error(`${name} must be a positive integer.`);
   }
 

@@ -1,3 +1,4 @@
+import { requirePatreonTier } from '../../config/middleware/patreon';
 import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
 import {
   PlayerSeasonShootingStats,
@@ -28,6 +29,7 @@ export class StatsController extends Controller {
    * @param conference Filters results to the specified conference abbreviation.
    */
   @Get('team/leaderboard')
+  @Middlewares(requirePatreonTier(2, { allowWebsitePage: true }))
   public async getTeamLeaderboardStats(
     @Query() season?: number,
     @Query() team?: string,

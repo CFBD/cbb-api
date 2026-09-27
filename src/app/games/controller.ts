@@ -1,3 +1,4 @@
+import { requirePatreonTier } from '../../config/middleware/patreon';
 import { Route, Tags, Controller, Get, Query, Middlewares } from 'tsoa';
 import {
   getBroadcasts,
@@ -159,6 +160,7 @@ export class ScoreboardController extends Controller {
    * @param conference Filters results to the specified conference abbreviation.
    */
   @Get()
+  @Middlewares(requirePatreonTier(1))
   public async getScoreboard(
     @Query() conference?: string,
   ): Promise<ScoreboardGame[]> {
