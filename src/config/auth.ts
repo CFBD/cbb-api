@@ -12,7 +12,6 @@ const keyPattern = /^Bearer (?<token>\S+)$/;
 
 type AuthOutcome =
   | 'allowed'
-  | 'legacy_website'
   | 'missing'
   | 'malformed'
   | 'unknown'
@@ -43,24 +42,6 @@ export const expressAuthentication = async (
   if (securityName !== 'apiKey') {
     logAuthOutcome(request, 'malformed', 'unknown');
     return Promise.reject(new AuthorizationError('Unauthorized'));
-  }
-
-  // TEMPORARY CUTOVER: remove after the service-credential website deploys.
-  // Preserve only the old website's public GETs; credentials and paid routes
-  // must always pass the principal checks below.
-  if (
-    request.headers.authorization === undefined &&
-    request.method === 'GET' &&
-    typeof request.route?.path === 'string' &&
-    isServiceOperationAllowed('websiteExporter', {
-      method: request.method,
-      path: request.route.path,
-    }) &&
-    request.get('origin') ===
-      (process.env.CORS_ORIGIN || 'https://collegebasketballdata.com')
-  ) {
-    logAuthOutcome(request, 'legacy_website', 'unknown');
-    return null;
   }
 
   const authorization = request.headers.authorization;

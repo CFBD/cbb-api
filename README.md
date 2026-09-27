@@ -27,16 +27,7 @@ at `/api-docs.json`, and the previous Swagger UI remains available at
 
 ### Website service principals
 
-**Release phase: temporary compatibility deployment.** The marked
-`TEMPORARY CUTOVER` block in `src/config/auth.ts` still accepts the existing
-website Origin for eligible public GETs without credentials. Paid operations,
-other methods, and requests carrying credentials cannot use that branch.
-This is not completed remediation. After deploying the migrated website, remove
-that block, its `legacy_website` log outcome, and the temporary HTTP test; replace
-the test with strict public-route Origin denial coverage. There is no runtime
-switch for enabling the bypass.
-
-The final implementation requires bearer authentication for data in all
+The API requires bearer authentication for data in all
 modes; Origin/Host headers never authenticate. Production requires four disjoint
 positive safe integer IDs: `CBBD_PUBLIC_PAGE_SERVICE_USER_ID`,
 `CBBD_EXPORTER_SERVICE_USER_ID`, `CFBD_PUBLIC_PAGE_SERVICE_USER_ID`, and

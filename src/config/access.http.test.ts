@@ -184,28 +184,26 @@ test('misconfigured privileged or restricted service accounts fail closed', asyn
   expect(stats.getTeamLeaderboardStats).not.toHaveBeenCalled();
 });
 
-// TEMPORARY CUTOVER: replace with strict Origin-denial coverage after web deploy.
-test('legacy website public GETs remain available only during the compatibility release', async () => {
+test('website headers cannot authenticate public GETs or alternate route spellings', async () => {
   const origin = process.env.CORS_ORIGIN || 'https://collegebasketballdata.com';
-  for (const path of ['/teams', '/Teams/']) {
-    expect((await fetch(base + path, { headers: { origin } })).status).toBe(
-      200,
-    );
-  }
-  expect(getTeams).toHaveBeenCalledTimes(2);
-  expect(mockUser).not.toHaveBeenCalled();
-  expect(mockMetrics).not.toHaveBeenCalled();
-  expect(mockReserve).not.toHaveBeenCalled();
-
-  jest.clearAllMocks();
   const rejectedHeaders: Record<string, string>[] = [
     {},
+    { origin },
     { origin: 'https://unrelated.example' },
     { host: 'collegebasketballdata.com' },
+    {
+      origin,
+      host: 'collegebasketballdata.com',
+      referer: origin,
+      'x-forwarded-for': '192.0.2.1',
+      'cf-connecting-ip': '192.0.2.2',
+    },
     { origin, authorization: 'malformed' },
   ];
-  for (const headers of rejectedHeaders) {
-    expect((await fetch(base + '/teams', { headers })).status).toBe(401);
+  for (const path of ['/teams', '/Teams/']) {
+    for (const headers of rejectedHeaders) {
+      expect((await fetch(base + path, { headers })).status).toBe(401);
+    }
   }
   expect(
     (await fetch(base + '/teams', { method: 'HEAD', headers: { origin } }))
@@ -220,6 +218,7 @@ test('legacy website public GETs remain available only during the compatibility 
   expect(getTeams).not.toHaveBeenCalled();
   expect(getScoreboard).not.toHaveBeenCalled();
   expect(stats.getTeamLeaderboardStats).not.toHaveBeenCalled();
+  expect(mockUser).not.toHaveBeenCalled();
   expect(mockMetrics).not.toHaveBeenCalled();
   expect(mockReserve).not.toHaveBeenCalled();
 });
