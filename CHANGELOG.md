@@ -1,3 +1,10 @@
+## [1.28.3](https://github.com/CFBD/cbb-api/compare/v1.28.2...v1.28.3) (2026-09-27)
+
+
+### Bug Fixes
+
+* **auth:** require bearer credentials for all cbb data requests ([21a7de2](https://github.com/CFBD/cbb-api/commit/21a7de2cd62f3eceb097e27d5b229c3becb374dc))
+
 ## [1.28.2](https://github.com/CFBD/cbb-api/compare/v1.28.1...v1.28.2) (2026-09-27)
 
 
