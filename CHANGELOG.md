@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/CFBD/cbb-api/compare/v1.28.3...v1.29.0) (2026-09-29)
+
+
+### Features
+
+* **stats:** team season snapshots endpoint ([200a6d1](https://github.com/CFBD/cbb-api/commit/200a6d15c168f685681516fcf37931c3c84af5a5))
+
 ## [1.28.3](https://github.com/CFBD/cbb-api/compare/v1.28.2...v1.28.3) (2026-09-27)
 
 
