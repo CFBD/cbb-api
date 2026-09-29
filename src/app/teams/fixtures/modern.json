@@ -1,0 +1,163 @@
+{
+  "formatVersion": 1,
+  "teamId": 72,
+  "season": 2026,
+  "seasonLabel": "2025\u201326",
+  "generatedAt": "2026-09-27T12:00:00.000Z",
+  "team": {
+    "school": "Duke",
+    "mascot": "Blue Devils",
+    "sourceId": "150",
+    "conference": {
+      "id": 1,
+      "name": "Atlantic Coast Conference",
+      "abbreviation": "ACC"
+    }
+  },
+  "record": {
+    "overall": {
+      "games": 2,
+      "wins": 2,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "conference": {
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "complete": true,
+    "unknownEligibilityGames": 0,
+    "unknownConferenceGames": 0
+  },
+  "ratings": {
+    "adjusted": {
+      "offense": {
+        "value": 120,
+        "rank": 1
+      },
+      "defense": {
+        "value": 95,
+        "rank": 2
+      },
+      "net": {
+        "value": 25,
+        "rank": 1
+      },
+      "population": 3
+    },
+    "elo": null,
+    "srs": null,
+    "polls": {
+      "ap": {
+        "state": "ranked",
+        "date": "2026-01-01",
+        "week": 8,
+        "seasonType": "regular",
+        "rank": 2
+      },
+      "coaches": {
+        "state": "unavailable",
+        "date": null,
+        "week": null,
+        "seasonType": null,
+        "rank": null
+      }
+    }
+  },
+  "efficiency": {
+    "coverage": {
+      "state": "partial",
+      "reason": "incomplete_inputs",
+      "eligibleGames": 2,
+      "coveredGames": 1
+    },
+    "pace": 70,
+    "paceGames": 1,
+    "offense": {
+      "points": 80,
+      "possessions": 70,
+      "rawRating": 114.28571428571429,
+      "effectiveFieldGoalPct": 55,
+      "turnoverPct": 10,
+      "offensiveReboundPct": 40,
+      "freeThrowRate": 30
+    },
+    "defense": {
+      "points": 70,
+      "possessions": 70,
+      "rawRating": 100,
+      "effectiveFieldGoalPct": 50,
+      "turnoverPct": 15,
+      "offensiveReboundPct": 20,
+      "freeThrowRate": 25
+    }
+  },
+  "shooting": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 2,
+      "coveredGames": 0
+    },
+    "trackedAttempts": 0,
+    "buckets": []
+  },
+  "players": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 2,
+      "coveredGames": 0
+    },
+    "rows": []
+  },
+  "schedule": {
+    "games": [
+      {
+        "id": 1,
+        "opponentId": 102,
+        "opponent": "Gonzaga",
+        "opponentHasProfile": true,
+        "startDate": "2026-01-02T01:00:00.000Z",
+        "calendarDate": "2026-01-02",
+        "startTimeTbd": false,
+        "location": "neutral",
+        "status": "final",
+        "seasonType": "regular",
+        "gameType": "TRNMNT",
+        "eligibility": "counted",
+        "conferenceGame": false,
+        "teamPoints": 80,
+        "opponentPoints": 70,
+        "result": "W",
+        "venue": null
+      },
+      {
+        "id": 2,
+        "opponentId": 102,
+        "opponent": "Gonzaga",
+        "opponentHasProfile": true,
+        "startDate": "2026-01-02T01:00:00.000Z",
+        "calendarDate": "2026-01-02",
+        "startTimeTbd": false,
+        "location": "neutral",
+        "status": "final",
+        "seasonType": "regular",
+        "gameType": "TRNMNT",
+        "eligibility": "counted",
+        "conferenceGame": false,
+        "teamPoints": 80,
+        "opponentPoints": 70,
+        "result": "W",
+        "venue": null
+      }
+    ]
+  },
+  "sources": {
+    "leaderboardUpdatedAt": null,
+    "latestFinalStartDate": null,
+    "notes": ["Synthetic contract fixture; not a captured team season."]
+  }
+}

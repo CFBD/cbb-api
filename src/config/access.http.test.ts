@@ -47,6 +47,17 @@ jest.mock('../app/auth/service', () => ({
 jest.mock('../app/teams/service', () => ({
   getTeams: jest.fn().mockResolvedValue([]),
 }));
+jest.mock('../app/teams/seasonOverview', () => ({
+  getTeamSeasonOverview: jest
+    .fn()
+    .mockResolvedValue({ teamId: 72, season: 2026 }),
+}));
+jest.mock('../app/teams/directory', () => ({
+  ...jest.requireActual('../app/teams/directory'),
+  getTeamDirectory: jest
+    .fn()
+    .mockResolvedValue({ season: 2026, teams: [], conferences: [] }),
+}));
 import { RegisterRoutes } from '../../build/routes';
 import { updateQuotas } from './middleware/quotas';
 import errorHandler from './errors';
@@ -222,3 +233,24 @@ test('website headers cannot authenticate public GETs or alternate route spellin
   expect(mockMetrics).not.toHaveBeenCalled();
   expect(mockReserve).not.toHaveBeenCalled();
 });
+
+test.each(['/teams/directory?season=2026', '/teams/72/season/2026/overview'])(
+  'new page operation preserves service boundaries: %s',
+  async (path) => {
+    for (const [id, allowed] of [
+      [101, true],
+      [102, false],
+      [201, false],
+      [202, false],
+      [1, true],
+    ] as const) {
+      jest.clearAllMocks();
+      mockUser.mockResolvedValue({ id, patronLevel: 0, remainingCalls: 10 });
+      const response = await fetch(base + path, {
+        headers: { authorization: 'Bearer test' },
+      });
+      expect(response.status).toBe(allowed ? 200 : 401);
+      if (id !== 1) expect(mockReserve).not.toHaveBeenCalled();
+    }
+  },
+);

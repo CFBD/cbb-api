@@ -643,7 +643,16 @@ export interface Venue {
   timezone: string | null;
 }
 
+export interface TeamSeasonSnapshot {
+  teamId: number;
+  season: number;
+  formatVersion: number;
+  generatedAt: Timestamp;
+  payload: Json;
+}
+
 export interface DB {
+  teamSeasonSnapshot: TeamSeasonSnapshot;
   adjustedEfficiency: AdjustedEfficiency;
   athlete: Athlete;
   athleteTeam: AthleteTeam;

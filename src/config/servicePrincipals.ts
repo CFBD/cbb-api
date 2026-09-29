@@ -14,6 +14,8 @@ export interface ApiOperation {
 
 const pageOperations = new Set([
   'GET /teams',
+  'GET /teams/directory',
+  'GET /teams/{teamId}/season/{season}/overview',
   'GET /conferences',
   'GET /ratings/adjusted',
   'GET /stats/team/season',
@@ -21,6 +23,8 @@ const pageOperations = new Set([
 ]);
 export const exporterDeniedPaths = new Set([
   '/scoreboard',
+  '/teams/directory',
+  '/teams/{teamId}/season/{season}/overview',
   '/stats/team/leaderboard',
 ]);
 

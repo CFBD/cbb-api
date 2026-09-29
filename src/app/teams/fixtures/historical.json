@@ -1,0 +1,130 @@
+{
+  "formatVersion": 1,
+  "teamId": 72,
+  "season": 2014,
+  "seasonLabel": "2013\u201314",
+  "generatedAt": "2026-09-27T12:00:00.000Z",
+  "team": {
+    "school": "Duke",
+    "mascot": "Blue Devils",
+    "sourceId": "150",
+    "conference": {
+      "id": 1,
+      "name": "Atlantic Coast Conference",
+      "abbreviation": "ACC"
+    }
+  },
+  "record": {
+    "overall": {
+      "games": 1,
+      "wins": 1,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "conference": {
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "complete": true,
+    "unknownEligibilityGames": 0,
+    "unknownConferenceGames": 0
+  },
+  "ratings": {
+    "adjusted": null,
+    "elo": null,
+    "srs": null,
+    "polls": {
+      "ap": {
+        "state": "unavailable",
+        "date": null,
+        "week": null,
+        "seasonType": null,
+        "rank": null
+      },
+      "coaches": {
+        "state": "unavailable",
+        "date": null,
+        "week": null,
+        "seasonType": null,
+        "rank": null
+      }
+    }
+  },
+  "efficiency": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 1,
+      "coveredGames": 0
+    },
+    "pace": null,
+    "paceGames": 0,
+    "offense": {
+      "points": null,
+      "possessions": null,
+      "rawRating": null,
+      "effectiveFieldGoalPct": null,
+      "turnoverPct": null,
+      "offensiveReboundPct": null,
+      "freeThrowRate": null
+    },
+    "defense": {
+      "points": null,
+      "possessions": null,
+      "rawRating": null,
+      "effectiveFieldGoalPct": null,
+      "turnoverPct": null,
+      "offensiveReboundPct": null,
+      "freeThrowRate": null
+    }
+  },
+  "shooting": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 1,
+      "coveredGames": 0
+    },
+    "trackedAttempts": 0,
+    "buckets": []
+  },
+  "players": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 1,
+      "coveredGames": 0
+    },
+    "rows": []
+  },
+  "schedule": {
+    "games": [
+      {
+        "id": 1,
+        "opponentId": 102,
+        "opponent": "Gonzaga",
+        "opponentHasProfile": true,
+        "startDate": "2014-01-02T01:00:00.000Z",
+        "calendarDate": "2014-01-02",
+        "startTimeTbd": false,
+        "location": "neutral",
+        "status": "final",
+        "seasonType": "regular",
+        "gameType": "TRNMNT",
+        "eligibility": "counted",
+        "conferenceGame": false,
+        "teamPoints": 80,
+        "opponentPoints": 70,
+        "result": "W",
+        "venue": null
+      }
+    ]
+  },
+  "sources": {
+    "leaderboardUpdatedAt": null,
+    "latestFinalStartDate": null,
+    "notes": ["Synthetic contract fixture; not a captured team season."]
+  }
+}

@@ -1,3 +1,4 @@
+import { TeamProfileError } from '../app/teams/directory';
 import { NextFunction, Request, Response } from 'express';
 import { AuthorizationError, UserMessageError } from '../globals';
 import { ValidateError } from 'tsoa';
@@ -8,6 +9,13 @@ export default function errorHandler(
   res: Response,
   next: NextFunction,
 ): Response | void {
+  if (err instanceof TeamProfileError) {
+    return res
+      .status(err.status)
+      .set('Cache-Control', 'no-store')
+      .json({ message: err.message });
+  }
+
   if (err instanceof ValidateError) {
     console.warn(`Caught Validation Error for %s:`, req.path, {
       fields: err?.fields,

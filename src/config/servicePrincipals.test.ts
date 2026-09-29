@@ -34,6 +34,8 @@ test('reviewed scope covers 36 generated operations and exactly five parameteriz
   expect([...getPageOperations()].sort()).toEqual(
     [
       'GET /teams',
+      'GET /teams/directory',
+      'GET /teams/{teamId}/season/{season}/overview',
       'GET /conferences',
       'GET /ratings/adjusted',
       'GET /stats/team/season',
@@ -48,7 +50,14 @@ test('reviewed scope covers 36 generated operations and exactly five parameteriz
         method: 'GET',
         path: matched,
       }),
-    ).toBe(!['/scoreboard', '/stats/team/leaderboard'].includes(path));
+    ).toBe(
+      ![
+        '/scoreboard',
+        '/stats/team/leaderboard',
+        '/teams/directory',
+        '/teams/{teamId}/season/{season}/overview',
+      ].includes(path),
+    );
     expect(
       isServiceOperationAllowed('websiteExporter', {
         method: 'POST',
@@ -60,4 +69,20 @@ test('reviewed scope covers 36 generated operations and exactly five parameteriz
     expect(
       isServiceOperationAllowed('websiteExporter', { method: 'GET', path }),
     ).toBe(false);
+});
+test('profile operations are page-scoped, ordinary consumer accessible and exporter excluded', () => {
+  for (const path of [
+    '/teams/directory',
+    '/teams/:teamId/season/:season/overview',
+  ]) {
+    expect(
+      isServiceOperationAllowed('websitePage', { method: 'GET', path }),
+    ).toBe(true);
+    expect(
+      isServiceOperationAllowed('individual', { method: 'GET', path }),
+    ).toBe(true);
+    expect(
+      isServiceOperationAllowed('websiteExporter', { method: 'GET', path }),
+    ).toBe(false);
+  }
 });

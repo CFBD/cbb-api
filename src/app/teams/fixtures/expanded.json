@@ -1,0 +1,314 @@
+{
+  "formatVersion": 2,
+  "teamId": 72,
+  "season": 2026,
+  "seasonLabel": "2025–26",
+  "generatedAt": "2026-09-27T12:00:00.000Z",
+  "team": {
+    "school": "Duke",
+    "mascot": "Blue Devils",
+    "sourceId": "150",
+    "conference": {
+      "id": 1,
+      "name": "Atlantic Coast Conference",
+      "abbreviation": "ACC"
+    }
+  },
+  "record": {
+    "overall": {
+      "games": 2,
+      "wins": 2,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "conference": {
+      "games": 0,
+      "wins": 0,
+      "losses": 0,
+      "unresolved": 0
+    },
+    "complete": true,
+    "unknownEligibilityGames": 0,
+    "unknownConferenceGames": 0
+  },
+  "ratings": {
+    "adjusted": {
+      "offense": {
+        "value": 120,
+        "rank": 1
+      },
+      "defense": {
+        "value": 95,
+        "rank": 2
+      },
+      "net": {
+        "value": 25,
+        "rank": 1
+      },
+      "population": 3
+    },
+    "elo": null,
+    "srs": null,
+    "polls": {
+      "ap": {
+        "state": "ranked",
+        "date": "2026-01-01",
+        "week": 8,
+        "seasonType": "regular",
+        "rank": 2
+      },
+      "coaches": {
+        "state": "unavailable",
+        "date": null,
+        "week": null,
+        "seasonType": null,
+        "rank": null
+      }
+    }
+  },
+  "efficiency": {
+    "coverage": {
+      "eligibleGames": 1,
+      "coveredGames": 1,
+      "state": "available",
+      "reason": null
+    },
+    "offense": {
+      "boxScore": {
+        "fieldGoals": {
+          "made": 30,
+          "attempted": 60,
+          "pct": 50
+        },
+        "twoPointFieldGoals": {
+          "made": 22,
+          "attempted": 40,
+          "pct": 55
+        },
+        "threePointFieldGoals": {
+          "made": 8,
+          "attempted": 20,
+          "pct": 40
+        },
+        "freeThrows": {
+          "made": 12,
+          "attempted": 20,
+          "pct": 60
+        },
+        "rebounds": {
+          "offensive": 10,
+          "defensive": 30,
+          "total": 40
+        },
+        "assists": 15,
+        "steals": 5,
+        "blocks": 3,
+        "turnovers": 10,
+        "fouls": 15,
+        "minutes": 40,
+        "teamTurnovers": 0,
+        "technicalFouls": 0,
+        "flagrantFouls": 0,
+        "pointsInPaint": 20,
+        "pointsOffTurnovers": 10,
+        "fastBreakPoints": 5,
+        "trueShootingPct": 58.139534883720934
+      },
+      "points": 80,
+      "possessions": 70,
+      "rawRating": 114.28571428571429,
+      "effectiveFieldGoalPct": 56.666666666666664,
+      "turnoverPct": 14.285714285714286,
+      "offensiveReboundPct": 25,
+      "freeThrowRate": 33.333333333333336
+    },
+    "defense": {
+      "boxScore": {
+        "fieldGoals": {
+          "made": 30,
+          "attempted": 60,
+          "pct": 50
+        },
+        "twoPointFieldGoals": {
+          "made": 22,
+          "attempted": 40,
+          "pct": 55
+        },
+        "threePointFieldGoals": {
+          "made": 8,
+          "attempted": 20,
+          "pct": 40
+        },
+        "freeThrows": {
+          "made": 12,
+          "attempted": 20,
+          "pct": 60
+        },
+        "rebounds": {
+          "offensive": 10,
+          "defensive": 30,
+          "total": 40
+        },
+        "assists": 15,
+        "steals": 5,
+        "blocks": 3,
+        "turnovers": 10,
+        "fouls": 15,
+        "minutes": 40,
+        "teamTurnovers": 0,
+        "technicalFouls": 0,
+        "flagrantFouls": 0,
+        "pointsInPaint": 20,
+        "pointsOffTurnovers": 10,
+        "fastBreakPoints": 5,
+        "trueShootingPct": 50.872093023255815
+      },
+      "points": 70,
+      "possessions": 70,
+      "rawRating": 100,
+      "effectiveFieldGoalPct": 56.666666666666664,
+      "turnoverPct": 14.285714285714286,
+      "offensiveReboundPct": 25,
+      "freeThrowRate": 33.333333333333336
+    },
+    "paceGames": 1,
+    "pace": 70
+  },
+  "shooting": {
+    "coverage": {
+      "state": "unavailable",
+      "reason": "no_source_rows",
+      "eligibleGames": 2,
+      "coveredGames": 0
+    },
+    "trackedAttempts": 0,
+    "buckets": []
+  },
+  "players": {
+    "coverage": {
+      "eligibleGames": 1,
+      "coveredGames": 1,
+      "state": "available",
+      "reason": null
+    },
+    "rows": [
+      {
+        "seasonStats": {
+          "fieldGoals": {
+            "made": 4,
+            "attempted": 8,
+            "pct": 50
+          },
+          "twoPointFieldGoals": {
+            "made": 3,
+            "attempted": 5,
+            "pct": 60
+          },
+          "threePointFieldGoals": {
+            "made": 1,
+            "attempted": 3,
+            "pct": 33.333333333333336
+          },
+          "freeThrows": {
+            "made": 1,
+            "attempted": 2,
+            "pct": 50
+          },
+          "rebounds": {
+            "offensive": 1,
+            "defensive": 2,
+            "total": 3
+          },
+          "assists": 2,
+          "steals": 1,
+          "blocks": 0,
+          "turnovers": 1,
+          "fouls": 1,
+          "starts": 1,
+          "assistTurnoverRatio": 2,
+          "freeThrowRate": 25,
+          "offensiveReboundPct": 5,
+          "advanced": {
+            "games": 1,
+            "offensiveRating": 113.2,
+            "defensiveRating": 98.7,
+            "netRating": 14.5,
+            "porpag": 2.1,
+            "winShares": {
+              "offensive": 0,
+              "defensive": 0,
+              "total": 0,
+              "per40": 0
+            }
+          }
+        },
+        "athleteId": 1,
+        "name": "Fixture Guard",
+        "position": "G",
+        "onRoster": true,
+        "hasStats": true,
+        "games": 1,
+        "minutes": 20,
+        "points": 10,
+        "rebounds": 3,
+        "assists": 2,
+        "minutesPerGame": 20,
+        "pointsPerGame": 10,
+        "usagePct": 25.0761421319797,
+        "trueShootingPct": 56.306306306306304,
+        "effectiveFieldGoalPct": 56.25,
+        "usageGames": 1,
+        "complete": true
+      }
+    ]
+  },
+  "schedule": {
+    "games": [
+      {
+        "id": 1,
+        "opponentId": 102,
+        "opponent": "Gonzaga",
+        "opponentHasProfile": true,
+        "startDate": "2026-01-02T01:00:00.000Z",
+        "calendarDate": "2026-01-02",
+        "startTimeTbd": false,
+        "location": "neutral",
+        "status": "final",
+        "seasonType": "regular",
+        "gameType": "TRNMNT",
+        "eligibility": "counted",
+        "conferenceGame": false,
+        "teamPoints": 80,
+        "opponentPoints": 70,
+        "result": "W",
+        "venue": null
+      },
+      {
+        "id": 2,
+        "opponentId": 102,
+        "opponent": "Gonzaga",
+        "opponentHasProfile": true,
+        "startDate": "2026-01-02T01:00:00.000Z",
+        "calendarDate": "2026-01-02",
+        "startTimeTbd": false,
+        "location": "neutral",
+        "status": "final",
+        "seasonType": "regular",
+        "gameType": "TRNMNT",
+        "eligibility": "counted",
+        "conferenceGame": false,
+        "teamPoints": 80,
+        "opponentPoints": 70,
+        "result": "W",
+        "venue": null
+      }
+    ]
+  },
+  "sources": {
+    "leaderboardUpdatedAt": null,
+    "latestFinalStartDate": null,
+    "notes": [
+      "Synthetic expanded-contract fixture; not actual team statistics."
+    ]
+  }
+}
