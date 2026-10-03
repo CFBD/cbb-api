@@ -115,6 +115,7 @@ const authoredRoutes = [
   'getting-started.html',
   'authentication.html',
   'usage-and-access.html',
+  'data-availability.html',
   'libraries/python.html',
   'libraries/r.html',
   'libraries/typescript.html',

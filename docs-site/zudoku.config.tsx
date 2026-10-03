@@ -155,6 +155,11 @@ const config: ZudokuConfig = {
           file: 'usage-and-access',
           label: 'Usage and access',
         },
+        {
+          type: 'doc',
+          file: 'data-availability',
+          label: 'Data availability',
+        },
       ],
     },
     {

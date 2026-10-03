@@ -1,0 +1,93 @@
+---
+title: Data availability
+description: Check historical season coverage and important limits across CBBD datasets.
+---
+
+Use this page to confirm that CBBD has the seasons needed for your project.
+Choose a data family, check its range and notes, then open the linked API
+operation to build a request.
+
+## How to read the ranges
+
+- Ranges are inclusive and describe records available on the verification
+  date. New seasons and historical corrections can be added afterward.
+- Basketball seasons use the **ending year**: `season=2026` means the 2025–26
+  season, and `season=2027` means 2026–27. Recruiting classes, portal cycles,
+  and NBA Draft years follow their own calendars.
+- A listed season means records are available. It does not guarantee that
+  every team, game, player, or response field is complete. Known gaps and
+  sparse early coverage are called out below.
+- An empty response or a missing field should not automatically be treated
+  as a zero. Coverage also depends on the operation's filters and required
+  underlying data.
+
+## Games, schedules, and box scores
+
+| Data                                   | Available seasons | API access                                                                                             | Notes                                                                                                                                                                                      |
+| -------------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Games, scores, and schedules           | 1949–present      | [Games](/api/games#getgames)                                                                           | Only 22 game records are available for 1949. Historical coverage varies.                                                                                                                   |
+| Team season records and scoring totals | 1949–present      | [Team season stats](/api/stats#getteamseasonstats)                                                     | Aggregated from available completed games. Detailed box-score fields have a narrower range than wins, losses, and scores.                                                                  |
+| Team box-score statistics              | 2003–present      | [Game team stats](/api/games#getgameteams), [team season stats](/api/stats#getteamseasonstats)         | Most 2003–04 box-score fields are missing. Populated shooting totals are limited to one game in 2003 and 12 games in 2004; coverage becomes much broader in 2005.                          |
+| Player box-score and season statistics | 2003–present      | [Game player stats](/api/games#getgameplayers), [player season stats](/api/stats#getplayerseasonstats) | Player statistics with recorded minutes are available for only one game in 2003 and 12 games in 2004. Broader coverage begins in 2005; individual fields and players can still be missing. |
+| Team statistics leaderboard            | 2015–present      | [Leaderboard](/api/stats#getteamleaderboardstats)                                                      | Stored season aggregates have a shorter history than the team season stats operation.                                                                                                      |
+| Live scoreboard                        | Current games     | [Scoreboard](/api/games#getscoreboard)                                                                 | A live view with no historical season selector. Use the games operation for historical results and schedules.                                                                              |
+
+Game lists and team box-score operations return at most 3,000 records per
+request. Use team, conference, or date filters to retrieve smaller slices;
+a single broad request may not contain every record in a season.
+
+## Plays, shooting, and lineups
+
+| Data                                | Available seasons  | API access                                                                                                                                                                      | Notes                                                                                                                                                                            |
+| ----------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Play-by-play                        | 2003; 2006–present | [Game plays](/api/plays#getplays), [team plays](/api/plays#getplaysbyteam), [player plays](/api/plays#getplaysbyplayerid)                                                       | Only 18 games have plays in 2003. No plays are available for 2004 or 2005. Coverage expands in later seasons; player requests also require participant attribution.              |
+| Team and player shooting breakdowns | 2003; 2006–present | [Team shooting](/api/stats#getteamseasonshootingstats), [player shooting](/api/stats#getplayerseasonshootingstats)                                                              | Derived from qualifying shot events, with the same missing seasons as play-by-play. Player breakdowns additionally require a matching shooter in the play text and participants. |
+| Shot coordinates                    | 2019–present       | [Plays](/api/plays#getplays)                                                                                                                                                    | Returned in `shotInfo.location` when both coordinates are available. Many shots have no location; shot-type breakdowns have a longer history than coordinates.                   |
+| Substitutions                       | 2024–present       | [Game substitutions](/api/plays#getsubstitutionsbygame), [team substitutions](/api/plays#getsubstitutionsbyteam), [player substitutions](/api/plays#getsubstitutionsbyplayerid) | Limited records exist for 212 games in 2013. No substitution records are available for 2014–2023.                                                                                |
+| Lineup statistics                   | 2024–present       | [Game lineups](/api/lineups#getlineupstatsbygame), [team lineups](/api/lineups#getlineupsbyteamseason)                                                                          | Requires five overlapping player stints and plays with usable elapsed times. The older 2013 substitution records do not produce lineup statistics.                               |
+
+## Ratings and probabilities
+
+| Data                                               | Available seasons  | API access                                                                                     | Notes                                                                                                                                                                            |
+| -------------------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SRS                                                | 1950–present       | [SRS ratings](/api/ratings#getsrs)                                                             | Team coverage depends on available ratings and season-specific conference membership.                                                                                            |
+| Elo                                                | 1950–present       | [Elo ratings](/api/ratings#getelo)                                                             | Returns each team's latest ending Elo from qualifying completed games in a season.                                                                                               |
+| Adjusted efficiency                                | 2014–present       | [Adjusted ratings](/api/ratings#getadjustedefficiency)                                         | Offensive, defensive, and net ratings have a shorter history than SRS and Elo.                                                                                                   |
+| In-game win probability                            | 2003; 2006–present | [Plays](/api/plays#getplays)                                                                   | Returned as `homeWinProbability`. Follows the play-by-play gaps; some plays have no stored probability.                                                                          |
+| Game excitement                                    | 2003; 2006–present | [Games](/api/games#getgames)                                                                   | Supplemental `excitement` values are available only for a subset of games.                                                                                                       |
+| Possessions and possession-based box-score metrics | 2003; 2006–present | [Game team stats](/api/games#getgameteams), [team season stats](/api/stats#getteamseasonstats) | Stored possession counts are absent in 2004–05. Pace and efficiency fields also need the inputs required by each calculation; a box score alone does not guarantee these values. |
+
+## Teams, rosters, and player movement
+
+| Data                             | Available seasons | API access                                                                                                                      | Notes                                                                                                                                                              |
+| -------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Team and conference affiliations | 1893–present      | [Teams](/api/teams#getteams), [directory](/api/teams#getdirectory), [conference history](/api/conferences#getconferencehistory) | Membership history starts with only two teams in 1893. Current memberships can have an open-ended end season; this does not establish future schedules or results. |
+| Rosters                          | 2003–present      | [Rosters](/api/teams#getteamroster)                                                                                             | Player membership ranges support these seasons. Team coverage and biographical fields vary; a returned team can have an empty player list.                         |
+| Team season overviews            | 2014–present      | [Season overview](/api/teams#getoverview)                                                                                       | Stored overviews combine datasets with different ranges.                                                                                                           |
+| Transfer portal                  | 2021–present      | [Portal transfers](/api/recruiting#getportaltransfers)                                                                          | The `season` filter follows the portal cycle. Destination teams and player details can be incomplete.                                                              |
+
+## Polls, recruiting, and the NBA Draft
+
+| Data                     | Available seasons or years | API access                                                   | Notes                                                                                                                                                         |
+| ------------------------ | -------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| AP Top 25                | 1949–present               | [Rankings](/api/rankings#getrankings)                        | Historical poll sizes and the number of stored weekly snapshots vary.                                                                                         |
+| Coaches Poll             | 2003–present               | [Rankings](/api/rankings#getrankings)                        | Coverage follows the available poll snapshots.                                                                                                                |
+| High-school recruits     | 2007–present               | [Recruits](/api/recruiting#getrecruits)                      | The `year` is the recruiting class. Player recruiting coverage starts later than team recruiting rankings.                                                    |
+| Team recruiting rankings | 2003–present               | [Team recruiting](/api/recruiting#getteamrecruitingrankings) | Only teams with stored rankings are included; coverage varies by class.                                                                                       |
+| NBA Draft picks          | 2001–present               | [Draft picks](/api/draft#getdraftpicks)                      | The `year` is the draft year. Picks can come from colleges, international teams, or other programs, so college associations are not available for every pick. |
+
+## Betting lines, broadcasts, and reference data
+
+| Data               | Available seasons | API access                                                                                                                                                                                                                                                  | Notes                                                                                                               |
+| ------------------ | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Betting lines      | 2013–present      | [Lines](/api/lines#getlines)                                                                                                                                                                                                                                | Provider, opening line, total, and moneyline coverage varies by game. A returned game can have an empty lines list. |
+| Broadcast listings | 2011–present      | [Broadcasts](/api/games#getbroadcasts)                                                                                                                                                                                                                      | Listings are not available for every game.                                                                          |
+| Reference lists    | Not season-based  | [Conferences](/api/conferences#getconferences), [venues](/api/venues#getvenues), [play types](/api/plays#getplaytypes), [line providers](/api/lines#getproviders), [draft teams](/api/draft#getdraftteams), [draft positions](/api/draft#getdraftpositions) | These operations return lookup information rather than a season-by-season history.                                  |
+
+## Corrections
+
+Historical source data can be corrected after publication. If a response
+inside a listed range appears incomplete, include the operation, season, team,
+and available game or player identifiers when reporting it through
+[CBBD on GitHub](https://github.com/CFBD/cbb-api) or the
+[CFBD Discord](https://discord.gg/Eb3ex5a).
