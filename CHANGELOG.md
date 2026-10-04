@@ -1,3 +1,11 @@
+# [1.30.0](https://github.com/CFBD/cbb-api/compare/v1.29.0...v1.30.0) (2026-10-04)
+
+
+### Features
+
+* **docs:** data coverage ([b9048e4](https://github.com/CFBD/cbb-api/commit/b9048e4bb9269a3302113ca4645f90283b5dbb70))
+* **teams:** logo urls ([722b5e8](https://github.com/CFBD/cbb-api/commit/722b5e843edc7eb31c35b219d7455a8dc3611318))
+
 # [1.29.0](https://github.com/CFBD/cbb-api/compare/v1.28.3...v1.29.0) (2026-09-29)
 
 
