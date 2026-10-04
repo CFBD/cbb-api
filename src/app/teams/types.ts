@@ -23,6 +23,7 @@ export interface TeamInfo {
    */
   conferenceId: number | null;
   conference: string | null;
+  logos: string[] | null;
 }
 
 export interface TeamRoster {

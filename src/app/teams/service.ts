@@ -43,6 +43,7 @@ export const getTeams = async (
       'venue.state as currentState',
       'conference.id as conferenceId',
       'conference.abbreviation as conference',
+      'team.logos',
     ]);
 
   if (conference) {

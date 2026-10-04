@@ -381,6 +381,92 @@ export interface Position {
   name: string;
 }
 
+export interface RapmGameQuality {
+  createdAt: Generated<Timestamp>;
+  eligible: boolean;
+  failureReason: string | null;
+  gameId: number;
+  hasValidStarters: boolean;
+  hasValidSubstitutions: boolean;
+  id: Generated<number>;
+  lineupSecondsError: number;
+  missingSecondsElapsedCount: number;
+  nullTeamPlayCount: number;
+  possessionsReconcile: boolean;
+  scoreReconciles: boolean;
+  season: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface RapmPossession {
+  createdAt: Generated<Timestamp>;
+  defenseTeamId: number;
+  endPlayId: Int8;
+  endReason: string;
+  endScoreAway: number;
+  endScoreHome: number;
+  endSecondsElapsed: number;
+  gameId: number;
+  id: Generated<number>;
+  isOvertime: boolean;
+  offenseTeamId: number;
+  period: number;
+  pointsScored: number;
+  possessionNumber: number;
+  season: number;
+  startPlayId: Int8;
+  startScoreAway: number;
+  startScoreHome: number;
+  startSecondsElapsed: number;
+  updatedAt: Generated<Timestamp>;
+}
+
+export interface RapmRating {
+  alpha: Numeric;
+  athleteId: number;
+  createdAt: Generated<Timestamp>;
+  defPossessions: number;
+  drapm: Numeric;
+  id: Generated<number>;
+  includedRows: number;
+  minutes: Numeric;
+  modelVersion: string;
+  offPossessions: number;
+  orapm: Numeric;
+  rapm: Numeric;
+  sampleGames: number;
+  season: number;
+  seasonEnd: number;
+  seasonStart: number;
+}
+
+export interface RapmTrainingRow {
+  createdAt: Generated<Timestamp>;
+  defenseTeamId: number;
+  defPlayer1: number;
+  defPlayer2: number;
+  defPlayer3: number;
+  defPlayer4: number;
+  defPlayer5: number;
+  gameId: number;
+  id: Generated<number>;
+  isOvertime: boolean;
+  offenseTeamId: number;
+  offPlayer1: number;
+  offPlayer2: number;
+  offPlayer3: number;
+  offPlayer4: number;
+  offPlayer5: number;
+  period: number;
+  pointsScored: number;
+  possessionNumber: number;
+  season: number;
+  secondsElapsedEnd: number;
+  secondsElapsedStart: number;
+  updatedAt: Generated<Timestamp>;
+  weight: Numeric;
+}
+
 export interface Recruit {
   athleteId: number | null;
   committedToId: number | null;
@@ -474,6 +560,7 @@ export interface Team {
   displayName: string | null;
   homeVenueId: number | null;
   id: Generated<number>;
+  logos: string[] | null;
   mascot: string | null;
   ncaaId: number | null;
   nickname: string | null;
@@ -491,6 +578,14 @@ export interface TeamRecruiting {
   rank: number;
   teamId: number;
   year: number;
+}
+
+export interface TeamSeasonSnapshot {
+  formatVersion: number;
+  generatedAt: Timestamp;
+  payload: Json;
+  season: number;
+  teamId: number;
 }
 
 export interface TeamStatsLeaderboard {
@@ -643,16 +738,7 @@ export interface Venue {
   timezone: string | null;
 }
 
-export interface TeamSeasonSnapshot {
-  teamId: number;
-  season: number;
-  formatVersion: number;
-  generatedAt: Timestamp;
-  payload: Json;
-}
-
 export interface DB {
-  teamSeasonSnapshot: TeamSeasonSnapshot;
   adjustedEfficiency: AdjustedEfficiency;
   athlete: Athlete;
   athleteTeam: AthleteTeam;
@@ -677,6 +763,10 @@ export interface DB {
   pollRank: PollRank;
   pollType: PollType;
   position: Position;
+  rapmGameQuality: RapmGameQuality;
+  rapmPossession: RapmPossession;
+  rapmRating: RapmRating;
+  rapmTrainingRow: RapmTrainingRow;
   recruit: Recruit;
   recruitPosition: RecruitPosition;
   recruitSchool: RecruitSchool;
@@ -685,6 +775,7 @@ export interface DB {
   substitution: Substitution;
   team: Team;
   teamRecruiting: TeamRecruiting;
+  teamSeasonSnapshot: TeamSeasonSnapshot;
   teamStatsLeaderboard: TeamStatsLeaderboard;
   tournament: Tournament;
   transfer: Transfer;
