@@ -1,4 +1,4 @@
-import { Pool, types } from 'pg';
+import { Pool, defaults, types } from 'pg';
 import { CamelCasePlugin, Kysely, PostgresDialect } from 'kysely';
 
 const user = process.env.DATABASE_USER;
@@ -11,6 +11,13 @@ import { DB } from './types/db';
 
 types.setTypeParser(types.builtins.INT8, (value) => Number(value));
 types.setTypeParser(types.builtins.NUMERIC, (value) => Number(value));
+// `timestamp without time zone` columns hold UTC wall-clock times. Read and
+// write them as UTC so results don't depend on the server's time zone.
+types.setTypeParser(
+  types.builtins.TIMESTAMP,
+  (value) => new Date(`${value.replace(' ', 'T')}Z`),
+);
+defaults.parseInputDatesAsUTC = true;
 
 const dialect = new PostgresDialect({
   pool: new Pool({
