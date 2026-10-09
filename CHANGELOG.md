@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/CFBD/cbb-api/compare/v1.30.0...v1.30.1) (2026-10-09)
+
+
+### Bug Fixes
+
+* **meta:** utc timestamp parsing ([c34652d](https://github.com/CFBD/cbb-api/commit/c34652df8f4ada7591b1693eab54faf642acb76a))
+
 # [1.30.0](https://github.com/CFBD/cbb-api/compare/v1.29.0...v1.30.0) (2026-10-04)
 
 
