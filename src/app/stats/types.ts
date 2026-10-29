@@ -95,6 +95,7 @@ export interface PlayerSeasonStats {
   athleteId: number;
   athleteSourceId: string;
   name: string;
+  /** Blank when the position is unavailable. */
   position: string;
   games: number;
   starts: number;

@@ -349,6 +349,7 @@ export interface GameBoxScorePlayers {
     athleteId: number;
     athleteSourceId: string;
     name: string;
+    /** Blank when the position is unavailable. */
     position: string;
     starter: boolean | null;
     ejected: boolean | null;

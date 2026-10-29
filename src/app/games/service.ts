@@ -845,7 +845,7 @@ export const getGamePlayerStatistics = async (
         eb
           .selectFrom('gamePlayerStats')
           .innerJoin('athlete', 'athlete.id', 'gamePlayerStats.athleteId')
-          .innerJoin('position', 'athlete.positionId', 'position.id')
+          .leftJoin('position', 'athlete.positionId', 'position.id')
           .whereRef('gamePlayerStats.gameTeamId', '=', 'gameTeam.id')
           .where('gamePlayerStats.minutes', 'is not', null)
           .select([
@@ -958,7 +958,7 @@ export const getGamePlayerStatistics = async (
           athleteId: player.athleteId,
           athleteSourceId: player.sourceId,
           name: player.name,
-          position: player.position,
+          position: player.position ?? '',
           starter: player.starter,
           ejected: player.ejected,
           minutes: player.minutes,

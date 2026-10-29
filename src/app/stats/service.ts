@@ -747,7 +747,7 @@ export const getPlayerSeasonStats = async (
     .innerJoin('gameTeamStats as oppStats', 'oppStats.gameTeamId', 'oppTeam.id')
     .innerJoin('gamePlayerStats', 'gameTeam.id', 'gamePlayerStats.gameTeamId')
     .innerJoin('athlete', 'gamePlayerStats.athleteId', 'athlete.id')
-    .innerJoin('position', 'athlete.positionId', 'position.id')
+    .leftJoin('position', 'athlete.positionId', 'position.id')
     .leftJoin('conferenceTeam', (join) =>
       join
         .onRef('team.id', '=', 'conferenceTeam.teamId')
@@ -951,7 +951,7 @@ export const getPlayerSeasonStats = async (
       athleteId: player.id,
       athleteSourceId: player.sourceId,
       name: player.name,
-      position: player.position,
+      position: player.position ?? '',
       games: Number(player.games),
       starts: Number(player.starts),
       minutes: Number(player.minutes),

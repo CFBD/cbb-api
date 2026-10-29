@@ -307,7 +307,7 @@ export function calculatePlayerSeasonOffenseRatings(player: {
   sourceId: string;
   name: string;
   conference: string | null;
-  position: string;
+  position: string | null;
   games: string | number | bigint;
   pointsTeam: string | number | bigint;
   possessionsTeam: string | number | bigint;
@@ -495,7 +495,7 @@ export function calculatePlayerSeasonDefensiveRating(player: {
   sourceId: string;
   name: string;
   conference: string | null;
-  position: string;
+  position: string | null;
   games: string | number | bigint;
   pointsTeam: string | number | bigint;
   possessionsTeam: string | number | bigint;
