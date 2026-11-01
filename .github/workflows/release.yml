@@ -42,8 +42,8 @@ jobs:
         run: pnpm install
       - name: Validate current commit
         run: npx commitlint --last --verbose
-      # - name: Run tests
-      #   run: pnpm test
+      - name: Run tests
+        run: pnpm test --runInBand
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -136,11 +136,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
+            set -e
             cd ${{ secrets.DEPLOY_PATH}}
             echo ${{ secrets.GH_PAT }} | docker login ghcr.io -u ${{ secrets.GH_USER }} --password-stdin
             docker pull ${{ env.REGISTRY }}/cfbd/cbb-api:main
-            docker compose up -dd
-            docker image prune -f
+            docker compose up -d
+            docker image prune -f || echo "Image cleanup skipped; deployment completed"
 
   discord:
     needs: deploy
