@@ -13,6 +13,17 @@ pnpm install
 pnpm dev
 ```
 
+Run tests and TypeScript checks before releasing:
+
+```bash
+pnpm test --runInBand # generates the TSOA spec/routes before running Jest
+pnpm typecheck       # checks TypeScript without emitting compiled output
+```
+
+The release workflow runs both commands before publishing. The `pretest` script
+regenerates `build/swagger.json` and `build/routes.ts`, so tests also work from a
+fresh checkout without a prior build.
+
 Documentation commands use the generated TSOA OpenAPI document as their source:
 
 ```bash
