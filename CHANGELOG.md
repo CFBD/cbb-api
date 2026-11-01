@@ -1,3 +1,11 @@
+## [1.30.2](https://github.com/CFBD/cbb-api/compare/v1.30.1...v1.30.2) (2026-11-01)
+
+
+### Bug Fixes
+
+* cicd fixes ([6f1e796](https://github.com/CFBD/cbb-api/commit/6f1e7964e477343b8669a3b76474c506aa2fa91b))
+* **stats:** player position nullable fix ([8f933f9](https://github.com/CFBD/cbb-api/commit/8f933f97bfa9c42ae21b3fac16201d77b267ab2e))
+
 ## [1.30.1](https://github.com/CFBD/cbb-api/compare/v1.30.0...v1.30.1) (2026-10-09)
 
 
