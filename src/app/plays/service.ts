@@ -1,5 +1,5 @@
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
-import { db } from '../../config/database';
+import { db, replicaDb } from '../../config/database';
 import { PlayInfo, PlayTypeInfo } from './types';
 import { sql } from 'kysely';
 import { SeasonType } from '../enums';
@@ -157,6 +157,89 @@ const getShooter = (
   return null;
 };
 
+type OnFloorSubstitution = {
+  id: number;
+  name: string;
+  team: string;
+  start: number;
+  end: number;
+  startInclusive: boolean;
+  endInclusive: boolean;
+};
+
+// Loads each game's substitution intervals once instead of re-joining athletes
+// and teams for every play.
+const getSubstitutionsByGame = async (
+  plays: { gameId: number | null }[],
+): Promise<Map<number, OnFloorSubstitution[]>> => {
+  const gameIds = [
+    ...new Set(
+      plays
+        .map((play) => play.gameId)
+        .filter((gameId): gameId is number => gameId !== null),
+    ),
+  ];
+  const substitutionsByGame = new Map<number, OnFloorSubstitution[]>();
+
+  if (gameIds.length === 0) {
+    return substitutionsByGame;
+  }
+
+  const substitutions = await replicaDb
+    .selectFrom('substitution')
+    .innerJoin('athlete', 'substitution.athleteId', 'athlete.id')
+    .innerJoin('team', 'substitution.teamId', 'team.id')
+    .where('substitution.gameId', 'in', gameIds)
+    .where(sql<boolean>`NOT isempty(substitution.time_range)`)
+    .select([
+      'substitution.gameId',
+      'athlete.id',
+      'athlete.name',
+      'team.school as team',
+      sql<number>`lower(substitution.time_range)`.as('start'),
+      sql<number>`upper(substitution.time_range)`.as('end'),
+      sql<boolean>`lower_inc(substitution.time_range)`.as('startInclusive'),
+      sql<boolean>`upper_inc(substitution.time_range)`.as('endInclusive'),
+    ])
+    .execute();
+
+  for (const { gameId, ...substitution } of substitutions) {
+    const gameSubstitutions = substitutionsByGame.get(gameId);
+    if (gameSubstitutions) {
+      gameSubstitutions.push(substitution);
+    } else {
+      substitutionsByGame.set(gameId, [substitution]);
+    }
+  }
+
+  return substitutionsByGame;
+};
+
+const getOnFloor = (
+  substitutions: OnFloorSubstitution[],
+  period: number,
+  secondsRemaining: number,
+): PlayInfo['onFloor'] => {
+  const secondsElapsed =
+    period === 1
+      ? 1200 - secondsRemaining
+      : period === 2
+        ? 2400 - secondsRemaining
+        : 2400 + (period - 2) * 300 - secondsRemaining;
+
+  return substitutions
+    .filter(
+      (substitution) =>
+        (substitution.startInclusive
+          ? secondsElapsed >= substitution.start
+          : secondsElapsed > substitution.start) &&
+        (substitution.endInclusive
+          ? secondsElapsed <= substitution.end
+          : secondsElapsed < substitution.end),
+    )
+    .map(({ id, name, team }) => ({ id, name, team }));
+};
+
 const getPlays = async (
   season?: number,
   gameId?: number,
@@ -167,7 +250,7 @@ const getPlays = async (
   shootingPlaysOnly?: boolean,
   tournament?: string,
 ): Promise<PlayInfo[]> => {
-  let query = db
+  let query = replicaDb
     .selectFrom('gameInfo')
     .innerJoin('play', 'gameInfo.id', 'play.gameId')
     .innerJoin('playType', 'play.playTypeId', 'playType.id')
@@ -220,19 +303,6 @@ const getPlays = async (
           )
           .select(['athlete.id', 'athlete.name']),
       ).as('participants'),
-      jsonArrayFrom(
-        eb
-          .selectFrom('substitution')
-          .innerJoin('athlete', 'substitution.athleteId', 'athlete.id')
-          .innerJoin('team', 'substitution.teamId', 'team.id')
-          .whereRef('substitution.gameId', '=', 'gameInfo.id')
-          .where(
-            'substitution.timeRange',
-            '@>',
-            sql<string>`(CASE WHEN play.period = 1 THEN 1200 - play.seconds_remaining WHEN play.period = 2 THEN 2400 - play.seconds_remaining ELSE 2400 + (play.period - 2) * 300 - play.seconds_remaining END)::numeric`,
-          )
-          .select(['athlete.id', 'athlete.name', 'team.school as team']),
-      ).as('onFloor'),
     ]);
 
   if (season) {
@@ -292,6 +362,7 @@ const getPlays = async (
   }
 
   const plays = await query.execute();
+  const substitutions = await getSubstitutionsByGame(plays);
 
   return plays
     .map((play): PlayInfo => {
@@ -398,7 +469,11 @@ const getPlays = async (
                     : { x: null, y: null },
               }
             : null,
-        onFloor: play.onFloor,
+        onFloor: getOnFloor(
+          substitutions.get(play.gameId ?? -1) ?? [],
+          play.period,
+          play.secondsRemaining,
+        ),
       };
     })
     .filter((play) => play.gameId !== -1);

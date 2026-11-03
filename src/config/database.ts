@@ -35,6 +35,28 @@ export const db = new Kysely<DB>({
   plugins: [new CamelCasePlugin()],
 });
 
+const replicaHost = process.env.DATABASE_REPLICA_HOST;
+const replicaPort = process.env.DATABASE_REPLICA_PORT;
+
+// Expensive reads that can tolerate replica lag use this. Without both replica
+// settings it aliases the primary so no redundant pool is created.
+export const replicaDb =
+  replicaHost && replicaPort
+    ? new Kysely<DB>({
+        dialect: new PostgresDialect({
+          pool: new Pool({
+            database: dbName,
+            host: replicaHost,
+            port: parseInt(replicaPort),
+            user,
+            password,
+            max: 10,
+          }),
+        }),
+        plugins: [new CamelCasePlugin()],
+      })
+    : db;
+
 const authDbHost = process.env.AUTH_DATABASE_HOST;
 const authDbPort = process.env.AUTH_DATABASE_PORT || '5432';
 const authDbUser = process.env.AUTH_DATABASE_USER;

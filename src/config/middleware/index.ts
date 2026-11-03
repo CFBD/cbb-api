@@ -9,6 +9,24 @@ const concurrencyLimit = createConcurrencyLimit([
     maxConcurrent: 2,
     leaseMs: 75000,
   },
+  {
+    path: '/plays/date',
+    methods: ['GET'],
+    maxConcurrent: 2,
+    leaseMs: 75000,
+  },
+  {
+    path: '/stats/team/shooting/season',
+    methods: ['GET'],
+    maxConcurrent: 2,
+    leaseMs: 75000,
+  },
+  {
+    path: '/stats/player/shooting/season',
+    methods: ['GET'],
+    maxConcurrent: 2,
+    leaseMs: 75000,
+  },
 ]);
 
 export default {

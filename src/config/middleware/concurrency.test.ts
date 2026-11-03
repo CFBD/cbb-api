@@ -167,7 +167,12 @@ describe('per-user concurrency limit middleware', () => {
     expect(admittedNext).toHaveBeenCalledTimes(1);
   });
 
-  test('limits concurrent requests to the team lineups endpoint', () => {
+  test.each([
+    '/lineups/team',
+    '/plays/date',
+    '/stats/team/shooting/season',
+    '/stats/player/shooting/season',
+  ])('limits concurrent requests to %s', (path) => {
     const first = createResponse();
     const second = createResponse();
     const third = createResponse();
@@ -175,9 +180,13 @@ describe('per-user concurrency limit middleware', () => {
     const secondNext = jest.fn();
     const thirdNext = jest.fn();
 
-    middlewares.concurrencyLimit(createRequest(1), first.res, firstNext);
-    middlewares.concurrencyLimit(createRequest(1), second.res, secondNext);
-    middlewares.concurrencyLimit(createRequest(1), third.res, thirdNext);
+    middlewares.concurrencyLimit(createRequest(1, path), first.res, firstNext);
+    middlewares.concurrencyLimit(
+      createRequest(1, path),
+      second.res,
+      secondNext,
+    );
+    middlewares.concurrencyLimit(createRequest(1, path), third.res, thirdNext);
 
     expect(firstNext).toHaveBeenCalledTimes(1);
     expect(secondNext).toHaveBeenCalledTimes(1);

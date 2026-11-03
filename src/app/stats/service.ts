@@ -7,7 +7,7 @@ import {
   TeamSeasonStats,
 } from './types';
 
-import { db } from '../../config/database';
+import { db, replicaDb } from '../../config/database';
 import { sql } from 'kysely';
 import { ValidateError } from 'tsoa';
 import {
@@ -1072,7 +1072,7 @@ export const getTeamSeasonShootingStats = async (
     );
   }
 
-  let query = db
+  let query = replicaDb
     .selectFrom('team')
     .innerJoin('gameTeam', 'team.id', 'gameTeam.teamId')
     .innerJoin('game', 'gameTeam.gameId', 'game.id')
@@ -1507,7 +1507,7 @@ export const getPlayerSeasonShootingStats = async (
     );
   }
 
-  let query = db
+  let query = replicaDb
     .selectFrom('team')
     .innerJoin('gameTeam', 'team.id', 'gameTeam.teamId')
     .innerJoin('game', 'gameTeam.gameId', 'game.id')

@@ -1,4 +1,4 @@
-import { db } from '../../config/database';
+import { replicaDb } from '../../config/database';
 import { sql } from 'kysely';
 import { jsonArrayFrom } from 'kysely/helpers/postgres';
 import { LineupStats } from './types';
@@ -25,7 +25,7 @@ const getLineupStats = async (
   startDateRange?: Date,
   endDateRange?: Date,
 ): Promise<LineupStats[]> => {
-  let query = db
+  let query = replicaDb
     .with('ranges', (eb) => {
       if (team) {
         let cte = eb
