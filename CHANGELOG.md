@@ -1,3 +1,10 @@
+## [1.30.3](https://github.com/CFBD/cbb-api/compare/v1.30.2...v1.30.3) (2026-11-03)
+
+
+### Bug Fixes
+
+* **perf:** performance and scalability enhancements ([9c69f5b](https://github.com/CFBD/cbb-api/commit/9c69f5b3234a0f8cf1e609ce1216e71e5a5d77f4))
+
 ## [1.30.2](https://github.com/CFBD/cbb-api/compare/v1.30.1...v1.30.2) (2026-11-01)
 
 
