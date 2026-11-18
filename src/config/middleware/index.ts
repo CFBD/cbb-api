@@ -30,7 +30,7 @@ const concurrencyLimit = createConcurrencyLimit([
 ]);
 
 export default {
-  standard: [concurrencyLimit, checkCallQuotas],
+  standard: [checkCallQuotas, concurrencyLimit],
   concurrencyLimit,
   cors,
   checkCallQuotas,

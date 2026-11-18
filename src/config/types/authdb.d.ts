@@ -40,9 +40,11 @@ export interface Brute {
 
 export interface Metrics {
   apiVersion: string | null;
+  durationMs: number | null;
   endpoint: string;
   id: Generated<Int8>;
   query: Json | null;
+  statusCode: number | null;
   timestamp: Generated<Timestamp>;
   userAgent: string | null;
   userId: number;

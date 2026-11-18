@@ -1,11 +1,15 @@
 import { getMockReq } from '@jest-mock/express';
-import type { Request } from 'express';
+import { EventEmitter } from 'node:events';
 
 import { expressAuthentication } from './auth';
 import { ApiUser, AuthorizationError } from '../globals';
+import type { QuotaRequest } from './middleware/quotas';
 
 const mockSelectUserExecuteTakeFirst = jest.fn();
 const mockInsertMetricsExecute = jest.fn();
+const mockMetricsValues = jest.fn(() => ({
+  execute: mockInsertMetricsExecute,
+}));
 const mockIsDeniedCfbWebsitePrincipal = jest.fn((userId: number) => {
   void userId;
   return false;
@@ -21,9 +25,7 @@ jest.mock('./database', () => ({
       })),
     })),
     insertInto: jest.fn(() => ({
-      values: jest.fn(() => ({
-        execute: mockInsertMetricsExecute,
-      })),
+      values: mockMetricsValues,
     })),
   },
 }));
@@ -44,17 +46,35 @@ const mockDatabaseUser = {
   isAdmin: false,
 };
 
-const toRequest = (request: ReturnType<typeof getMockReq>) =>
-  request as unknown as Request;
+const toRequest = (
+  request: ReturnType<typeof getMockReq>,
+  res = new EventEmitter(),
+) => Object.assign(request, { res }) as unknown as QuotaRequest;
+
+const metricsRequest = () => {
+  const res = Object.assign(new EventEmitter(), {
+    statusCode: 200,
+    writableFinished: false,
+  });
+  const request = getMockReq({
+    headers: { authorization: 'Bearer my_api_key' },
+    path: '/teams/42',
+    route: { path: '/teams/:id' },
+    query: { season: '2026' },
+    get: jest.fn().mockReturnValue('test-client'),
+  });
+  return { res, request: toRequest(request, res) };
+};
+
+beforeEach(() => {
+  mockSelectUserExecuteTakeFirst
+    .mockReset()
+    .mockResolvedValue(mockDatabaseUser);
+  mockInsertMetricsExecute.mockReset().mockResolvedValue(undefined);
+  mockIsDeniedCfbWebsitePrincipal.mockReset().mockReturnValue(false);
+});
 
 describe('generic auth tests', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockSelectUserExecuteTakeFirst.mockResolvedValue(mockDatabaseUser);
-    mockInsertMetricsExecute.mockResolvedValue(undefined);
-    mockIsDeniedCfbWebsitePrincipal.mockReturnValue(false);
-  });
-
   test('non api key auth type', async () => {
     const request = getMockReq();
 
@@ -108,15 +128,12 @@ describe('generic auth tests', () => {
 
   test('CFB website service users are denied before metrics', async () => {
     mockIsDeniedCfbWebsitePrincipal.mockReturnValueOnce(true);
-    const request = getMockReq({
-      headers: {
-        authorization: 'Bearer cfb-service-key',
-      },
-    });
+    const { request, res } = metricsRequest();
 
     await expect(
-      expressAuthentication(toRequest(request), 'apiKey'),
+      expressAuthentication(request, 'apiKey'),
     ).rejects.toBeInstanceOf(AuthorizationError);
+    res.emit('close');
     expect(mockIsDeniedCfbWebsitePrincipal).toHaveBeenCalledWith(123);
     expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
   });
@@ -155,6 +172,103 @@ describe('generic auth tests', () => {
     const user = await expressAuthentication(toRequest(request), 'apiKey');
 
     expect(user as ApiUser).toBeDefined();
+  });
+});
+
+describe('request metrics', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  test('writes once after close with the final status and measured duration', async () => {
+    const { request, res } = metricsRequest();
+    const now = jest.spyOn(performance, 'now').mockReturnValue(100);
+
+    await expressAuthentication(request, 'apiKey');
+    expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
+
+    res.statusCode = 400;
+    res.writableFinished = true;
+    now.mockReturnValue(125.7);
+    res.emit('close');
+    res.emit('close');
+
+    expect(mockInsertMetricsExecute).toHaveBeenCalledTimes(1);
+    expect(mockMetricsValues).toHaveBeenCalledWith({
+      userId: 123,
+      endpoint: '/teams/:id',
+      query: { season: '2026' },
+      userAgent: 'test-client',
+      apiVersion: 'cbb',
+      statusCode: 400,
+      durationMs: 26,
+    });
+  });
+
+  test('records an unfinished response after authentication as 499', async () => {
+    const { request, res } = metricsRequest();
+    await expressAuthentication(request, 'apiKey');
+    res.emit('close');
+
+    expect(mockMetricsValues).toHaveBeenCalledWith(
+      expect.objectContaining({ statusCode: 499 }),
+    );
+  });
+
+  test.each([mockDatabaseUser, null])(
+    'waits for the lookup after an early disconnect (lookup returns %p)',
+    async (user) => {
+      let completeLookup!: (value: typeof user) => void;
+      mockSelectUserExecuteTakeFirst.mockReturnValueOnce(
+        new Promise((resolve) => {
+          completeLookup = resolve;
+        }),
+      );
+      const now = jest.spyOn(performance, 'now').mockReturnValue(100);
+      const { request, res } = metricsRequest();
+      const authenticated = expressAuthentication(request, 'apiKey');
+
+      now.mockReturnValue(110);
+      res.emit('close');
+      expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
+
+      now.mockReturnValue(200);
+      completeLookup(user);
+      if (user) {
+        await authenticated;
+        expect(mockInsertMetricsExecute).toHaveBeenCalledTimes(1);
+        expect(mockMetricsValues).toHaveBeenCalledWith(
+          expect.objectContaining({ statusCode: 499, durationMs: 10 }),
+        );
+      } else {
+        await expect(authenticated).rejects.toBeInstanceOf(AuthorizationError);
+        expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
+      }
+    },
+  );
+
+  test('skips the insert when the quota refusal is known at close', async () => {
+    const { request, res } = metricsRequest();
+    await expressAuthentication(request, 'apiKey');
+    request.quotaRefused = true;
+    res.statusCode = 429;
+    res.writableFinished = true;
+    res.emit('close');
+
+    expect(mockInsertMetricsExecute).not.toHaveBeenCalled();
+  });
+
+  test('logs a failed insert without affecting the response', async () => {
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+    mockInsertMetricsExecute.mockRejectedValueOnce(new Error('write failed'));
+    const { request, res } = metricsRequest();
+    await expressAuthentication(request, 'apiKey');
+    res.writableFinished = true;
+    res.emit('close');
+    await Promise.resolve();
+
+    expect(consoleError).toHaveBeenCalledWith('API metrics write failed.');
+    expect(res.statusCode).toBe(200);
   });
 });
 

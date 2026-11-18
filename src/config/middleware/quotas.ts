@@ -3,12 +3,13 @@ import { authDb } from '../database';
 import { ApiUser } from 'src/globals';
 import { sql } from 'kysely';
 
-type QuotaRequest = Request & {
+export type QuotaRequest = Request & {
   quotaReserved?: boolean;
+  quotaRefused?: boolean;
   user?: ApiUser;
 };
 
-export const ignoredPaths: string[] = ['/scoreboard'];
+export const ignoredPaths: string[] = ['/scoreboard', '/info'];
 
 const isSuccessfulResponse = (statusCode: number): boolean =>
   statusCode >= 200 && statusCode < 300;
@@ -36,6 +37,7 @@ export const checkCallQuotas = async (
   const user = req.user;
 
   if (user.remainingCalls <= 0) {
+    req.quotaRefused = true;
     res.status(429).send({
       message: 'Monthly call quota exceeded.',
     });
@@ -55,6 +57,7 @@ export const checkCallQuotas = async (
 
     if (!remaining) {
       user.remainingCalls = 0;
+      req.quotaRefused = true;
       res.status(429).send({
         message: 'Monthly call quota exceeded.',
       });

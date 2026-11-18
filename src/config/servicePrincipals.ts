@@ -22,6 +22,7 @@ const pageOperations = new Set([
   'GET /stats/team/leaderboard',
 ]);
 export const exporterDeniedPaths = new Set([
+  '/info',
   '/scoreboard',
   '/teams/directory',
   '/teams/{teamId}/season/{season}/overview',

@@ -1,16 +1,9 @@
 import { getMockReq, getMockRes } from '@jest-mock/express';
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
+import type { QuotaRequest } from './quotas';
 
-import { ApiUser } from '../../globals';
-
-type QuotaTestRequest = Request & {
-  quotaReserved?: boolean;
-  user?: ApiUser;
-};
-
-const toQuotaRequest = (
-  request: ReturnType<typeof getMockReq>,
-): QuotaTestRequest => request as unknown as QuotaTestRequest;
+const toQuotaRequest = (request: ReturnType<typeof getMockReq>): QuotaRequest =>
+  request as unknown as QuotaRequest;
 
 const toResponse = (response: unknown): Response => response as Response;
 const toNext = (next: unknown): NextFunction => next as NextFunction;
@@ -106,6 +99,7 @@ describe('check quotas tests', () => {
 
     expect(mockUpdateTable).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(429);
+    expect(toQuotaRequest(req).quotaRefused).toBe(true);
     expect(res.send).toHaveBeenCalledWith({
       message: 'Monthly call quota exceeded.',
     });
@@ -130,6 +124,7 @@ describe('check quotas tests', () => {
 
     expect(quotaReq.user?.remainingCalls).toEqual(0);
     expect(quotaReq.quotaReserved).toBeUndefined();
+    expect(quotaReq.quotaRefused).toBe(true);
     expect(next).not.toHaveBeenCalled();
   });
 
@@ -147,6 +142,7 @@ describe('check quotas tests', () => {
     await checkCallQuotas(toQuotaRequest(req), toResponse(res), toNext(next));
 
     expect(res.status).toHaveBeenCalledWith(503);
+    expect(toQuotaRequest(req).quotaRefused).toBeUndefined();
     expect(res.send).toHaveBeenCalledWith({
       message: 'Unable to verify call quota. Please retry later.',
     });

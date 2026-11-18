@@ -7,8 +7,51 @@ import {
   isServiceOperationAllowed,
 } from './servicePrincipals';
 import { isDeniedCfbWebsitePrincipal } from './cfbServicePrincipals';
+import type { QuotaRequest } from './middleware/quotas';
+import type { Metrics } from './types/authdb';
 
 const keyPattern = /^Bearer (?<token>\S+)$/;
+
+const trackRequestMetrics = (request: QuotaRequest, startedAt: number) => {
+  let requestMetrics:
+    | Pick<Metrics, 'userId' | 'endpoint' | 'query' | 'userAgent'>
+    | undefined;
+  let outcome: { statusCode: number; durationMs: number } | undefined;
+
+  const writeMetrics = async () => {
+    if (!requestMetrics || !outcome) return;
+
+    try {
+      await authDb
+        .insertInto('metrics')
+        .values({ ...requestMetrics, ...outcome, apiVersion: 'cbb' })
+        .execute();
+    } catch {
+      console.error('API metrics write failed.');
+    }
+  };
+
+  // A disconnect can close the response while the user lookup is pending.
+  const res = request.res;
+  res?.once('close', () => {
+    if (request.quotaRefused) return;
+    outcome = {
+      statusCode: res.writableFinished ? res.statusCode : 499,
+      durationMs: Math.round(performance.now() - startedAt),
+    };
+    void writeMetrics();
+  });
+
+  return (userId: number, endpoint: string) => {
+    requestMetrics = {
+      userId,
+      endpoint,
+      query: request.query,
+      userAgent: request.get('user-agent') ?? '',
+    };
+    void writeMetrics();
+  };
+};
 
 type AuthOutcome =
   | 'allowed'
@@ -39,6 +82,7 @@ export const expressAuthentication = async (
   request: Request,
   securityName: string,
 ) => {
+  const startedAt = performance.now();
   if (securityName !== 'apiKey') {
     logAuthOutcome(request, 'malformed', 'unknown');
     return Promise.reject(new AuthorizationError('Unauthorized'));
@@ -59,6 +103,7 @@ export const expressAuthentication = async (
     );
   }
 
+  const recordAuthenticatedRequest = trackRequestMetrics(request, startedAt);
   const user = await authDb
     .selectFrom('user')
     .where('token', '=', token.groups['token'])
@@ -97,21 +142,7 @@ export const expressAuthentication = async (
     return Promise.reject(new AuthorizationError('Unauthorized'));
   }
 
-  try {
-    await authDb
-      .insertInto('metrics')
-      .values({
-        userId: user.id,
-        endpoint: matchedPath ?? request.path,
-        query: request.query,
-        userAgent: request.get('user-agent') ?? '',
-        apiVersion: 'cbb',
-      })
-      .execute();
-  } catch {
-    console.error('API metrics write failed.');
-  }
-
+  recordAuthenticatedRequest(user.id, matchedPath ?? request.path);
   logAuthOutcome(request, 'allowed', principalClass);
 
   return Promise.resolve({

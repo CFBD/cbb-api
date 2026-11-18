@@ -197,10 +197,10 @@ describe('per-user concurrency limit middleware', () => {
     second.res.emit('finish');
   });
 
-  test('runs before quota reservation in the standard middleware chain', () => {
+  test('runs after quota reservation in the standard middleware chain', () => {
     expect(middlewares.standard).toEqual([
-      middlewares.concurrencyLimit,
       middlewares.checkCallQuotas,
+      middlewares.concurrencyLimit,
     ]);
   });
 });

@@ -12,6 +12,16 @@ other client. Use the account and access information on
 [CollegeBasketballData.com](https://collegebasketballdata.com) when you need to
 review or change your access.
 
+## Check your remaining calls
+
+Call `GET /info` with your API key to see your advertised tier, monthly
+allowance, next reset time, and current balance. CBB and CFB draw from the same
+monthly allowance. Requests to `/info` appear in usage history and consume no
+calls.
+
+Metered responses include the `X-CallLimit-Remaining` header. For per-endpoint
+usage history, open the [Workbench](https://collegebasketballdata.com/workbench).
+
 ## Troubleshoot common responses
 
 - `400` means the API could not accept the parameters or their combination.
@@ -20,8 +30,12 @@ review or change your access.
   review [Authentication](/authentication).
 - `404` means the resource or route was not found. Check the operation path and
   any identifiers in the request.
-- A quota or entitlement response means the current account cannot complete
-  that request. Check your usage and the current API tiers.
+- `429` with `Monthly call quota exceeded.` means your shared balance is empty.
+  Pause metered requests. Use the advertised reset time as a guide and call
+  `/info` to confirm that calls are available again.
+- `429` with `Too many concurrent requests for this endpoint.` means the
+  endpoint has reached its in-flight limit for your key. Wait for active
+  requests to finish, then retry.
 - `500` means the server could not complete a valid request. Retry later and
   contact support if the problem continues.
 
