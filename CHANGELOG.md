@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/CFBD/cbb-api/compare/v1.30.3...v1.31.0) (2026-11-18)
+
+
+### Features
+
+* **meta:** new info endpoint ([a54063f](https://github.com/CFBD/cbb-api/commit/a54063fe6e0499547cbfeca74734aa32d0ceca92))
+
 ## [1.30.3](https://github.com/CFBD/cbb-api/compare/v1.30.2...v1.30.3) (2026-11-03)
 
 
