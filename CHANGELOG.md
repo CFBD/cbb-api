@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/CFBD/cbb-api/compare/v1.31.0...v1.32.0) (2026-11-21)
+
+
+### Features
+
+* **ratings:** daily ratings history ([bd20dd5](https://github.com/CFBD/cbb-api/commit/bd20dd558f8ff229f1b9b2295807d634ecf5f6f0))
+
 # [1.31.0](https://github.com/CFBD/cbb-api/compare/v1.30.3...v1.31.0) (2026-11-18)
 
 
