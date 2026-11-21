@@ -5,27 +5,39 @@ const mockUser = jest.fn();
 const mockMetrics = jest.fn().mockResolvedValue(undefined);
 const mockReserve = jest.fn().mockResolvedValue({ remainingCalls: 9 });
 const mockRefund = jest.fn().mockResolvedValue({ remainingCalls: 10 });
-jest.mock('./database', () => ({
-  authDb: {
-    selectFrom: () => ({
-      where: () => ({ selectAll: () => ({ executeTakeFirst: mockUser }) }),
+jest.mock('./database', () => {
+  const { Kysely, PostgresDialect, CamelCasePlugin } =
+    jest.requireActual('kysely');
+  const query = jest.fn();
+  const client = { query, release: jest.fn() };
+  return {
+    db: new Kysely({
+      dialect: new PostgresDialect({
+        pool: { connect: async () => client, end: async () => {} },
+      }),
+      plugins: [new CamelCasePlugin()],
     }),
-    insertInto: () => ({
-      values: (row: unknown) => ({ execute: () => mockMetrics(row) }),
-    }),
-    updateTable: () => ({
-      set: () => ({
-        where: () => ({
+    query,
+    authDb: {
+      selectFrom: () => ({
+        where: () => ({ selectAll: () => ({ executeTakeFirst: mockUser }) }),
+      }),
+      insertInto: () => ({
+        values: (row: unknown) => ({ execute: () => mockMetrics(row) }),
+      }),
+      updateTable: () => ({
+        set: () => ({
           where: () => ({
-            returning: () => ({ executeTakeFirst: mockReserve }),
+            where: () => ({
+              returning: () => ({ executeTakeFirst: mockReserve }),
+            }),
+            returning: () => ({ executeTakeFirstOrThrow: mockRefund }),
           }),
-          returning: () => ({ executeTakeFirstOrThrow: mockRefund }),
         }),
       }),
-    }),
-  },
-  db: {},
-}));
+    },
+  };
+});
 jest.mock('./servicePrincipals', () => {
   const actual = jest.requireActual('./servicePrincipals');
   return {
@@ -195,6 +207,55 @@ test('foreign identities stop before successful metrics and quota', async () => 
   expect(mockMetrics).not.toHaveBeenCalled();
   expect(mockReserve).not.toHaveBeenCalled();
   expect(getScoreboard).not.toHaveBeenCalled();
+});
+
+test('ratings history validates selectors and applies season-specific tiers', async () => {
+  const { query } = jest.requireMock('./database') as { query: jest.Mock };
+  query.mockResolvedValue({
+    rows: [
+      {
+        teamId: 7,
+        net: '12.3',
+        netRank: 8,
+        oneDay: null,
+        sevenDays: '1.2',
+        thirtyDays: null,
+      },
+    ],
+  });
+  const now = new Date();
+  const season = now.getUTCFullYear() + (now.getUTCMonth() >= 9 ? 1 : 0);
+  const date = `${season - 1}-11-20`;
+  const getHistory = (patronLevel: number, year: number, filters = '') => {
+    mockUser.mockResolvedValue({ id: 1, patronLevel, remainingCalls: 10 });
+    return requestAfterClose(`/ratings/history?season=${year}${filters}`, {
+      headers: { authorization: 'Bearer test' },
+    });
+  };
+
+  for (const tier of [0, 1]) {
+    expect((await getHistory(tier, season, '&team=A')).status).toBe(401);
+  }
+  const denied = await getHistory(2, season - 1, '&team=A');
+  expect(denied.status).toBe(401);
+  expect((await denied.json()).message).toContain('Tier 3');
+  expect((await getHistory(2, season)).status).toBe(400);
+  expect((await getHistory(2, season, '&date=2026-02-30')).status).toBe(400);
+  expect(query).not.toHaveBeenCalled();
+
+  const byDate = await getHistory(2, season, `&date=${date}&conference=ACC`);
+  expect(byDate.status).toBe(200);
+  expect(await byDate.json()).toMatchObject([
+    {
+      netRating: 12.3,
+      rankings: { net: 8 },
+      netRatingChange: { oneDay: null, sevenDays: 1.2, thirtyDays: null },
+    },
+  ]);
+  expect(query.mock.lastCall?.[1]).toEqual([1, 7, 30, season, date, 'acc']);
+
+  expect((await getHistory(3, season - 1, '&team=A')).status).toBe(200);
+  expect(query.mock.lastCall?.[1]).toEqual([1, 7, 30, season - 1, 'a']);
 });
 test('forged headers cannot dispatch data, but enrollment remains anonymous', async () => {
   expect(

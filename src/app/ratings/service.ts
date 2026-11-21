@@ -1,6 +1,173 @@
+import { sql } from 'kysely';
+import { ValidateError } from 'tsoa';
 import { db } from '../../config/database';
+import { AuthorizationError } from '../../globals';
 
-import { AdjustedEfficiencyInfo, SrsInfo, TeamElo } from './types';
+import {
+  AdjustedEfficiencyInfo,
+  SrsInfo,
+  TeamElo,
+  TeamRatingHistory,
+} from './types';
+
+const toNullableNumber = (value: string | null): number | null =>
+  value === null ? null : Number(value);
+
+export const getRatingHistory = async (
+  patronLevel: number,
+  season: number,
+  date?: string,
+  team?: string,
+  conference?: string,
+): Promise<TeamRatingHistory[]> => {
+  if (!Number.isInteger(season) || season < 1 || season > 32767) {
+    throw new ValidateError(
+      {
+        season: {
+          value: season,
+          message: 'season must be an integer between 1 and 32767',
+        },
+      },
+      'Invalid season',
+    );
+  }
+  if (date === undefined && !team?.trim()) {
+    throw new ValidateError(
+      { date: { message: 'Provide a rating date or team' } },
+      'Missing rating history filter',
+    );
+  }
+  if (date !== undefined) {
+    const parsed = new Date(`${date}T00:00:00Z`);
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(date) ||
+      date.startsWith('0000') ||
+      !Number.isFinite(parsed.getTime()) ||
+      parsed.toISOString().slice(0, 10) !== date
+    ) {
+      throw new ValidateError(
+        {
+          date: {
+            value: date,
+            message: 'date must be a valid YYYY-MM-DD date',
+          },
+        },
+        'Invalid rating date',
+      );
+    }
+  }
+
+  const now = new Date();
+  const currentSeason = now.getUTCFullYear() + (now.getUTCMonth() >= 9 ? 1 : 0);
+  if (season < currentSeason && patronLevel < 3) {
+    throw new AuthorizationError(
+      'Unauthorized. Ratings history for earlier seasons requires a Patreon subscription at Tier 3 or higher.',
+    );
+  }
+
+  let query = db
+    .selectFrom('teamRatingHistory as history')
+    .innerJoin('team', 'team.id', 'history.teamId')
+    .innerJoin('conferenceTeam', (join) =>
+      join
+        .onRef('conferenceTeam.teamId', '=', 'history.teamId')
+        .onRef('conferenceTeam.startYear', '<=', 'history.season')
+        .on((eb) =>
+          eb.or([
+            eb('conferenceTeam.endYear', '>=', eb.ref('history.season')),
+            eb('conferenceTeam.endYear', 'is', null),
+          ]),
+        ),
+    )
+    .innerJoin('conference', 'conference.id', 'conferenceTeam.conferenceId')
+    .select([
+      'history.season',
+      'history.teamId',
+      'team.school as team',
+      'conference.abbreviation as conference',
+      'history.series',
+      'history.games',
+      'history.offense',
+      'history.defense',
+      'history.net',
+      'history.srs',
+      'history.offenseRank',
+      'history.defenseRank',
+      'history.netRank',
+    ])
+    .select((eb) => {
+      const change = (days: number) =>
+        eb
+          .selectFrom('teamRatingHistory as prior')
+          .whereRef('prior.season', '=', 'history.season')
+          .whereRef('prior.teamId', '=', 'history.teamId')
+          .where(
+            'prior.ratingDate',
+            '=',
+            sql<Date>`${eb.ref('history.ratingDate')} - ${days}::integer`,
+          )
+          .select(({ ref }) =>
+            sql<string | null>`${ref('history.net')} - ${ref('prior.net')}`.as(
+              'change',
+            ),
+          );
+      return [
+        sql<string>`to_char(${eb.ref('history.ratingDate')}, 'YYYY-MM-DD')`.as(
+          'date',
+        ),
+        change(1).as('oneDay'),
+        change(7).as('sevenDays'),
+        change(30).as('thirtyDays'),
+      ];
+    })
+    .where('history.season', '=', season)
+    .orderBy('history.ratingDate')
+    .orderBy(sql`${sql.ref('history.netRank')} asc nulls last`)
+    .orderBy('team.school');
+
+  if (date !== undefined) {
+    query = query.where('history.ratingDate', '=', sql<Date>`${date}::date`);
+  }
+  if (team !== undefined) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['team.school']),
+      '=',
+      team.toLowerCase(),
+    );
+  }
+  if (conference !== undefined) {
+    query = query.where(
+      (eb) => eb.fn('lower', ['conference.abbreviation']),
+      '=',
+      conference.toLowerCase(),
+    );
+  }
+
+  const rows = await query.execute();
+  return rows.map((row) => ({
+    season: row.season,
+    date: row.date,
+    teamId: row.teamId,
+    team: row.team,
+    conference: row.conference,
+    series: row.series as TeamRatingHistory['series'],
+    games: row.games,
+    offensiveRating: toNullableNumber(row.offense),
+    defensiveRating: toNullableNumber(row.defense),
+    netRating: toNullableNumber(row.net),
+    srs: toNullableNumber(row.srs),
+    rankings: {
+      offense: row.offenseRank,
+      defense: row.defenseRank,
+      net: row.netRank,
+    },
+    netRatingChange: {
+      oneDay: toNullableNumber(row.oneDay),
+      sevenDays: toNullableNumber(row.sevenDays),
+      thirtyDays: toNullableNumber(row.thirtyDays),
+    },
+  }));
+};
 
 export const getSrs = async (
   year?: number,

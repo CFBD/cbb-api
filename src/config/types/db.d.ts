@@ -572,6 +572,22 @@ export interface Team {
   srInfo: Json | null;
 }
 
+export interface TeamRatingHistory {
+  createdAt: Generated<Timestamp>;
+  defense: Numeric | null;
+  defenseRank: number | null;
+  games: number;
+  net: Numeric | null;
+  netRank: number | null;
+  offense: Numeric | null;
+  offenseRank: number | null;
+  ratingDate: Timestamp;
+  season: number;
+  series: string;
+  srs: Numeric | null;
+  teamId: number;
+}
+
 export interface TeamRecruiting {
   id: Generated<number>;
   points: Numeric;
@@ -774,6 +790,7 @@ export interface DB {
   srs: Srs;
   substitution: Substitution;
   team: Team;
+  teamRatingHistory: TeamRatingHistory;
   teamRecruiting: TeamRecruiting;
   teamSeasonSnapshot: TeamSeasonSnapshot;
   teamStatsLeaderboard: TeamStatsLeaderboard;

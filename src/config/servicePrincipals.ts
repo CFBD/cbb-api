@@ -23,6 +23,7 @@ const pageOperations = new Set([
 ]);
 export const exporterDeniedPaths = new Set([
   '/info',
+  '/ratings/history',
   '/scoreboard',
   '/teams/directory',
   '/teams/{teamId}/season/{season}/overview',

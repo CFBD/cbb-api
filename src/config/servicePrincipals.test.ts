@@ -53,6 +53,7 @@ test('reviewed scope covers 36 generated operations and exactly five parameteriz
     ).toBe(
       ![
         '/info',
+        '/ratings/history',
         '/scoreboard',
         '/stats/team/leaderboard',
         '/teams/directory',
